@@ -14,7 +14,7 @@ export default async function AdminTastings() {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-serif text-[var(--color-gold)] uppercase tracking-widest">Catas</h1>
-        <Link href="/es/admin/tastings/new" className="bg-[var(--color-gold)] text-black px-4 py-2 text-sm uppercase tracking-widest font-bold hover:bg-[var(--color-gold-hover)] transition-colors">
+        <Link href="/admin/tastings/new" className="bg-[var(--color-gold)] text-black px-4 py-2 text-sm uppercase tracking-widest font-bold hover:bg-[var(--color-gold-hover)] transition-colors">
           Nueva Cata
         </Link>
       </div>
@@ -54,7 +54,7 @@ export default async function AdminTastings() {
                       </span>
                     </td>
                     <td className="py-4 text-right">
-                      <Link href={`/es/admin/tastings/${tasting.id}`} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Editar</Link>
+                      <Link href={`/admin/tastings/${tasting.id}`} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Editar</Link>
                     </td>
                   </tr>
                 ))}

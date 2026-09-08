@@ -3,12 +3,12 @@ import AdminTastingForm from "../AdminTastingForm";
 import { notFound } from "next/navigation";
 
 export default async function EditTastingPage({ params }: { params: unknown }) {
-  const { id } = await params;
+  const { id } = (await params) as any; console.log('EDIT PAGE PARAMS:', await params, 'ID:', id);
   const supabase = await createClient();
   
   const { data: tasting } = await supabase.from('tastings').select('*').eq('id', id).single();
   
-  if (!tasting) notFound();
+  if (!tasting) { console.log('NOT FOUND!'); notFound(); }
 
   return (
     <div className="space-y-8">
