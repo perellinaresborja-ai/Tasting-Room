@@ -20,12 +20,18 @@ export default function WhatsAppButton() {
 
   if (!isVisible) return null;
 
+  const isEn = pathname.startsWith('/en');
+  const popupText = isEn ? "Hi, need help?" : "Hola, ¿necesitas ayuda?";
+  const waText = isEn 
+    ? "Hi,%20I%20have%20a%20question%20about%20The%20Church%20Tasting%20Room%20reservations."
+    : "Hola,%20tengo%20una%20duda%20sobre%20las%20reservas%20de%20The%20Church%20Tasting%20Room.";
+
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
       {/* Globo de texto (oculto en móviles muy pequeños para no tapar) */}
       <div className="bg-[#111] border border-[var(--color-charcoal)] px-5 py-3 rounded-full shadow-2xl hidden sm:block relative">
-        <p className="text-sm text-white font-light">Hola, ¿necesitas ayuda?</p>
+        <p className="text-sm text-white font-light">{popupText}</p>
         
         {/* Triángulo apuntando al botón */}
         <div className="absolute top-1/2 -right-2 transform -translate-y-1/2 border-[6px] border-transparent border-l-[#111] z-10"></div>
@@ -34,7 +40,7 @@ export default function WhatsAppButton() {
       
       {/* Botón Flotante */}
       <a
-        href="https://wa.me/34626218295?text=Hola,%20tengo%20una%20duda%20sobre%20las%20reservas%20de%20The%20Church%20Tasting%20Room."
+        href={`https://wa.me/34626218295?text=${waText}`}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full shadow-lg transition-transform hover:scale-110"
