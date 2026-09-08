@@ -1,0 +1,101 @@
+{
+  "Index": {
+    "title": "Experiencias Sensoriales",
+    "subtitle": "Descubre catas exclusivas de vino, destilados y gastronomía en el entorno único de The Church.",
+    "book_now": "Reservar ahora",
+    "next_tasting": "Próxima Experiencia",
+    "upcoming_tastings": "Próximas Catas",
+    "view_all": "Ver todas",
+    "what_is": "Experiencias para descubrir, catar y disfrutar",
+    "what_is_desc": "Catas y experiencias gastronómicas en un espacio íntimo: vinos, champagne, destilados, gastronomía, café y mucho más, de la mano de profesionales y productores invitados.",
+    "past_tastings": "Experiencias Realizadas",
+    "subscribe_title": "Mantente Informado",
+    "subscribe_desc": "Únete a nuestra lista para recibir invitaciones exclusivas a futuras catas antes de que se agoten las plazas.",
+    "name": "Nombre",
+    "email": "Email",
+    "phone": "Teléfono (opcional)",
+    "interests": "Intereses (ej. Vinos, Whisky, Gastronomía)",
+    "consent": "Acepto recibir comunicaciones sobre futuras catas.",
+    "subscribe_btn": "Suscribirse",
+    "location": "Ubicación",
+    "subtitle_1": "Descubre catas exclusivas de vino, destilados y gastronomía",
+    "subtitle_2": "en el entorno único de The Church.",
+    "language": "Idioma preferido",
+    "lang_es": "Español",
+    "lang_en": "Inglés",
+    "consent_email": "Acepto recibir comunicaciones por email.",
+    "consent_wa": "Acepto que me contacten por WhatsApp.",
+    "phone_email_title": "Contacto",
+    "subscribe_desc_1": "Únete a nuestra lista para recibir invitaciones exclusivas a futuras catas",
+    "subscribe_desc_2": "antes de que se agoten las plazas.",
+    "subscribe_success": "¡Suscripción exitosa!",
+    "subscribe_error": "Error al suscribirse. Verifica tu conexión o inténtalo más tarde.",
+    "subscribe_invalid": "Por favor, rellena todos los campos obligatorios."
+  },
+  "Tastings": {
+    "title": "Catas y Experiencias",
+    "subtitle": "Reserva tu plaza en nuestras próximas catas exclusivas.",
+    "empty": "No hay catas programadas en este momento.",
+    "category": "Categoría",
+    "price": "Precio",
+    "book": "Reservar",
+    "details": "Ver detalles",
+    "per_person": "Por persona",
+    "capacity": "Plazas",
+    "host": "Anfitrión",
+    "date": "Fecha",
+    "time": "Hora",
+    "location_title": "Lugar"
+  },
+  "PastTastings": {
+    "title": "Experiencias Realizadas",
+    "subtitle": "Un archivo visual de las catas que ya hemos celebrado.",
+    "empty": "Todavía no hay experiencias pasadas."
+  },
+  "Contact": {
+    "title": "Contacto y Ubicación",
+    "subtitle": "Estamos en The Church. Ven a descubrirnos.",
+    "address_title": "Dirección",
+    "address_line1": "Camí Vell d'Altea, 26",
+    "address_line2": "03581 L'Albir, Alicante, España",
+    "web": "Web Oficial",
+    "email": "Email de Contacto",
+    "get_directions": "Cómo llegar",
+    "phone": "Teléfono"
+  },
+  "Nav": {
+    "home": "Inicio",
+    "tastings": "Catas",
+    "past": "Catas Realizadas",
+    "contact": "Contacto"
+  },
+  "Age": {
+    "welcome": "Bienvenido a The Church Tasting Room",
+    "subtitle": "Este sitio está dirigido a mayores de 18 años.",
+    "over_18": "TENGO 18 AÑOS O MÁS",
+    "under_18": "SOY MENOR DE 18 AÑOS",
+    "denied": "Lo sentimos, el contenido de este sitio está destinado exclusivamente a mayores de 18 años.",
+    "welcome_1": "Bienvenido a",
+    "welcome_2": "The Church Tasting Room"
+  },
+  "Checkout": {
+    "confirm_age": "Confirmo que tengo 18 años o más.",
+    "title": "Completar Reserva",
+    "first_name": "Nombre",
+    "last_name": "Apellidos",
+    "email": "Email",
+    "total": "Total",
+    "pay_securely": "Pagar de forma segura",
+    "loading": "Cargando..."
+  },
+  "Footer": {
+    "privacy": "Política de Privacidad",
+    "legal": "Aviso Legal",
+    "cookies": "Política de Cookies",
+    "terms": "Condiciones Generales",
+    "visit_the_church": "Visita The Church"
+  },
+  "Legal": {
+    "placeholder": "Página de información legal en desarrollo."
+  }
+}

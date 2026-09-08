@@ -1,0 +1,101 @@
+{
+  "Index": {
+    "title": "Sensory Experiences",
+    "subtitle": "Discover exclusive wine, spirits and gastronomy tastings in the unique setting of The Church.",
+    "book_now": "Book Now",
+    "next_tasting": "Next Experience",
+    "upcoming_tastings": "Upcoming Tastings",
+    "view_all": "View all",
+    "what_is": "Experiences to discover, taste and enjoy",
+    "what_is_desc": "Tastings and gastronomic experiences in an intimate space: wines, champagne, premium spirits, gastronomy, coffee and much more, guided by professionals and guest producers.",
+    "past_tastings": "Past Experiences",
+    "subscribe_title": "Stay Informed",
+    "subscribe_desc": "Join our list to receive exclusive invitations to future tastings before they sell out.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "interests": "Interests (e.g. Wine, Whiskey, Gastronomy)",
+    "consent": "I agree to receive communications about future tastings.",
+    "subscribe_btn": "Subscribe",
+    "location": "Location",
+    "subtitle_1": "Discover exclusive wine, spirits and gastronomy tastings",
+    "subtitle_2": "in the unique setting of The Church.",
+    "language": "Preferred Language",
+    "lang_es": "Spanish",
+    "lang_en": "English",
+    "consent_email": "I agree to receive communications by email.",
+    "consent_wa": "I agree to be contacted via WhatsApp.",
+    "phone_email_title": "Contact",
+    "subscribe_desc_1": "Join our list to receive exclusive invitations to future tastings",
+    "subscribe_desc_2": "before they sell out.",
+    "subscribe_success": "Subscription successful!",
+    "subscribe_error": "Error subscribing. Please check your connection or try again later.",
+    "subscribe_invalid": "Please fill out all required fields."
+  },
+  "Tastings": {
+    "title": "Tastings and Experiences",
+    "subtitle": "Reserve your spot in our upcoming exclusive tastings.",
+    "empty": "No tastings scheduled at the moment.",
+    "category": "Category",
+    "price": "Price",
+    "book": "Book Now",
+    "details": "View details",
+    "per_person": "Per person",
+    "capacity": "Capacity",
+    "host": "Host",
+    "date": "Date",
+    "time": "Time",
+    "location_title": "Location"
+  },
+  "PastTastings": {
+    "title": "Past Experiences",
+    "subtitle": "A visual archive of the tastings we have already hosted.",
+    "empty": "No past experiences yet."
+  },
+  "Contact": {
+    "title": "Contact and Location",
+    "subtitle": "We are located at The Church. Come discover us.",
+    "address_title": "Address",
+    "address_line1": "Camí Vell d'Altea, 26",
+    "address_line2": "03581 L'Albir, Alicante, Spain",
+    "web": "Official Website",
+    "email": "Contact Email",
+    "get_directions": "Get Directions",
+    "phone": "Phone Number"
+  },
+  "Nav": {
+    "home": "Home",
+    "tastings": "Tastings",
+    "past": "Past Tastings",
+    "contact": "Contact"
+  },
+  "Age": {
+    "welcome": "Welcome to The Church Tasting Room",
+    "subtitle": "This site is intended for people aged 18 and over.",
+    "over_18": "I AM 18 OR OVER",
+    "under_18": "I AM UNDER 18",
+    "denied": "Sorry, the content of this site is intended exclusively for people aged 18 and over.",
+    "welcome_1": "Welcome to",
+    "welcome_2": "The Church Tasting Room"
+  },
+  "Checkout": {
+    "confirm_age": "I confirm that I am 18 years of age or older.",
+    "title": "Complete Reservation",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "email": "Email",
+    "total": "Total",
+    "pay_securely": "Pay securely",
+    "loading": "Loading..."
+  },
+  "Footer": {
+    "privacy": "Privacy Policy",
+    "legal": "Legal Notice",
+    "cookies": "Cookie Policy",
+    "terms": "Terms & Conditions",
+    "visit_the_church": "Visit The Church"
+  },
+  "Legal": {
+    "placeholder": "Legal information page under development."
+  }
+}
