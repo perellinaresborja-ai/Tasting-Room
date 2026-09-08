@@ -1,56 +1,67 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
-import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { QRCodeSVG } from 'qrcode.react';
+import { ensureProfile } from '@/app/actions/member';
 
 export default function MemberPortal() {
-  const [profile, setProfile] = useState<unknown>(null);
-  const [reservations, setReservations] = useState<unknown[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [profile, setProfile] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // Login State
   const [email, setEmail] = useState('');
   const [loginStep, setLoginStep] = useState<'IDLE' | 'SENT'>('IDLE');
   
   const supabase = createClient();
 
   useEffect(() => {
-    async function loadData(user: unknown) {
-      setLoading(true);
-      // Get profile
-      const { data: pData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-      if (pData) setProfile(pData);
-      
-      // Get reservations (using customers table linked by email)
-      if (user.email) {
-        const { data: customerData } = await supabase.from("customers").select("id").eq("email", user.email).single();
-        if (customerData) {
-          const { data: rData } = await supabase
-            .from("reservations")
-            .select("*, tasting:tastings(title_es, date, start_time)")
-            .eq("customer_id", customerData.id)
-            .order('created_at', { ascending: false });
-          
-          if (rData) setReservations(rData);
-        }
+    let active = true;
+
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    async function loadData(user: any) {
+      if (!user || !user.email) return;
+
+      // 1. Ensure profile exists (bypasses RLS to insert if missing)
+      const res = await ensureProfile(user.id, user.email);
+      if (res.success && res.profile) {
+        if (active) setProfile(res.profile);
+      } else {
+        console.error("Error loading profile:", res.error);
+        if (active) setProfile(user); // fallback
       }
       
-      setLoading(false);
+      // 2. Load Reservations from customers table (linked by email)
+      const { data: customerData } = await supabase.from("customers").select("id").eq("email", user.email).single();
+      
+      if (customerData && active) {
+        const { data: rData } = await supabase
+          .from("reservations")
+          .select("*, tasting:tastings(title_es, date, start_time)")
+          .eq("customer_id", customerData.id)
+          .order('created_at', { ascending: false });
+        
+        if (rData) setReservations(rData);
+      }
+      
+      if (active) setLoading(false);
     }
 
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
+      if (user && active) {
         await loadData(user);
-      } else {
+      } else if (active) {
         setLoading(false);
       }
     }
+    
     checkAuth();
+
+    return () => { active = false; };
   }, [supabase]);
-
-
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -76,6 +87,7 @@ export default function MemberPortal() {
     await supabase.auth.signOut();
     setProfile(null);
     setReservations([]);
+    setLoginStep('IDLE');
   }
 
   if (loading) {
@@ -87,7 +99,7 @@ export default function MemberPortal() {
   }
 
   // LOGIN SCREEN
-  if (!profile) {
+  if (!profile || !profile.public_token) {
     return (
       <div className="max-w-md mx-auto px-4 py-32">
         <div className="bg-[#141414] border border-[var(--color-charcoal)] p-8 text-center">
@@ -180,7 +192,7 @@ export default function MemberPortal() {
                     <div className="text-right">
                       <p className="text-[var(--color-gold)] text-lg">{res.tickets} {res.tickets > 1 ? 'plazas' : 'plaza'}</p>
                       <p className={`text-[10px] uppercase tracking-widest ${res.payment_status === 'PAID' ? 'text-green-500' : 'text-orange-500'}`}>
-                        {res.payment_status === 'PAID' ? 'PAGADO' : 'PENDIENTE'}
+                        {res.payment_status === 'PAID' ? 'PAGADO ✓' : 'PENDIENTE'}
                       </p>
                     </div>
                   </div>
