@@ -52,9 +52,6 @@ export default async function HomePage({
           <p className="text-lg md:text-xl text-[var(--color-warm-white)]/80 mb-12 font-light max-w-2xl leading-relaxed">
             {t("what_is_desc")}
           </p>
-          <Link href="/tastings" className="inline-block bg-[var(--color-gold)] text-black px-10 py-4 uppercase tracking-widest font-bold hover:bg-[var(--color-gold-hover)] transition-all transform hover:scale-105">
-            {t("book_now")}
-          </Link>
         </div>
       </section>
 
