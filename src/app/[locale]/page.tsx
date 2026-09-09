@@ -117,7 +117,7 @@ export default async function HomePage({
                 phone: t("phone_optional", { default: t("phone") + " (WhatsApp)" }),
                 consent_email: t("consent_email"),
                 consent_wa: t("consent_wa"),
-                subscribe_btn: "QUIERO ESTAR INFORMADO",
+                subscribe_btn: t("subscribe_btn"),
                 subscribe_success: t("subscribe_success"),
                 subscribe_error: t("subscribe_error"),
                 subscribe_invalid: t("subscribe_invalid")
