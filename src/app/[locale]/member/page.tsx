@@ -11,6 +11,7 @@ interface Profile {
   email: string;
   first_name: string;
   public_token: string;
+  member_number?: number;
   [key: string]: unknown;
 }
 
@@ -185,6 +186,12 @@ export default function MemberPortal() {
             <div className="bg-white p-4 inline-block mb-6 shadow-[0_0_30px_rgba(197,160,89,0.1)]">
               {profile.public_token && <QRCodeSVG value={`${process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es"}/q/${profile.public_token}`} size={200} />}
             </div>
+            
+            {profile.member_number !== undefined && profile.member_number !== null && (
+              <p className="text-xl text-[var(--color-gold)] font-serif mb-2">
+                Tasting Room {profile.member_number.toString().padStart(4, '0')}
+              </p>
+            )}
             
             <p className="text-[10px] font-mono text-gray-600 break-all">{profile.public_token}</p>
           </div>

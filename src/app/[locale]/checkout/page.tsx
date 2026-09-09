@@ -7,15 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 import { useTranslations, useLocale } from "next-intl";
 import { mockTastings } from "@/lib/mock-data";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-"use client";
-
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { useTranslations, useLocale } from "next-intl";
-import { mockTastings } from "@/lib/mock-data";
-
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const tastingId = searchParams.get("tasting");
