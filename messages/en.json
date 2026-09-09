@@ -99,7 +99,8 @@
     "placeholder": "Legal information page under development."
   },
   "Member": {
-    "title": "Access your Tasting Room",
+    "title_1": "Access your",
+    "title_2": "Tasting Room",
     "login_desc": "We'll send you a link to access without a password.",
     "email_placeholder": "Email",
     "send_link": "SEND ACCESS LINK",

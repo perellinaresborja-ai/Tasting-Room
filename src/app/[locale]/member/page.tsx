@@ -122,7 +122,9 @@ export default function MemberPortal() {
     return (
       <div className="max-w-md mx-auto px-4 py-32">
         <div className="bg-[#141414] border border-[var(--color-charcoal)] p-8 text-center">
-          <h1 className="text-2xl font-serif text-[var(--color-gold)] mb-6 uppercase tracking-widest">{t('title')}</h1>
+          <h1 className="text-2xl font-serif text-[var(--color-gold)] mb-6 uppercase tracking-widest leading-relaxed">
+            {t('title_1')}<br />{t('title_2')}
+          </h1>
           
           {loginStep === 'IDLE' ? (
             <>
@@ -163,7 +165,7 @@ export default function MemberPortal() {
     <div className="max-w-5xl mx-auto px-4 py-16">
       <div className="flex justify-between items-center mb-12 border-b border-[var(--color-charcoal)] pb-6">
         <div>
-          <h1 className="text-3xl font-serif text-[var(--color-gold)] uppercase tracking-wider mb-2">{t('title')}</h1>
+          <h1 className="text-3xl font-serif text-[var(--color-gold)] uppercase tracking-wider mb-2">{t('title_1')} {t('title_2')}</h1>
           <p className="text-gray-400">{t('welcome')}, {profile.first_name || profile.email}</p>
         </div>
         <button onClick={handleLogout} className="text-xs uppercase tracking-widest text-gray-500 hover:text-white transition-colors border border-[var(--color-charcoal)] px-4 py-2">
