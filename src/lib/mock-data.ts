@@ -84,6 +84,6 @@ export const mockPastTastings = [
     date: "2026-06-12",
     category_es: "Gastronomía",
     category_en: "Gastronomy",
-    image_url: "https://images.unsplash.com/photo-1414235077428-9711455345c2?q=80&w=2070&auto=format&fit=crop"
+    image_url: "/aceite-relleu.jpg"
   }
 ];
