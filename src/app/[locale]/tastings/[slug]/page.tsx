@@ -101,14 +101,10 @@ export default async function TastingDetailPage({
             </div>
           )}
 
-          <div className="flex items-center justify-between mb-10 border-t border-[var(--color-charcoal)] pt-8">
+          <div className="mb-10 border-t border-[var(--color-charcoal)] pt-8">
             <div>
               <p className="text-3xl text-white">€{tasting.price.toFixed(2)}</p>
               <p className="text-sm text-gray-500 uppercase">{t("per_person")}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xl text-[var(--color-gold)] font-serif">{availableSpots} / {tasting.capacity}</p>
-              <p className="text-sm text-gray-500 uppercase tracking-widest">{locale === 'es' ? 'Plazas Libres' : 'Available'}</p>
             </div>
           </div>
 
