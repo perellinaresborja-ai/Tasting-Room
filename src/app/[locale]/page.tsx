@@ -47,7 +47,7 @@ export default async function HomePage({
             className="object-contain mb-8 w-[240px] md:w-[370px] h-auto"
           />
           <h2 className="text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-6 uppercase tracking-wider leading-relaxed">
-            {t("what_is")}
+            {t("what_is_1")}<br />{t("what_is_2")}
           </h2>
           <p className="text-lg md:text-xl text-[var(--color-warm-white)]/80 mb-12 font-light max-w-2xl leading-relaxed">
             {t("what_is_desc")}
