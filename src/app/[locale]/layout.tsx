@@ -55,6 +55,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       siteName: 'The Church Tasting Room',
       locale: locale === 'en' ? 'en_US' : 'es_ES',
       type: 'website',
+      images: [
+        {
+          url: '/og-image.png',
+          width: 800,
+          height: 850,
+          alt: 'The Church Tasting Room Logo',
+        }
+      ],
     },
   };
 }
