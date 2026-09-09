@@ -69,7 +69,7 @@ export async function POST(req: Request) {
         if (!resData.confirmation_email_sent_at && resData.profile?.email) {
           try {
             const locale = session.metadata?.locale || "es"; // just fallback
-            const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+            const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tastingroom.es';
             const qrUrl = `${appUrl}/q/${resData.profile.public_token}`;
             const title = resData.tasting?.title_es || 'The Church Tasting Room';
             const date = resData.tasting?.date;

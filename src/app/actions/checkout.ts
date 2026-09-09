@@ -60,7 +60,7 @@ export async function createCheckoutSession(formData: FormData) {
     }
 
     // 3. Create Stripe Checkout Session
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tastingroom.es';
     
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
