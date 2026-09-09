@@ -30,7 +30,7 @@ export default function Navbar({ locale }: { locale: string }) {
         </div>
         
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex flex-1 justify-center items-center gap-6 xl:gap-10 text-sm uppercase tracking-wider text-[var(--color-warm-white)]">
+        <nav className="hidden md:flex flex-1 justify-center items-center gap-3 lg:gap-6 xl:gap-10 text-xs lg:text-sm uppercase tracking-wider text-[var(--color-warm-white)]">
           {navLinks.map((link) => (
             <Link 
               key={link.href} 
@@ -55,7 +55,7 @@ export default function Navbar({ locale }: { locale: string }) {
           
           {/* Mobile Menu Toggle */}
           <button 
-            className="lg:hidden text-[var(--color-gold)] ml-2"
+            className="md:hidden text-[var(--color-gold)] ml-2"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle Menu"
           >
@@ -66,7 +66,7 @@ export default function Navbar({ locale }: { locale: string }) {
 
       {/* Mobile Nav Dropdown */}
       {isOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 bg-[var(--background)] border-b border-[var(--color-charcoal)] py-4 px-4 shadow-xl">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-[var(--background)] border-b border-[var(--color-charcoal)] py-4 px-4 shadow-xl">
           <nav className="flex flex-col space-y-4 text-center text-sm uppercase tracking-wider text-[var(--color-warm-white)]">
             {navLinks.map((link) => (
               <Link 
