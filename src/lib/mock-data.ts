@@ -75,7 +75,7 @@ export const mockPastTastings = [
     date: "2026-07-25",
     category_es: "Sake",
     category_en: "Sake",
-    image_url: "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?q=80&w=2070&auto=format&fit=crop"
+    image_url: "/sake-premium.jpg"
   },
   {
     id: "past-3",
