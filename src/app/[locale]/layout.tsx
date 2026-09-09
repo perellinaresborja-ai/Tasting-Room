@@ -20,14 +20,42 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
-export const metadata: Metadata = {
-  title: {
-    template: "%s | The Church Tasting Room",
-    default: "The Church Tasting Room",
-  },
-  description: "Premium tasting experiences at The Church.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es"),
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  
+  const isEn = locale === 'en';
+  
+  const title = isEn 
+    ? "The Church Tasting Room | Wine Tasting in Albir & Altea" 
+    : "The Church Tasting Room | Catas de Vino en El Albir y Altea";
+    
+  const description = isEn
+    ? "Premium wine, spirits, and gastronomy tasting experiences in Costa Blanca. Located in El Albir (L'Alfàs del Pi), near Altea. Exclusive events for wine lovers."
+    : "Experiencias de cata de vinos, destilados y gastronomía premium en la Costa Blanca. Ubicado en El Albir (L'Alfàs del Pi), muy cerca de Altea.";
+    
+  return {
+    title: {
+      template: "%s | The Church Tasting Room",
+      default: title,
+    },
+    description,
+    keywords: [
+      "Wine Tasting Albir", "Wine Experience Altea", "Wine Lover Albir", "Costa Blanca wine tasting",
+      "Catas de vino Albir", "Catas de vino Altea", "L'Alfàs del Pi", 
+      "Albir Garden", "Restaurante Enrique", "Can Tapetes", "Sprint Bar", "Casa Teo", "Yamato Albir",
+      "Things to do in Albir", "Altea tourist activities", "Bodegas Costa Blanca"
+    ],
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es"),
+    openGraph: {
+      title,
+      description,
+      url: '/',
+      siteName: 'The Church Tasting Room',
+      locale: locale === 'en' ? 'en_US' : 'es_ES',
+      type: 'website',
+    },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
