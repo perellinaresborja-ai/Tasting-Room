@@ -29,7 +29,7 @@ type Reservation = {
 export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'PENDING' | 'ARRIVED' | 'ALL'>('PENDING');
+  const [filter, setFilter] = useState<'PENDING' | 'ARRIVED' | 'ALL' | 'INTERESTED'>('PENDING');
   
   const supabase = React.useMemo(() => createClient(), []);
 
@@ -37,9 +37,8 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
   const loadData = useCallback(async () => {
     const { data } = await supabase
       .from('reservations')
-      .select('id, tickets, payment_status, reservation_type, status, check_in_time, customer:profiles(first_name, last_name, phone)')
+      .select('id, tickets, payment_status, reservation_type, status, check_in_time, created_at, customer:profiles(first_name, last_name, phone, email)')
       .eq('tasting_id', tastingId)
-      .in('status', ['CONFIRMED', 'PENDING']) // Exclude CANCELLED
       .not('payment_status', 'in', '("FAILED", "REFUNDED")'); // Only valid payments (mostly PAID)
       
     if (data) {
@@ -79,7 +78,14 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
   const isComplete = totalSpots > 0 && pendingSpots === 0;
 
   // Filtered List
-  const filteredList = validReservations.filter(r => {
+  const filteredList = reservations.filter(r => {
+    if (filter === 'INTERESTED') {
+      const isExpired = r.status === 'EXPIRED' || r.status === 'ABANDONED';
+      const isOldPending = r.status === 'PENDING' && (new Date().getTime() - new Date(r.created_at).getTime()) > 15 * 60 * 1000;
+      return isExpired || isOldPending || r.status === 'CANCELLED';
+    }
+
+    if (r.status !== 'CONFIRMED') return false;
     if (filter === 'PENDING') return !r.check_in_time;
     if (filter === 'ARRIVED') return !!r.check_in_time;
     return true;
@@ -128,22 +134,28 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
       </div>
 
       {/* FILTROS */}
-      <div className="flex gap-2 bg-[#111] p-1 border border-[var(--color-charcoal)]">
+      <div className="flex flex-wrap gap-2 bg-[#111] p-1 border border-[var(--color-charcoal)]">
         <button 
           onClick={() => setFilter('PENDING')}
-          className={`flex-1 py-3 text-xs uppercase tracking-widest font-bold transition-colors ${filter === 'PENDING' ? 'bg-[var(--color-gold)] text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`flex-1 min-w-[80px] py-3 text-xs uppercase tracking-widest font-bold transition-colors ${filter === 'PENDING' ? 'bg-[var(--color-gold)] text-black' : 'text-gray-400 hover:text-white'}`}
         >
           Pendientes
         </button>
         <button 
           onClick={() => setFilter('ARRIVED')}
-          className={`flex-1 py-3 text-xs uppercase tracking-widest font-bold transition-colors ${filter === 'ARRIVED' ? 'bg-[var(--color-gold)] text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`flex-1 min-w-[80px] py-3 text-xs uppercase tracking-widest font-bold transition-colors ${filter === 'ARRIVED' ? 'bg-[var(--color-gold)] text-black' : 'text-gray-400 hover:text-white'}`}
         >
           Han Llegado
         </button>
         <button 
+          onClick={() => setFilter('INTERESTED')}
+          className={`flex-1 min-w-[80px] py-3 text-xs uppercase tracking-widest font-bold transition-colors ${filter === 'INTERESTED' ? 'bg-orange-600 text-white' : 'text-gray-400 hover:text-white'}`}
+        >
+          Interesados
+        </button>
+        <button 
           onClick={() => setFilter('ALL')}
-          className={`flex-1 py-3 text-xs uppercase tracking-widest font-bold transition-colors ${filter === 'ALL' ? 'bg-[var(--color-gold)] text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`flex-1 min-w-[60px] py-3 text-xs uppercase tracking-widest font-bold transition-colors ${filter === 'ALL' ? 'bg-[var(--color-gold)] text-black' : 'text-gray-400 hover:text-white'}`}
         >
           Todos
         </button>
@@ -153,22 +165,31 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
       <div className="space-y-3">
         {filteredList.length === 0 ? (
           <div className="text-center p-8 border border-[var(--color-charcoal)] bg-black text-gray-500 uppercase tracking-widest text-sm">
-            No hay asistentes en esta lista
+            No hay asistentes en esta categoría
           </div>
         ) : (
           filteredList.map(res => (
             <div key={res.id} className="border border-[var(--color-charcoal)] bg-black p-4 flex flex-col gap-3">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-bold text-white mb-1 uppercase tracking-wider">{res.customer.first_name} {res.customer.last_name}</p>
-                  {res.customer.phone ? (
-                    <a href={`tel:${res.customer.phone}`} className="text-blue-400 text-sm hover:underline">{res.customer.phone}</a>
-                  ) : (
-                    <p className="text-gray-600 text-sm">Sin teléfono</p>
+                  <p className="font-bold text-white mb-1 uppercase tracking-wider">{res.customer?.first_name} {res.customer?.last_name}</p>
+                  
+                  {/* Additional info for INTERESTED or ALL */}
+                  {(filter === 'INTERESTED' || filter === 'ALL') && (
+                    <div className="mb-2">
+                      <p className="text-gray-400 text-sm">{res.customer?.email}</p>
+                      {res.customer?.phone && <a href={`tel:${res.customer.phone}`} className="text-blue-400 text-sm hover:underline">{res.customer.phone}</a>}
+                    </div>
                   )}
+
                   {res.check_in_time && (
-                    <p className="text-green-500 text-xs mt-2 uppercase tracking-widest">
+                    <p className="text-green-500 text-xs uppercase tracking-widest mt-1">
                       Llegada: {new Date(res.check_in_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </p>
+                  )}
+                  {filter === 'INTERESTED' && (
+                    <p className="text-orange-400 text-xs mt-1 uppercase tracking-widest">
+                      Iniciada: {new Date(res.created_at).toLocaleString([], {day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit'})}
                     </p>
                   )}
                 </div>
@@ -176,10 +197,10 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
                   <span className="text-[var(--color-gold)] font-bold text-lg">{res.tickets} {res.tickets > 1 ? 'plazas' : 'plaza'}</span>
                   <span className={`text-[10px] uppercase tracking-widest font-bold mt-1 px-2 py-1 ${
                     res.reservation_type === 'INVITATION' ? 'bg-blue-900/30 text-blue-400' :
-                    res.payment_status === 'PAID' ? 'bg-green-900/30 text-green-400' : 
+                    res.status === 'CONFIRMED' ? 'bg-green-900/30 text-green-400' : 
                     'bg-orange-900/30 text-orange-400'
                   }`}>
-                    {res.reservation_type === 'INVITATION' ? 'INVITACIÓN' : res.payment_status === 'PAID' ? 'PAGADO ✓' : 'PENDIENTE'}
+                    {res.reservation_type === 'INVITATION' ? 'INVITACIÓN' : res.status === 'CONFIRMED' ? 'PAGADO ✓' : 'ABANDONADO'}
                   </span>
                 </div>
               </div>

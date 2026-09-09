@@ -1,4 +1,4 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
@@ -70,36 +70,54 @@ export async function POST(req: Request) {
           try {
             const locale = session.metadata?.locale || "es"; // just fallback
             const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tastingroom.es';
-            const qrUrl = `${appUrl}/q/${resData.profile.public_token}`;
             const title = resData.tasting?.title_es || 'The Church Tasting Room';
             const date = resData.tasting?.date;
             const time = resData.tasting?.start_time;
 
-            const html = `
-              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <h1 style="color: #c9a96e; text-transform: uppercase;">The Church Tasting Room</h1>
-                <h2>Confirmación de Reserva</h2>
-                <p>Hola ${resData.profile.first_name || ''},</p>
-                <p>Tu reserva para <strong>${title}</strong> ha sido confirmada.</p>
-                <ul>
-                  <li><strong>Fecha:</strong> ${date}</li>
-                  <li><strong>Hora:</strong> ${time}</li>
-                  <li><strong>Plazas:</strong> ${resData.places}</li>
-                  <li><strong>Reserva ID:</strong> ${reservationId}</li>
-                </ul>
-                <div style="margin: 30px 0; text-align: center;">
-                  <p>Guarda este enlace para mostrar tu QR de acceso:</p>
-                  <a href="${qrUrl}" style="background-color: #c9a96e; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Ver Mi QR de Acceso</a>
+            const html = locale === 'en' ? `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                  <h1 style="color: #c9a96e; text-transform: uppercase;">The Church Tasting Room</h1>
+                  <h2>Booking Confirmed</h2>
+                  <p>Hi ${resData.profile.first_name || ''},</p>
+                  <p>Your booking for <strong>${title}</strong> is confirmed.</p>
+                  <ul>
+                    <li><strong>Date:</strong> ${date}</li>
+                    <li><strong>Time:</strong> ${time}</li>
+                    <li><strong>Spots:</strong> ${resData.tickets}</li>
+                  </ul>
+                  <div style="margin: 30px 0; text-align: center;">
+                    <p>Your access is in My Chapel.</p>
+                    <p>My Chapel is your personal space at The Church Tasting Room. There you will find your personal QR code, upcoming experiences, and past tastings.</p>
+                    <p>Your QR is personal and permanent: you will always use the same one for your experiences with us.</p>
+                    <a href="${appUrl}/en/member" style="background-color: #c9a96e; color: #111; padding: 12px 24px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;">Access My Chapel</a>
+                  </div>
+                  <p style="font-size: 12px; color: #666; text-align: center;">You don't need a password. Enter the same email used for the booking to receive your access link.</p>
                 </div>
-                <p>O accede a <a href="${appUrl}/${locale}/member">Mi Capilla</a> para ver tus próximas experiencias.</p>
-                <p>¡Nos vemos pronto!</p>
-              </div>
-            `;
+              ` : `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                  <h1 style="color: #c9a96e; text-transform: uppercase;">The Church Tasting Room</h1>
+                  <h2>Tu reserva está confirmada</h2>
+                  <p>Hola ${resData.profile.first_name || ''},</p>
+                  <p>Tu reserva para <strong>${title}</strong> está confirmada.</p>
+                  <ul>
+                    <li><strong>Fecha:</strong> ${date}</li>
+                    <li><strong>Hora:</strong> ${time}</li>
+                    <li><strong>Plazas:</strong> ${resData.tickets}</li>
+                  </ul>
+                  <div style="margin: 30px 0; text-align: center;">
+                    <p style="font-size: 18px; font-weight: bold;">Tu acceso está en Mi Capilla</p>
+                    <p>Mi Capilla es tu espacio personal en The Church Tasting Room. Allí encontrarás tu QR personal, tus próximas experiencias y el historial de las catas a las que hayas asistido.</p>
+                    <p>Tu QR es personal y permanente: utilizarás siempre el mismo en tus experiencias con nosotros.</p>
+                    <a href="${appUrl}/es/member" style="background-color: #c9a96e; color: #111; padding: 12px 24px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;">Acceder a Mi Capilla</a>
+                  </div>
+                  <p style="font-size: 12px; color: #666; text-align: center;">No necesitas contraseña. Introduce el mismo email utilizado en la reserva y recibirás tu enlace de acceso.</p>
+                </div>
+              `;
 
             await resend.emails.send({
               from: 'The Church Tasting Room <reservas@tastingroom.es>',
               to: resData.profile.email,
-              subject: `Reserva Confirmada: ${title}`,
+              subject: locale === 'en' ? `Booking Confirmed: ${title}` : `Tu reserva está confirmada — The Church Tasting Room`,
               html: html
             });
 
@@ -129,8 +147,8 @@ export async function POST(req: Request) {
         await supabaseAdmin
           .from('reservations')
           .update({
-            status: 'CANCELLED',
-            payment_status: 'FAILED',
+            status: 'EXPIRED',
+            payment_status: 'ABANDONED',
             updated_at: new Date().toISOString()
           })
           .eq('id', failedReservationId)

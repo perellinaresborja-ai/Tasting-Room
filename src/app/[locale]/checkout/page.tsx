@@ -121,6 +121,11 @@ function CheckoutContent() {
             {isSubmitting ? t("loading") : t("pay_securely")}
           </button>
         </div>
+        <p className="text-xs text-gray-500 mt-4 text-center md:text-left">
+          {locale === "es" 
+            ? "Tus plazas se mantendrán durante 15 minutos mientras completas el pago. La reserva no estará confirmada hasta que el pago se haya realizado correctamente." 
+            : "Your places will be held for 15 minutes while you complete payment. Your booking will not be confirmed until payment has been successfully completed."}
+        </p>
       </form>
     </div>
   );
