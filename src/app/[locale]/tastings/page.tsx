@@ -44,7 +44,7 @@ export default async function TastingsPage({
               <div className="text-xs text-[var(--color-gold)] uppercase tracking-widest mb-3">
                 {tasting.category}
               </div>
-              <h2 className="text-2xl font-serif text-[var(--color-warm-white)] mb-4 group-hover:text-[var(--color-gold)] transition-colors">
+              <h2 className="text-2xl font-serif text-[var(--color-warm-white)] mb-4 group-hover:text-[var(--color-gold)] transition-colors whitespace-pre-line">
                 {locale === "es" ? tasting.title_es : tasting.title_en}
               </h2>
               <div className="flex items-center gap-3 text-sm text-[var(--color-warm-white)] mb-4">

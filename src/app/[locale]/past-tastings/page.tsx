@@ -32,7 +32,7 @@ export default async function PastTastingsPage({
               <span className="text-sm text-[var(--color-gold)] uppercase tracking-[0.2em] mb-2">
                 {locale === "es" ? past.category_es : past.category_en}
               </span>
-              <h2 className="text-2xl font-serif text-white mb-2 leading-snug">
+              <h2 className="text-2xl font-serif text-white mb-2 leading-snug whitespace-pre-line">
                 {locale === "es" ? past.title_es : past.title_en}
               </h2>
               <p className="text-gray-400 text-sm tracking-widest">{formatDate(past.date, locale)}</p>

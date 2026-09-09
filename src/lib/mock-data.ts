@@ -70,8 +70,8 @@ export const mockPastTastings = [
   },
   {
     id: "past-2",
-    title_es: "Iniciación al Sake Premium",
-    title_en: "Premium Sake Initiation",
+    title_es: "Iniciación al\nSake Premium",
+    title_en: "Premium Sake\nInitiation",
     date: "2026-07-25",
     category_es: "Sake",
     category_en: "Sake",
