@@ -49,12 +49,9 @@ export default async function HomePage({
           <h2 className="text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-6 uppercase tracking-wider leading-relaxed">
             {t("what_is")}
           </h2>
-          <p className="text-lg md:text-xl text-[var(--color-warm-white)]/80 mb-8 font-light max-w-2xl leading-relaxed">
+          <p className="text-lg md:text-xl text-[var(--color-warm-white)]/80 mb-12 font-light max-w-2xl leading-relaxed">
             {t("what_is_desc")}
           </p>
-          <div className="flex flex-wrap justify-center gap-4 text-xs md:text-sm uppercase tracking-widest text-gray-500 mb-12">
-            <span>Vino</span> &middot; <span>Champagne</span> &middot; <span>Destilados</span> &middot; <span>Gastronomía</span> &middot; <span>Café</span>
-          </div>
           <Link href="/tastings" className="inline-block bg-[var(--color-gold)] text-black px-10 py-4 uppercase tracking-widest font-bold hover:bg-[var(--color-gold-hover)] transition-all transform hover:scale-105">
             {t("book_now")}
           </Link>
