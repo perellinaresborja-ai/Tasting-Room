@@ -101,13 +101,6 @@ export default async function TastingDetailPage({
             </div>
           )}
 
-          <div className="mb-10 border-t border-[var(--color-charcoal)] pt-8">
-            <div>
-              <p className="text-3xl text-white">€{tasting.price.toFixed(2)}</p>
-              <p className="text-sm text-gray-500 uppercase">{t("per_person")}</p>
-            </div>
-          </div>
-
           <BookingForm 
             tastingId={tasting.id} 
             price={tasting.price} 
