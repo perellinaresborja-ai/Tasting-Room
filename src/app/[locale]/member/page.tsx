@@ -10,6 +10,7 @@ interface Profile {
   id: string;
   email: string;
   first_name: string;
+  last_name?: string;
   public_token: string;
   member_number?: number;
   [key: string]: unknown;
@@ -188,9 +189,14 @@ export default function MemberPortal() {
             </div>
             
             {profile.member_number !== undefined && profile.member_number !== null && (
-              <p className="text-xl text-[var(--color-gold)] font-serif mb-2">
-                Tasting Room {profile.member_number.toString().padStart(4, '0')}
-              </p>
+              <div className="mb-4">
+                <p className="text-xl text-[var(--color-gold)] font-serif mb-1">
+                  Tasting Room {profile.member_number.toString().padStart(4, '0')}
+                </p>
+                <p className="text-sm text-gray-400 uppercase tracking-widest">
+                  {profile.first_name} {profile.last_name || ''}
+                </p>
+              </div>
             )}
             
             <p className="text-[10px] font-mono text-gray-600 break-all">{profile.public_token}</p>
