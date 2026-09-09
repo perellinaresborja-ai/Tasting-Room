@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { translateEsToEn } from "@/app/actions/translate";
 import { uploadImageAction } from "@/app/actions/uploadImage";
+import { clearCache } from "@/app/actions/revalidate";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
@@ -141,6 +142,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
       setError(res.error.message);
       setLoading(false);
     } else {
+      await clearCache();
       router.push(`/${locale}/admin/tastings`);
       router.refresh();
     }
