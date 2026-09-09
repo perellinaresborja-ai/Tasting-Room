@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "dummy", {
-  apiVersion: "2024-06-20" as unknown,
+  apiVersion: '2026-08-26.dahlia',
 });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
@@ -22,8 +22,8 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   }  
   catch (err: unknown /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-    console.error("Webhook signature verification failed.", err.message);
-    return NextResponse.json({ error: err.message }, { status: 400 });
+    console.error("Webhook signature verification failed.", (err instanceof Error ? (err instanceof Error ? (err instanceof Error ? (err instanceof Error ? err.message : String(err)) : String(err)) : String(err)) : String(err)));
+    return NextResponse.json({ error: (err instanceof Error ? (err instanceof Error ? (err instanceof Error ? (err instanceof Error ? err.message : String(err)) : String(err)) : String(err)) : String(err)) }, { status: 400 });
   }
 
   if (event.type === "checkout.session.completed") {

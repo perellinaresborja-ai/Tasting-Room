@@ -6,7 +6,7 @@ export default async function AdminReservations() {
   
   const { data: reservations } = await supabase
     .from('reservations')
-    .select('*, customer:profiles(first_name, last_name, email), tasting:tastings(title_es, date)')
+    .select('*, profile:profiles(first_name, last_name, email), tasting:tastings(title_es, date)')
     .order('created_at', { ascending: false });
 
   return (
@@ -37,8 +37,8 @@ export default async function AdminReservations() {
                   <tr key={res.id}>
                     <td className="py-4 text-gray-500 text-xs">{new Date(res.created_at).toLocaleString('es-ES')}</td>
                     <td className="py-4 text-gray-300">
-                      <div>{res.customer?.first_name} {res.customer?.last_name}</div>
-                      <div className="text-xs text-gray-500">{res.customer?.email}</div>
+                      <div>{res.profile?.first_name} {res.profile?.last_name}</div>
+                      <div className="text-xs text-gray-500">{res.profile?.email}</div>
                     </td>
                     <td className="py-4 text-gray-300">
                       {res.tasting?.title_es}

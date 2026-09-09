@@ -3,8 +3,8 @@ import { Link } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import CreateInvitationForm from "./CreateInvitationForm";
 
-export default async function AdminInvitationsPage({ params }: { params: unknown }) {
-  const { id, locale } = (await params) as unknown;
+export default async function AdminInvitationsPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
+  const { id, locale } = (await params);
   const supabase = await createClient();
   
   const { data: tasting } = await supabase.from('tastings').select('id, title_es, title_en, capacity').eq('id', id).single();

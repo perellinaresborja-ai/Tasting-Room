@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import InvitationActions from "./InvitationActions";
 import { formatDate, formatTime, formatDayOfWeek } from "@/lib/utils/formatDate";
 
-export default async function InvitationPage({ params }: { params: unknown }) {
-  const { token, locale } = (await params) as unknown;
+export default async function InvitationPage({ params }: { params: Promise<{ token: string; locale: string }> }) {
+  const { token, locale } = (await params);
   const supabase = await createClient();
 
   const { data: reservation } = await supabase

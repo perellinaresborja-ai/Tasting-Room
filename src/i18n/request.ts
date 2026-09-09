@@ -5,7 +5,7 @@ export default getRequestConfig(async ({requestLocale}) => {
   let locale = await requestLocale;
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!locale || !routing.locales.includes(locale as unknown)) {
+  if (!locale || !routing.locales.includes(locale as "en" | "es")) {
     locale = routing.defaultLocale;
   }
  

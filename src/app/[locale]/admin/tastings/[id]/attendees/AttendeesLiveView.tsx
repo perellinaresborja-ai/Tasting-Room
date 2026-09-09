@@ -41,12 +41,12 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
       
     if (data) {
       // Sort alphabetically by first_name
-      const sorted = (data as unknown[]).sort((a: unknown, b: unknown) => {
+      const sorted = (data).sort((a: Reservation, b: Reservation) => {
         const nameA = a.customer?.first_name?.toLowerCase() || '';
         const nameB = b.customer?.first_name?.toLowerCase() || '';
         return nameA.localeCompare(nameB);
       });
-      setReservations(sorted as unknown as Reservation[]);
+      setReservations(sorted);
     }
     setLoading(false);
   }, [supabase, tastingId]);

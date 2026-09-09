@@ -2,8 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import AdminTastingForm from "../AdminTastingForm";
 import { notFound } from "next/navigation";
 
-export default async function EditTastingPage({ params }: { params: unknown }) {
-  const { id } = (await params) as unknown; console.log('EDIT PAGE PARAMS:', await params, 'ID:', id);
+export default async function EditTastingPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
+  const { id } = (await params); console.log('EDIT PAGE PARAMS:', await params, 'ID:', id);
   const supabase = await createClient();
   
   const { data: tasting } = await supabase.from('tastings').select('*').eq('id', id).single();

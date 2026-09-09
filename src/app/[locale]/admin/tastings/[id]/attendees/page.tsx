@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import AttendeesLiveView from './AttendeesLiveView';
 import { notFound } from 'next/navigation';
 
-export default async function AttendeesPage({ params }: { params: unknown }) {
+export default async function AttendeesPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
 

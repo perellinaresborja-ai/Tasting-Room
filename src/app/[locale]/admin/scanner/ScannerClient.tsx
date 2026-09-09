@@ -7,15 +7,19 @@ import { Scanner } from '@yudiel/react-qr-scanner';
 import { processScan, validateAccess, searchReservations } from '@/app/actions/scanner';
 
 type Props = {
-  tastings: unknown[];
+  tastings: Tasting[];
 };
 
+type Reservation = { id: string; tickets: number; status: string; payment_status: string; reservation_type: string; check_in_time?: string | null; };
+type Customer = { first_name: string; last_name: string; phone?: string; email?: string; };
+type Tasting = { id: string; title_es: string; date: string; start_time: string; };
+type ScanResult = { status: 'SUCCESS' | 'ALREADY_CHECKED_IN' | 'NOT_FOUND' | 'ERROR' | 'SIN RESERVA' | 'RESERVA CANCELADA' | 'INVITACIÓN PENDIENTE' | 'PAGO PENDIENTE' | 'YA VALIDADO' | 'VÁLIDO'; reservation?: Reservation; customer?: Customer; tasting?: Tasting; message?: string; checkInTime?: string | null; };
 export default function ScannerClient({ tastings }: Props) {
   const [selectedTastingId, setSelectedTastingId] = useState<string>(tastings[0]?.id || '');
   const [scanResult, setScanResult] = useState<{status: string; checkInTime?: string; customer?: {first_name: string; last_name: string; phone?: string; email?: string}; reservation?: {id: string; tickets: number; status: string; payment_status: string; reservation_type: string; check_in_time?: string | null}} | null>(null);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<unknown[]>([]);
+  const [searchResults, setSearchResults] = useState<Tasting[]>([]);
 
   // We want to extract the UUID from the URL or fallback to raw string
   // Format: https://tastingroom.es/q/{uuid}
@@ -25,7 +29,7 @@ export default function ScannerClient({ tastings }: Props) {
     return rawValue; // fallback if they just scan the raw uuid somehow
   }
 
-  async function onScan(result: unknown) {
+  async function onScan(result: string) {
     if (loading || scanResult || !result || !result[0]) return;
     
     setLoading(true);
@@ -63,7 +67,7 @@ export default function ScannerClient({ tastings }: Props) {
     setLoading(false);
   }
 
-  function selectManualResult(reservation: { status: string; payment_status: string; reservation_type: string; check_in_time: string | null }, customer: { first_name: string; last_name: string; phone: string; email: string; }) {
+  function selectManualResult(reservation: Reservation, customer: Customer) {
     let status = 'VÁLIDO';
     if (reservation.status === 'CANCELLED' || reservation.status === 'REJECTED' || reservation.payment_status === 'FAILED') status = 'RESERVA CANCELADA';
     else if (reservation.reservation_type === 'INVITATION' && reservation.status === 'PENDING') status = 'INVITACIÓN PENDIENTE';
@@ -132,7 +136,7 @@ export default function ScannerClient({ tastings }: Props) {
           {searchResults.length > 0 && (
             <div className="absolute top-full left-0 right-0 z-50 mt-2 border border-[var(--color-charcoal)] bg-[#111] max-h-60 overflow-y-auto shadow-2xl">
               {searchResults.map(res => (
-                <div key={res.id} onClick={() => selectManualResult(res, res.customer)} className="p-4 border-b border-[var(--color-charcoal)] hover:bg-[#1a1a1a] cursor-pointer flex justify-between items-center">
+                <div key={res.id} onClick={() => selectManualResult(res as unknown as Reservation, (res as unknown as {customer: Customer}).customer)} className="p-4 border-b border-[var(--color-charcoal)] hover:bg-[#1a1a1a] cursor-pointer flex justify-between items-center">
                   <div className="flex-grow pr-4">
                     <p className="text-white text-sm font-bold">{res.customer.first_name} {res.customer.last_name}</p>
                     <p className="text-xs text-gray-400 break-all">{res.customer.email}</p>
@@ -155,7 +159,7 @@ export default function ScannerClient({ tastings }: Props) {
           </div>
           {!scanResult ? (
             <Scanner 
-              onScan={onScan}
+              onScan={(codes) => { if(codes.length > 0) onScan(codes[0].rawValue); }}
               styles={{ container: { width: '100%', height: '100%' } }}
             />
           ) : (

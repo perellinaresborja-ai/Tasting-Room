@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build', {
-  apiVersion: '2025-01-27.acacia' as unknown,
+  apiVersion: '2026-08-26.dahlia',
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err: unknown) {
-    console.error(`Webhook signature verification failed: ${err.message}`);
+    console.error(`Webhook signature verification failed: ${(err instanceof Error ? (err instanceof Error ? (err instanceof Error ? (err instanceof Error ? err.message : String(err)) : String(err)) : String(err)) : String(err))}`);
     return NextResponse.json({ error: 'Webhook Error' }, { status: 400 });
   }
 

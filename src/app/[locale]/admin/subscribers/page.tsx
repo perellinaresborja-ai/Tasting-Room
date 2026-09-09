@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
-export default async function AdminSubscribers({ searchParams }: { searchParams: unknown /* eslint-disable-line @typescript-eslint/no-explicit-any */ }) {
+export default async function AdminSubscribers({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> /* eslint-disable-line @typescript-eslint/no-explicit-any */ }) {
   const supabase = await createClient();
   const params = await searchParams;
   const q = params.q || "";
@@ -49,7 +49,7 @@ export default async function AdminSubscribers({ searchParams }: { searchParams:
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-charcoal)]">
-                {subscribers.map((sub: unknown /* eslint-disable-line @typescript-eslint/no-explicit-any */) => (
+                {subscribers.map((sub: { id: string; email: string; created_at: string; name?: string; phone?: string; preferences?: any; language?: string; interests?: string[]; consent_email?: boolean; consent_wa?: boolean; } /* eslint-disable-line @typescript-eslint/no-explicit-any */) => (
                   <tr key={sub.id}>
                     <td className="py-4 text-gray-300">{sub.name}</td>
                     <td className="py-4 text-[var(--color-gold)]">{sub.email}</td>

@@ -4,7 +4,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 
-export async function saveTastingAction(dataToSave: unknown, id?: string) {
+export async function saveTastingAction(dataToSave: Record<string, unknown>, id?: string) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -29,12 +29,12 @@ export async function saveTastingAction(dataToSave: unknown, id?: string) {
     }
 
     if (res.error) {
-      return { success: false, error: res.error.message };
+      return { success: false, error: res.error?.message };
     }
 
     revalidatePath('/', 'layout');
     return { success: true };
   } catch (error: unknown) {
-    return { success: false, error: error.message || "Error desconocido" };
+    return { success: false, error: (error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : String(error)) || "Error desconocido" };
   }
 }

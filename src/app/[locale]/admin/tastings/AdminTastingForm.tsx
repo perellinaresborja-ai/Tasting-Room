@@ -9,7 +9,30 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 
-export default function AdminTastingForm({ initialData = null }: { initialData?: unknown /* eslint-disable-line @typescript-eslint/no-explicit-any */ }) {
+export type InitialTastingData = {
+  id?: string;
+  title_es?: string;
+  title_en?: string;
+  description_es?: string;
+  description_en?: string;
+  date?: string;
+  start_time?: string;
+  price?: number;
+  capacity?: number;
+  includes_alcohol?: boolean;
+  cover_image?: string;
+  seo_title?: string;
+  seo_description?: string;
+  slug?: string;
+  status?: string;
+  host?: string;
+  category?: string;
+  end_time?: string;
+  subtitle_es?: string;
+  subtitle_en?: string;
+  guests?: { name: string; role: string; company?: string; photo?: string; avatar_url?: string }[];
+};
+export default function AdminTastingForm({ initialData = null }: { initialData?: InitialTastingData | null /* eslint-disable-line @typescript-eslint/no-explicit-any */ }) {
   const [formData, setFormData] = useState(initialData || {
     title_es: "",
     title_en: "",
@@ -45,7 +68,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
     try {
       const res = await translateEsToEn(formData.description_es);
       if (res.success && res.translation) {
-        setFormData((prev: unknown) => ({ ...prev, description_en: res.translation }));
+        setFormData((prev: InitialTastingData) => ({ ...prev, description_en: res.translation }));
       } else {
         alert(res.error || "Error al traducir");
       }
@@ -64,7 +87,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
       data.append('file', file);
       const res = await uploadImageAction(data);
       if (res.success && res.url) {
-        setFormData((prev: unknown) => ({ ...prev, cover_image: res.url }));
+        setFormData((prev: InitialTastingData) => ({ ...prev, cover_image: res.url }));
       } else {
         alert(res.error || "Error al subir la imagen");
       }
@@ -76,11 +99,11 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
   };
 
   const addGuest = () => {
-    setFormData((prev: unknown) => ({ ...prev, guests: [...(prev.guests || []), { name: '', role: '', company: '', photo: '' }] }));
+    setFormData((prev: InitialTastingData) => ({ ...prev, guests: [...(prev.guests || []), { name: '', role: '', company: '', photo: '' }] }));
   };
 
   const updateGuest = (index: number, field: string, value: string) => {
-    setFormData((prev: unknown) => {
+    setFormData((prev: InitialTastingData) => {
       const newGuests = [...(prev.guests || [])];
       newGuests[index] = { ...newGuests[index], [field]: value };
       return { ...prev, guests: newGuests };
@@ -88,7 +111,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
   };
 
   const removeGuest = (index: number) => {
-    setFormData((prev: unknown) => {
+    setFormData((prev: InitialTastingData) => {
       const newGuests = [...(prev.guests || [])];
       newGuests.splice(index, 1);
       return { ...prev, guests: newGuests };
@@ -114,7 +137,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    setFormData((prev: unknown /* eslint-disable-line @typescript-eslint/no-explicit-any */) => ({
+    setFormData((prev: InitialTastingData /* eslint-disable-line @typescript-eslint/no-explicit-any */) => ({
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }));
@@ -132,7 +155,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
     if (!dataToSave.host) delete dataToSave.host;
     if (!dataToSave.cover_image) delete dataToSave.cover_image;
 
-    const res = await saveTastingAction(dataToSave, (initialData as any)?.id);
+    const res = await saveTastingAction(dataToSave, initialData?.id);
   
     if (res.error) {
       setError(res.error);
@@ -257,7 +280,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
             <button type="button" onClick={addGuest} className="text-[var(--color-gold)] text-xs uppercase tracking-widest border border-[var(--color-gold)] px-3 py-1 hover:bg-[var(--color-gold)] hover:text-black transition-colors">+ Añadir Invitado</button>
           </div>
           
-          {(formData.guests || []).map((guest: unknown, index: number) => (
+          {(formData.guests || []).map((guest: { name: string; role: string; company?: string; photo?: string; avatar_url?: string }, index: number) => (
             <div key={index} className="bg-[#0a0a0a] border border-[var(--color-charcoal)] p-4 mb-4 relative">
               <button type="button" onClick={() => removeGuest(index)} className="absolute top-2 right-2 text-red-500 text-xs uppercase tracking-widest hover:underline">Eliminar</button>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

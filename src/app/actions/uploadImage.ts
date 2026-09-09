@@ -45,6 +45,6 @@ export async function uploadImageAction(formData: FormData) {
 
     return { success: true, url: publicUrl };
   } catch (error: unknown) {
-    return { success: false, error: error.message || "Error desconocido" };
+    return { success: false, error: (error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : String(error)) || "Error desconocido" };
   }
 }

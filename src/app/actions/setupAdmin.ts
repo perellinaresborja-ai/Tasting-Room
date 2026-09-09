@@ -78,6 +78,6 @@ export async function setupAdminAction(formData: FormData) {
     return { success: true };
 
   } catch (error: unknown) {
-    return { success: false, error: error.message || "Error desconocido" };
+    return { success: false, error: (error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : String(error)) || "Error desconocido" };
   }
 }

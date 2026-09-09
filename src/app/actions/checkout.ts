@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build', {
-  apiVersion: '2025-01-27.acacia' as unknown, // fallback or force type
+  apiVersion: '2026-08-26.dahlia', // fallback or force type
 });
 
 const supabaseAdmin = createClient(
@@ -97,6 +97,6 @@ export async function createCheckoutSession(formData: FormData) {
     return { success: true, url: session.url };
   } catch (error: unknown) {
     console.error('Checkout error:', error);
-    return { success: false, error: error.message || 'Error inesperado' };
+    return { success: false, error: (error instanceof Error ? (error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : String(error)) : String(error)) || 'Error inesperado' };
   }
 }

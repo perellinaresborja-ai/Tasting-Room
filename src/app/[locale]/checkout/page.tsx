@@ -13,7 +13,7 @@ function CheckoutContent() {
   const t = useTranslations("Checkout");
   const locale = useLocale();
   
-  const [tasting, setTasting] = useState<unknown>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [tasting, setTasting] = useState<CheckoutTasting | null>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const supabase = createClient();
 
@@ -100,6 +100,7 @@ function CheckoutContent() {
   );
 }
 
+type CheckoutTasting = { id: string; title_es: string; title_en: string; includes_alcohol: boolean; date: string; start_time: string; price: number; capacity: number; };
 export default function CheckoutPage() {
   const t = useTranslations("Checkout");
   return (

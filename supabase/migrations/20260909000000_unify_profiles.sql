@@ -1,10 +1,13 @@
--- 1. Create a safe UUID generator if needed
+﻿-- 1. Create a safe UUID generator if needed
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- 2. Add profile_id to reservations
-ALTER TABLE reservations ADD COLUMN IF NOT EXISTS profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE;
+-- 2. Add auth_user_id to profiles
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS auth_user_id UUID UNIQUE REFERENCES auth.users(id) ON DELETE SET NULL;
 
--- 3. Migrate customers to profiles if they don't exist
+-- 3. Add profile_id to reservations (NO DESTRUCTIVE)
+ALTER TABLE reservations ADD COLUMN IF NOT EXISTS profile_id UUID REFERENCES profiles(id) ON DELETE RESTRICT;
+
+-- 4. Migrate customers to profiles if they don't exist
 INSERT INTO profiles (id, email, first_name, last_name, phone, role, public_token)
 SELECT 
   gen_random_uuid(), 
@@ -17,21 +20,27 @@ SELECT
 FROM customers c
 WHERE c.email NOT IN (SELECT email FROM profiles);
 
--- 4. Update reservations to point to the correct profile_id
+-- 5. Update reservations to point to the correct profile_id
 UPDATE reservations r
 SET profile_id = p.id
 FROM customers c
 JOIN profiles p ON p.email = c.email
 WHERE r.customer_id = c.id;
 
--- 5. Force constraints and drop customer_id
-ALTER TABLE reservations ALTER COLUMN profile_id SET NOT NULL;
-ALTER TABLE reservations DROP COLUMN IF EXISTS customer_id;
+-- 6. Add invitation fields to reservations
+ALTER TABLE reservations ADD COLUMN IF NOT EXISTS reservation_type TEXT DEFAULT 'SALE' NOT NULL;
+ALTER TABLE reservations ADD COLUMN IF NOT EXISTS invitation_token UUID;
+-- We use DO block to add unique constraint safely
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'reservations_invitation_token_key'
+  ) THEN
+    ALTER TABLE reservations ADD CONSTRAINT reservations_invitation_token_key UNIQUE (invitation_token);
+  END IF;
+END $$;
 
--- 6. Drop public_token from reservations (QR belongs to profile)
-ALTER TABLE reservations DROP COLUMN IF EXISTS public_token;
-
--- 7. Update RPC create_reservation to use profiles instead of customers
+-- 7. Update RPC create_reservation to be atomic and use profiles
 CREATE OR REPLACE FUNCTION create_reservation(
     p_tasting_id UUID,
     p_email TEXT,
@@ -39,7 +48,9 @@ CREATE OR REPLACE FUNCTION create_reservation(
     p_last_name TEXT,
     p_phone TEXT,
     p_tickets INTEGER,
-    p_total_amount NUMERIC
+    p_total_amount NUMERIC,
+    p_reservation_type TEXT DEFAULT 'SALE',
+    p_invitation_token UUID DEFAULT NULL
 ) RETURNS UUID AS $$
 DECLARE
     v_profile_id UUID;
@@ -48,15 +59,20 @@ DECLARE
     v_total_capacity INTEGER;
     v_reserved INTEGER;
 BEGIN
-    -- Get capacities
+    IF p_tickets IS NULL OR p_tickets <= 0 THEN
+      RAISE EXCEPTION 'Invalid ticket quantity';
+    END IF;
+
+    -- Get capacities with FOR UPDATE for atomic row-level lock
     SELECT capacity INTO v_total_capacity FROM tastings WHERE id = p_tasting_id FOR UPDATE;
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Cata no encontrada';
     END IF;
 
+    -- Calculate based on valid statuses
     SELECT COALESCE(SUM(tickets), 0) INTO v_reserved 
     FROM reservations 
-    WHERE tasting_id = p_tasting_id AND status != 'CANCELLED';
+    WHERE tasting_id = p_tasting_id AND status IN ('PENDING', 'CONFIRMED', 'COMPLETED');
 
     v_available_capacity := v_total_capacity - v_reserved;
 
@@ -79,23 +95,25 @@ BEGIN
         profile_id,
         tickets,
         total_amount,
-        status
+        status,
+        reservation_type,
+        invitation_token
     ) VALUES (
         p_tasting_id,
         v_profile_id,
         p_tickets,
         p_total_amount,
-        'PENDING'
+        'PENDING',
+        p_reservation_type,
+        p_invitation_token
     ) RETURNING id INTO v_reservation_id;
 
     RETURN v_reservation_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 7b. Add type and token to reservations for invitations
-ALTER TABLE reservations ADD COLUMN IF NOT EXISTS reservation_type TEXT DEFAULT 'SALE' NOT NULL;
-ALTER TABLE reservations ADD COLUMN IF NOT EXISTS invitation_token UUID;
-ALTER TABLE reservations ADD UNIQUE (invitation_token);
+-- NO DROPS DURING PHASE 1
+-- DO NOT DROP customers
+-- DO NOT DROP reservations.customer_id
+-- DO NOT DROP reservations.public_token
 
--- 8. Safely drop customers table (all dependencies moved)
-DROP TABLE IF EXISTS customers CASCADE;

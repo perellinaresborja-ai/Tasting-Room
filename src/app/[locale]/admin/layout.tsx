@@ -7,7 +7,7 @@ export default async function AdminLayout({
   params
 }: {
   children: React.ReactNode;
-  params: unknown;
+  params: Promise<{ locale: string }>;
 }) {
   const {locale} = await params;
   const { profile } = await requireAdmin(locale);

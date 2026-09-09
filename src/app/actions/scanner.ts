@@ -27,27 +27,27 @@ export async function processScan(token: string, tastingId: string) {
     .single();
 
   if (resError || !reservation) {
-    return { status: 'SIN RESERVA', message: `No hay reserva para esta cata.`, customer: profile };
+    return { status: 'SIN RESERVA', message: `No hay reserva para esta cata.`, profile: profile };
   }
 
   // 4. Check Status
   if (reservation.status === 'CANCELLED' || reservation.status === 'REJECTED' || reservation.payment_status === 'FAILED' || reservation.payment_status === 'REFUNDED') {
-    return { status: 'RESERVA CANCELADA', reservation, customer: profile };
+    return { status: 'RESERVA CANCELADA', reservation, profile: profile };
   }
 
   if (reservation.reservation_type === 'INVITATION') {
     if (reservation.status === 'PENDING') {
-      return { status: 'INVITACIÓN PENDIENTE', reservation, customer: profile };
+      return { status: 'INVITACIÓN PENDIENTE', reservation, profile: profile };
     }
   } else if (reservation.payment_status !== 'PAID') {
-    return { status: 'PAGO PENDIENTE', reservation, customer: profile };
+    return { status: 'PAGO PENDIENTE', reservation, profile: profile };
   }
 
   if (reservation.check_in_time) {
-    return { status: 'YA VALIDADO', reservation, customer: profile, checkInTime: reservation.check_in_time };
+    return { status: 'YA VALIDADO', reservation, profile: profile, checkInTime: reservation.check_in_time };
   }
 
-  return { status: 'VÁLIDO', reservation, customer: profile };
+  return { status: 'VÁLIDO', reservation, profile: profile };
 }
 
 export async function validateAccess(reservationId: string) {
@@ -84,7 +84,7 @@ export async function searchReservations(query: string, tastingId: string) {
 
   const { data: reservations } = await supabase
     .from('reservations')
-    .select('*, customer:profiles(first_name, last_name, email, phone)')
+    .select('*, profile:profiles(first_name, last_name, email, phone)')
     .eq('tasting_id', tastingId)
     .in('profile_id', profileIds);
 

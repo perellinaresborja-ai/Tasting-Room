@@ -78,7 +78,7 @@ export default async function TastingDetailPage({
             <div className="mb-10">
               <p className="text-xs text-[var(--color-gold)] uppercase tracking-[0.2em] mb-4">Invitados Especiales / Expertos</p>
               <div className="space-y-4">
-                {tasting.guests.map((guest: unknown, idx: number) => (
+                {tasting.guests.map((guest: { id: string; name: string; role: string; company?: string; bio?: string; avatar_url?: string; photo?: string }, idx: number) => (
                   <div key={idx} className="flex items-center gap-4 bg-[#0a0a0a] p-4 border border-[var(--color-charcoal)]">
                     {guest.photo ? (
                       <div className="w-12 h-12 relative flex-shrink-0 rounded-full overflow-hidden border border-[var(--color-gold)]">
