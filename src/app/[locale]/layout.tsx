@@ -43,6 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       "Wine Tasting Albir", "Wine Experience Altea", "Wine Lover Albir", "Costa Blanca wine tasting",
       "Catas de vino Albir", "Catas de vino Altea", "L'Alfàs del Pi", 
       "Albir Garden", "Restaurante Enrique", "Can Tapetes", "Sprint Bar", "Casa Teo", "Yamato Albir",
+      "Zawa", "Fanneli's Albir", "Essens",
       "Things to do in Albir", "Altea tourist activities", "Bodegas Costa Blanca"
     ],
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es"),
