@@ -37,14 +37,14 @@ export default async function HomePage({
           priority 
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#141414]/50 to-[var(--background)] z-0"></div>
-        <div className="relative z-10 max-w-4xl flex flex-col items-center">
+        <div className="relative z-10 max-w-4xl flex flex-col items-center pt-8 md:pt-0">
           <Image 
             src="/logo.png" 
             alt="The Church Tasting Room" 
             width={370} 
             height={400} 
             priority
-            className="object-contain mb-8"
+            className="object-contain mb-8 w-[240px] md:w-[370px] h-auto"
           />
           <h2 className="text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-6 uppercase tracking-wider leading-relaxed">
             {t("what_is")}
