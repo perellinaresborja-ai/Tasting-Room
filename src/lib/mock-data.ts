@@ -80,7 +80,7 @@ export const mockPastTastings = [
   {
     id: "past-3",
     title_es: "Cata de Aceites de Oliva Virgen Extra",
-    title_en: "EVOO Tasting",
+    title_en: "Premium Olive Oil Tasting",
     date: "2026-06-12",
     category_es: "Gastronomía",
     category_en: "Gastronomy",
