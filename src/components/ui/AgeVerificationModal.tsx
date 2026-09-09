@@ -38,9 +38,9 @@ export default function AgeVerificationModal() {
         <Image 
           src="/logo-transparent.png" 
           alt="The Church Tasting Room" 
-          width={240} 
-          height={120} 
-          className="object-contain w-[200px] md:w-[280px] mb-8"
+          width={300} 
+          height={300} 
+          className="object-contain w-[180px] md:w-[260px] h-auto mb-8"
         />
         
         {denied ? (
