@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
         <div className="flex flex-col items-center md:items-start gap-4">
           <Image src="/logo-header-full.png" alt="The Church Tasting Room" width={180} height={50} className="object-contain opacity-70" />
-          <p className="text-sm text-gray-500 uppercase tracking-widest">© {new Date().getFullYear()} Tasting Room</p>
+          <p className="hidden md:block text-sm text-gray-500 uppercase tracking-widest">© {new Date().getFullYear()} Tasting Room</p>
         </div>
         
         <nav className="flex flex-wrap justify-center gap-6 text-sm uppercase tracking-wider text-gray-500">
@@ -22,10 +22,14 @@ export default function Footer() {
         </nav>
         
         <div className="flex flex-col items-center md:items-end gap-2">
-          <a href="https://tastingroom.es" className="text-sm text-[var(--color-warm-white)] hover:text-[var(--color-gold)] transition-colors">tastingroom.es</a>
           <a href="https://www.thechurch.es" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--color-gold)] uppercase tracking-widest hover:underline mt-2">
             {t("visit_the_church")}
           </a>
+        </div>
+
+        {/* Mobile only copyright */}
+        <div className="md:hidden w-full text-center mt-4">
+          <p className="text-sm text-gray-500 uppercase tracking-widest">© {new Date().getFullYear()} Tasting Room</p>
         </div>
       </div>
     </footer>
