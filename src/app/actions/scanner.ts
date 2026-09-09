@@ -1,12 +1,20 @@
-"use server";
+﻿"use server";
 
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/supabase/adminAuth';
+
+const supabaseAdmin = require('@supabase/supabase-js').createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function processScan(token: string, tastingId: string) {
-  const supabase = await createClient();
+  // Only admins/staff can process scans
+  const { profile: staffProfile } = await requireAdmin('es');
+  if (!staffProfile) return { status: 'NO AUTORIZADO' };
 
-  // 1. Get profile by public_token
-  const { data: profile, error: profileError } = await supabase
+  // 1. Get profile by public_token (use admin to read any profile)
+  const { data: profile, error: profileError } = await supabaseAdmin
     .from('profiles')
     .select('id, email, first_name, last_name, phone')
     .eq('public_token', token)
@@ -17,7 +25,7 @@ export async function processScan(token: string, tastingId: string) {
   }
 
   // 3. Check reservation for this tasting
-  const { data: reservation, error: resError } = await supabase
+  const { data: reservation, error: resError } = await supabaseAdmin
     .from('reservations')
     .select('*')
     .eq('profile_id', profile.id)
@@ -51,10 +59,11 @@ export async function processScan(token: string, tastingId: string) {
 }
 
 export async function validateAccess(reservationId: string) {
-  const supabase = await createClient();
+  const { profile: staffProfile } = await requireAdmin('es');
+  if (!staffProfile) return { success: false, error: 'NO AUTORIZADO' };
 
   // Validate the reservation by setting check_in_time
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('reservations')
     .update({ check_in_time: new Date().toISOString() })
     .eq('id', reservationId)
@@ -70,19 +79,20 @@ export async function validateAccess(reservationId: string) {
 }
 
 export async function searchReservations(query: string, tastingId: string) {
-  const supabase = await createClient();
+  const { profile: staffProfile } = await requireAdmin('es');
+  if (!staffProfile) return [];
   
   // Search profiles matching query
-  const { data: profiles } = await supabase
+  const { data: profiles } = await supabaseAdmin
     .from('profiles')
     .select('id')
     .or(`email.ilike.%${query}%,first_name.ilike.%${query}%,last_name.ilike.%${query}%,phone.ilike.%${query}%`);
     
   if (!profiles || profiles.length === 0) return [];
 
-  const profileIds = profiles.map(p => p.id);
+  const profileIds = profiles.map((p: any) => p.id);
 
-  const { data: reservations } = await supabase
+  const { data: reservations } = await supabaseAdmin
     .from('reservations')
     .select('*, profile:profiles(first_name, last_name, email, phone)')
     .eq('tasting_id', tastingId)

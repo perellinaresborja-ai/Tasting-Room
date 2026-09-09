@@ -181,7 +181,7 @@ export default function MemberPortal() {
             </p>
             
             <div className="bg-white p-4 inline-block mb-6 shadow-[0_0_30px_rgba(197,160,89,0.1)]">
-              {profile.public_token && <QRCodeSVG value={`https://tastingroom.es/q/${profile.public_token}`} size={200} />}
+              {profile.public_token && <QRCodeSVG value={`${process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es"}/q/${profile.public_token}`} size={200} />}
             </div>
             
             <p className="text-[10px] font-mono text-gray-600 break-all">{profile.public_token}</p>

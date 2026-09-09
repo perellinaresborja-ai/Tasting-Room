@@ -1,8 +1,10 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from 'react';
-import { createCheckoutSession } from '@/app/actions/checkout';
 import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { joinWaitlist } from '@/app/actions/waitlist';
 
 type Props = {
   tastingId: string;
@@ -14,37 +16,81 @@ type Props = {
 export default function BookingForm({ tastingId, price, availableSpots, includesAlcohol }: Props) {
   const t = useTranslations('Tastings');
   const locale = useLocale();
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const [tickets, setTickets] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [waitlistMode, setWaitlistMode] = useState(false);
+  const [waitlistDone, setWaitlistDone] = useState(false);
+  const [waitlistError, setWaitlistError] = useState('');
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleCheckout = () => {
+    setLoading(true);
+    router.push(`/${locale}/checkout?tasting=${tastingId}&tickets=${tickets}`);
+  };
+
+  const handleWaitlist = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-
+    setWaitlistError('');
     const formData = new FormData(e.currentTarget);
     formData.append('tasting_id', tastingId);
-    formData.append('locale', locale);
-
-    const res = await createCheckoutSession(formData);
     
-    if (!res.success) {
-      setError(res.error || 'Error al procesar la reserva');
-      setLoading(false);
-    } else if (res.url) {
-      window.location.href = res.url;
+    const res = await joinWaitlist(formData);
+    setLoading(false);
+    if (res.success) {
+      setWaitlistDone(true);
+    } else {
+      setWaitlistError(res.error || 'Error al apuntarse');
     }
-  }
+  };
 
   if (availableSpots <= 0) {
+    if (waitlistDone) {
+      return (
+        <div className="bg-[#141414] p-8 border border-[var(--color-charcoal)] text-center">
+          <p className="text-[var(--color-gold)] font-serif text-2xl uppercase tracking-widest mb-2">Apuntado</p>
+          <p className="text-gray-400">Te avisaremos si quedan plazas libres.</p>
+        </div>
+      );
+    }
+
+    if (waitlistMode) {
+      return (
+        <div className="bg-[#141414] p-6 border border-[var(--color-charcoal)] relative">
+          <h3 className="text-xl font-serif text-[var(--color-gold)] mb-4 uppercase tracking-widest text-center">
+            Lista de Espera
+          </h3>
+          {waitlistError && <p className="text-red-500 text-sm mb-4">{waitlistError}</p>}
+          <form onSubmit={handleWaitlist} className="space-y-4">
+            <div>
+              <input type="text" name="name" required placeholder="Tu Nombre" className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none" />
+            </div>
+            <div>
+              <input type="email" name="email" required placeholder="Tu Email" className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none" />
+            </div>
+            <div>
+              <input type="tel" name="phone" placeholder="Tu Teléfono (opcional)" className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none" />
+            </div>
+            <button disabled={loading} type="submit" className="w-full bg-[var(--color-gold)] text-black font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors disabled:opacity-50">
+              {loading ? 'Apuntando...' : 'Apuntarse'}
+            </button>
+            <button type="button" onClick={() => setWaitlistMode(false)} className="w-full text-gray-400 text-sm hover:text-white uppercase tracking-wider">
+              Volver
+            </button>
+          </form>
+        </div>
+      );
+    }
+
     return (
       <div className="bg-[#141414] p-8 border border-[var(--color-charcoal)] text-center">
-        <p className="text-[var(--color-gold)] font-serif text-2xl uppercase tracking-widest">
+        <p className="text-[var(--color-gold)] font-serif text-2xl uppercase tracking-widest mb-4">
           {locale === 'es' ? 'Agotado' : 'Sold Out'}
         </p>
+        <button onClick={() => setWaitlistMode(true)} className="w-full border border-[var(--color-gold)] text-[var(--color-gold)] font-bold uppercase tracking-widest py-4 hover:bg-[var(--color-gold)] hover:text-black transition-colors">
+          {locale === 'es' ? 'Apuntarse a la lista de espera' : 'Join waitlist'}
+        </button>
       </div>
     );
   }
@@ -56,42 +102,17 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
           {locale === 'es' ? 'Últimas Plazas' : 'Last Spots'}
         </div>
       )}
+      <div className="flex justify-between items-center mb-8">
+        <span className="text-gray-400 uppercase tracking-widest text-sm">{locale === 'es' ? 'Precio' : 'Price'}</span>
+        <span className="text-3xl font-serif text-[var(--color-warm-white)]">{price}€</span>
+      </div>
       
-      <h3 className="text-xl font-serif text-[var(--color-gold)] mb-6 uppercase tracking-widest">{t('book')}</h3>
-      
-      {error && (
-        <div className="bg-red-900/30 border border-red-500 text-red-200 p-4 mb-6 text-sm">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs text-gray-500 mb-1 uppercase tracking-widest">Nombre</label>
-            <input type="text" name="first_name" required className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none" />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1 uppercase tracking-widest">Apellidos</label>
-            <input type="text" name="last_name" required className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none" />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs text-gray-500 mb-1 uppercase tracking-widest">Email</label>
-            <input type="email" name="email" required className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none" />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1 uppercase tracking-widest">Teléfono</label>
-            <input type="tel" name="phone" required className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none" />
-          </div>
-        </div>
-
+      <div className="space-y-6">
         <div>
-          <label className="block text-xs text-gray-500 mb-1 uppercase tracking-widest">Plazas</label>
+          <label className="block text-sm text-gray-400 uppercase tracking-widest mb-2">
+            {locale === 'es' ? 'Nº de Plazas' : 'Number of Tickets'}
+          </label>
           <select 
-            name="tickets" 
             value={tickets}
             onChange={(e) => setTickets(Number(e.target.value))}
             className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none"
@@ -101,31 +122,20 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
             ))}
           </select>
         </div>
-
+        
+        <button 
+          onClick={handleCheckout}
+          disabled={loading}
+          className="w-full bg-[var(--color-gold)] text-black font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors disabled:opacity-50"
+        >
+          {loading ? t('loading') : (locale === 'es' ? 'Comprar' : 'Book')}
+        </button>
         {includesAlcohol && (
-          <div className="flex items-start gap-3 mt-4">
-            <input type="checkbox" required id="age_verify" className="mt-1" />
-            <label htmlFor="age_verify" className="text-sm text-gray-400 leading-tight">
-              {locale === 'es' ? 'Confirmo que tengo 18 años o más.' : 'I confirm I am 18 years or older.'}
-            </label>
-          </div>
+          <p className="text-xs text-gray-500 text-center uppercase tracking-wider">
+            Solo para mayores de 18 años.
+          </p>
         )}
-
-        <div className="pt-6 mt-6 border-t border-[var(--color-charcoal)]">
-          <div className="flex justify-between items-center mb-6">
-            <span className="text-gray-400">Total</span>
-            <span className="text-2xl text-[var(--color-gold)]">€{(price * tickets).toFixed(2)}</span>
-          </div>
-
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-[var(--color-gold)] text-black px-10 py-4 uppercase tracking-widest font-bold hover:bg-[var(--color-gold-hover)] transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Procesando...' : (locale === 'es' ? 'Pagar con Tarjeta' : 'Pay via Card')}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }

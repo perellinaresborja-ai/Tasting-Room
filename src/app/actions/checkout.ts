@@ -67,6 +67,7 @@ export async function createCheckoutSession(formData: FormData) {
       mode: 'payment',
       customer_email: email,
       metadata: {
+        locale: locale,
         reservation_id: reservationId,
         tasting_id: tastingId,
       },

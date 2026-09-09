@@ -1,0 +1,1 @@
+﻿ALTER TABLE reservations ADD COLUMN IF NOT EXISTS confirmation_email_sent_at TIMESTAMPTZ DEFAULT NULL;

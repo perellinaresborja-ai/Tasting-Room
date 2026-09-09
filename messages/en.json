@@ -65,8 +65,8 @@
   },
   "Nav": {
     "home": "Home",
-    "tastings": "Tastings",
-    "past": "Past Tastings",
+    "tastings": "Upcoming",
+    "past": "Past",
     "contact": "Contact"
   },
   "Age": {
@@ -118,6 +118,6 @@
     "error_sending": "Error sending link"
   },
   "Navigation": {
-    "member_access": "My chapel"
+    "member_access": "My Chapel"
   }
 }
