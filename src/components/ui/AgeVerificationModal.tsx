@@ -33,14 +33,14 @@ export default function AgeVerificationModal() {
   if (!showModal) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <div className="max-w-md w-full px-6 py-12 flex flex-col items-center text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black overflow-y-auto p-4">
+      <div className="max-w-md w-full my-auto py-8 flex flex-col items-center text-center">
         <Image 
           src="/logo-transparent.png" 
           alt="The Church Tasting Room" 
-          width={300} 
-          height={150} 
-          className="object-contain mb-10"
+          width={240} 
+          height={120} 
+          className="object-contain w-[200px] md:w-[280px] mb-8"
         />
         
         {denied ? (
