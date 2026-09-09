@@ -28,7 +28,7 @@ export default async function HomePage({
   return (
     <main className="flex flex-col">
       {/* HERO */}
-      <section className="relative h-[85vh] flex items-center justify-center text-center px-4 overflow-hidden">
+      <section className="relative h-[85vh] min-h-[700px] flex items-center justify-center text-center px-4 overflow-hidden">
         <Image 
           src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=2070&auto=format&fit=crop" 
           alt="The Church Atmosphere" 
@@ -47,28 +47,17 @@ export default async function HomePage({
             className="object-contain mb-8"
           />
           <h2 className="text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-6 uppercase tracking-wider leading-relaxed">
-            {t("title")}
+            {t("what_is")}
           </h2>
-          <p className="text-lg md:text-xl text-[var(--color-warm-white)]/80 mb-12 font-light max-w-2xl leading-relaxed">
-            {t("subtitle_1")}<br />{t("subtitle_2")}
+          <p className="text-lg md:text-xl text-[var(--color-warm-white)]/80 mb-8 font-light max-w-2xl leading-relaxed">
+            {t("what_is_desc")}
           </p>
+          <div className="flex flex-wrap justify-center gap-4 text-xs md:text-sm uppercase tracking-widest text-gray-500 mb-12">
+            <span>Vino</span> &middot; <span>Champagne</span> &middot; <span>Destilados</span> &middot; <span>Gastronomía</span> &middot; <span>Café</span>
+          </div>
           <Link href="/tastings" className="inline-block bg-[var(--color-gold)] text-black px-10 py-4 uppercase tracking-widest font-bold hover:bg-[var(--color-gold-hover)] transition-all transform hover:scale-105">
             {t("book_now")}
           </Link>
-        </div>
-      </section>
-
-      {/* WHAT IS THE CHURCH TASTING ROOM */}
-      <section className="py-24 px-4 md:px-8 bg-[#0a0a0a] border-y border-[var(--color-charcoal)] relative overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <Image src="/logo-header-full.png" alt="Logo" width={200} height={60} className="mx-auto mb-8 opacity-50 object-contain" />
-          <h3 className="text-3xl font-serif text-[var(--color-gold)] mb-8">{t("what_is")}</h3>
-          <p className="text-lg text-[var(--color-warm-white)]/80 leading-relaxed font-light mb-12">
-            {t("what_is_desc")}
-          </p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm uppercase tracking-widest text-gray-500">
-            <span>Vino</span> • <span>Champagne</span> • <span>Destilados</span> • <span>Gastronomía</span> • <span>Café</span>
-          </div>
         </div>
       </section>
 
