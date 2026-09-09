@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const isEn = locale === 'en';
   
   const title = isEn 
-    ? "The Church Tasting Room | Wine Tasting in Albir & Altea" 
-    : "The Church Tasting Room | Catas de Vino en El Albir y Altea";
+    ? "The Church Tasting Room | Gastronomy Experiences" 
+    : "The Church Tasting Room | Experiencias Gastronómicas";
     
   const description = isEn
     ? "Premium wine, spirits, and gastronomy tasting experiences in Costa Blanca. Located in El Albir (L'Alfàs del Pi), near Altea. Exclusive events for wine lovers."
