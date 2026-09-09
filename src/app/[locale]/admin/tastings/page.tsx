@@ -7,7 +7,7 @@ export default async function AdminTastings() {
   
   const { data: tastings } = await supabase
     .from('tastings')
-    .select('*')
+    .select('*, reservations(tickets, status)')
     .order('date', { ascending: false });
 
   return (
@@ -33,31 +33,39 @@ export default async function AdminTastings() {
                   <th className="pb-3 font-normal">Fecha y Hora</th>
                   <th className="pb-3 font-normal">Precio</th>
                   <th className="pb-3 font-normal">Capacidad</th>
+                  <th className="pb-3 font-normal">Plazas Restantes</th>
                   <th className="pb-3 font-normal">Estado</th>
                   <th className="pb-3 font-normal text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-charcoal)]">
-                {tastings.map((tasting: unknown /* eslint-disable-line @typescript-eslint/no-explicit-any */) => (
-                  <tr key={tasting.id}>
-                    <td className="py-4 text-gray-300 font-serif">{tasting.title_es}</td>
-                    <td className="py-4 text-gray-400">{tasting.date} {tasting.start_time}</td>
-                    <td className="py-4 text-[var(--color-gold)]">{tasting.price}€</td>
-                    <td className="py-4 text-gray-300">{tasting.capacity}</td>
+                {tastings.map((tasting: unknown /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
+                  const reserved = (tasting as any).reservations
+                    ?.filter((r: any) => r.status === 'COMPLETED')
+                    ?.reduce((sum: number, r: any) => sum + (r.tickets || 0), 0) || 0;
+                  const remaining = Math.max(0, (tasting as any).capacity - reserved);
+                  
+                  return (
+                  <tr key={(tasting as any).id}>
+                    <td className="py-4 text-gray-300 font-serif">{(tasting as any).title_es}</td>
+                    <td className="py-4 text-gray-400">{(tasting as any).date} {(tasting as any).start_time}</td>
+                    <td className="py-4 text-[var(--color-gold)]">{(tasting as any).price}€</td>
+                    <td className="py-4 text-gray-300">{(tasting as any).capacity}</td>
+                    <td className="py-4 font-bold text-[var(--color-gold)]">{remaining}</td>
                     <td className="py-4">
                       <span className={`px-2 py-1 text-xs uppercase tracking-wider ${
-                        tasting.status === 'PUBLISHED' ? 'bg-green-900/30 text-green-400' : 
-                        tasting.status === 'DRAFT' ? 'bg-yellow-900/30 text-yellow-400' :
+                        (tasting as any).status === 'PUBLISHED' ? 'bg-green-900/30 text-green-400' : 
+                        (tasting as any).status === 'DRAFT' ? 'bg-yellow-900/30 text-yellow-400' :
                         'bg-gray-800 text-gray-400'
                       }`}>
-                        {tasting.status}
+                        {(tasting as any).status}
                       </span>
                     </td>
                     <td className="py-4 text-right">
-                      <Link href={`/admin/tastings/${tasting.id}`} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Editar</Link>
+                      <Link href={`/admin/tastings/${(tasting as any).id}`} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Editar</Link>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
