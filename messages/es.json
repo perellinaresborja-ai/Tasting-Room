@@ -97,5 +97,27 @@
   },
   "Legal": {
     "placeholder": "Página de información legal en desarrollo."
+  },
+  "Member": {
+    "title": "Accede a tu Tasting Room",
+    "login_desc": "Te enviaremos un enlace para acceder sin contraseña.",
+    "email_placeholder": "Email",
+    "send_link": "ENVIAR ENLACE DE ACCESO",
+    "sent_msg": "Si existe una cuenta asociada a este email, recibirás un enlace de acceso.",
+    "welcome": "Bienvenido",
+    "logout": "Cerrar sesión",
+    "qr_title": "Tu QR Personal",
+    "qr_desc": "Este es tu QR personal de The Church Tasting Room. Utilízalo en todas tus experiencias.",
+    "upcoming": "Próximas Experiencias",
+    "no_upcoming": "No tienes próximas catas programadas.",
+    "history": "Historial",
+    "no_history": "Aún no has asistido a ninguna cata.",
+    "tickets": "plazas",
+    "ticket": "plaza",
+    "loading": "Cargando...",
+    "error_sending": "Error al enviar el enlace"
+  },
+  "Navigation": {
+    "member_access": "Mi acceso"
   }
 }

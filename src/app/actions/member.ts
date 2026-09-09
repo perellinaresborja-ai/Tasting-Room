@@ -7,35 +7,55 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function ensureProfile(userId: string, email: string) {
+export async function checkIfEmailExists(email: string) {
+  const emailNormalized = email.toLowerCase().trim();
+  
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('id')
+    .eq('email', emailNormalized)
+    .single();
+
+  if (!profile) {
+    return { success: true, exists: false };
+  }
+
+  return { success: true, exists: true };
+}
+
+export async function getMemberData(authUserId: string, email: string) {
   try {
-    let { data: profile } = await supabaseAdmin
+    const emailNormalized = email.toLowerCase().trim();
+
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('*')
-      .eq('email', email)
+      .eq('email', emailNormalized)
       .single();
 
     if (!profile) {
-      const publicToken = 'user-' + Math.random().toString(36).substring(2, 10);
-      
-      const { data: newProfile, error: insertError } = await supabaseAdmin
-        .from('profiles')
-        .insert({
-          id: userId,
-          email: email,
-          public_token: publicToken,
-          role: 'CUSTOMER'
-        })
-        .select()
-        .single();
-        
-      if (insertError) throw insertError;
-      profile = newProfile;
+      return { success: false, error: 'No profile found' };
     }
-    
-    return { success: true, profile };
-  } catch (error: unknown) {
-    console.error('Error ensuring profile:', error);
-    return { success: false, error: (error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : String(error)) };
+
+    if (!profile.auth_user_id) {
+      await supabaseAdmin
+        .from('profiles')
+        .update({ auth_user_id: authUserId })
+        .eq('id', profile.id);
+      profile.auth_user_id = authUserId;
+    } else if (profile.auth_user_id !== authUserId) {
+      return { success: false, error: 'Auth user mismatch' };
+    }
+
+    const { data: reservations } = await supabaseAdmin
+      .from('reservations')
+      .select('*, tasting:tastings(*)')
+      .eq('profile_id', profile.id)
+      .order('created_at', { ascending: false });
+
+    return { success: true, profile, reservations };
+  } catch (err: unknown) {
+    console.error('getMemberData error', err);
+    return { success: false, error: (err instanceof Error ? err.message : String(err)) };
   }
 }

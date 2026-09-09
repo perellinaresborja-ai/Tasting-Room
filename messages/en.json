@@ -97,5 +97,27 @@
   },
   "Legal": {
     "placeholder": "Legal information page under development."
+  },
+  "Member": {
+    "title": "Access your Tasting Room",
+    "login_desc": "We'll send you a link to access without a password.",
+    "email_placeholder": "Email",
+    "send_link": "SEND ACCESS LINK",
+    "sent_msg": "If there is an account associated with this email, you will receive an access link.",
+    "welcome": "Welcome",
+    "logout": "Logout",
+    "qr_title": "Your Personal QR",
+    "qr_desc": "This is your personal QR code for The Church Tasting Room. Use it for all your experiences.",
+    "upcoming": "Upcoming Experiences",
+    "no_upcoming": "You have no upcoming scheduled tastings.",
+    "history": "History",
+    "no_history": "You have not attended any tastings yet.",
+    "tickets": "tickets",
+    "ticket": "ticket",
+    "loading": "Loading...",
+    "error_sending": "Error sending link"
+  },
+  "Navigation": {
+    "member_access": "My access"
   }
 }

@@ -1,9 +1,10 @@
-import {useTranslations} from "next-intl";
+﻿import {useTranslations} from "next-intl";
 import {Link} from "@/i18n/routing";
 import Image from "next/image";
 
 export default function Navbar({locale}: {locale: string}) {
   const t = useTranslations("Nav");
+  const tNav = useTranslations("Navigation");
   
   return (
     <header className="relative z-50 border-b border-[var(--color-charcoal)] py-3 px-4 md:px-8 bg-[var(--background)]">
@@ -18,6 +19,7 @@ export default function Navbar({locale}: {locale: string}) {
           <Link href="/tastings" className="hover:text-[var(--color-gold)] transition-colors">{t("tastings")}</Link>
           <Link href="/past-tastings" className="hover:text-[var(--color-gold)] transition-colors">{t("past")}</Link>
           <Link href="/contact" className="hover:text-[var(--color-gold)] transition-colors">{t("contact")}</Link>
+          <Link href="/member" className="hover:text-[var(--color-gold)] transition-colors text-gray-400">{tNav("member_access")}</Link>
         </nav>
         
         <div className="flex justify-center md:justify-end items-center gap-4 text-sm font-semibold">
