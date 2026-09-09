@@ -84,6 +84,7 @@
     "first_name": "Nombre",
     "last_name": "Apellidos",
     "email": "Email",
+    "phone": "Teléfono móvil",
     "total": "Total",
     "pay_securely": "Pagar de forma segura",
     "loading": "Cargando..."

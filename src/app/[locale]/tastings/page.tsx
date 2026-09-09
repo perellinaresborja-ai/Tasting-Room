@@ -61,7 +61,7 @@ export default async function TastingsPage({
             </div>
             <div className="p-8 border-t border-[var(--color-charcoal)] flex justify-between items-center bg-[#111]">
               <span className="text-lg text-[var(--color-gold)]">€{tasting.price.toFixed(2)}</span>
-              <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-[var(--color-gold)] transition-colors">{t("book_now")} →</span>
+              <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-[var(--color-gold)] transition-colors">{t("book")} →</span>
             </div>
           </Link>
         ))}
