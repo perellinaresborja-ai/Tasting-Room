@@ -14,10 +14,10 @@ export default function Footer() {
             <Image src="/logo-header-full.png" alt="The Church Tasting Room" width={180} height={50} className="object-contain opacity-70" />
           </div>
           
-          <nav className="flex flex-wrap justify-center gap-6 text-sm uppercase tracking-wider text-gray-500">
+          <nav className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 text-sm uppercase tracking-wider text-gray-500">
             <a href={locale === 'es' ? '/es/condiciones' : '/en/terms'} className="hover:text-[var(--color-gold)] transition-colors">{t("terms")}</a>
-            <a href={locale === 'es' ? '/es/privacidad' : '/en/privacy'} className="hover:text-[var(--color-gold)] transition-colors">{t("privacy")}</a>
             <a href={locale === 'es' ? '/es/cookies' : '/en/cookies'} className="hover:text-[var(--color-gold)] transition-colors">{t("cookies")}</a>
+            <a href={locale === 'es' ? '/es/privacidad' : '/en/privacy'} className="hover:text-[var(--color-gold)] transition-colors">{t("privacy")}</a>
             <a href={locale === 'es' ? '/es/aviso-legal' : '/en/legal'} className="hover:text-[var(--color-gold)] transition-colors">{t("legal")}</a>
           </nav>
           
