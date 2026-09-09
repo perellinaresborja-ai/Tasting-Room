@@ -16,8 +16,8 @@ export default function Footer() {
           
           <nav className="flex flex-wrap justify-center gap-6 text-sm uppercase tracking-wider text-gray-500">
             <a href={locale === 'es' ? '/es/condiciones' : '/en/terms'} className="hover:text-[var(--color-gold)] transition-colors">{t("terms")}</a>
-            <a href={locale === 'es' ? '/es/cookies' : '/en/cookies'} className="hover:text-[var(--color-gold)] transition-colors">{t("cookies")}</a>
             <a href={locale === 'es' ? '/es/privacidad' : '/en/privacy'} className="hover:text-[var(--color-gold)] transition-colors">{t("privacy")}</a>
+            <a href={locale === 'es' ? '/es/cookies' : '/en/cookies'} className="hover:text-[var(--color-gold)] transition-colors">{t("cookies")}</a>
             <a href={locale === 'es' ? '/es/aviso-legal' : '/en/legal'} className="hover:text-[var(--color-gold)] transition-colors">{t("legal")}</a>
           </nav>
           
