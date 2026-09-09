@@ -66,7 +66,7 @@ export const mockPastTastings = [
     date: "2026-08-10",
     category_es: "Vino",
     category_en: "Wine",
-    image_url: "https://images.unsplash.com/photo-1563514972179-c5c7d853e020?q=80&w=2070&auto=format&fit=crop"
+    image_url: "/vinos-blancos.webp"
   },
   {
     id: "past-2",
