@@ -125,18 +125,9 @@ export default async function IntelligenceDashboard({ params }: { params: Promis
         </div>
       </section>
 
-      {/* ARCHITECTURE NOTICE */}
-      <section className="bg-[#111] p-6 border border-[var(--color-charcoal)] mt-12">
-        <h2 className="text-xl font-bold text-white mb-4 uppercase tracking-wider">Módulos en Arquitectura</h2>
-        <div className="text-sm text-gray-400 space-y-4">
-          <p>La base de datos ya está registrando las tablas necesarias para soportar:</p>
-          <ul className="list-disc list-inside space-y-2">
-            <li><strong>Atribución (UTMs):</strong> La tabla <code className="text-white bg-black px-1">analytics_events</code> está desplegada.</li>
-            <li><strong>Alertas Comerciales:</strong> El motor puede insertar alertas programáticas en <code className="text-white bg-black px-1">commercial_alerts</code>.</li>
-            <li><strong>Funnel Completo:</strong> Listo para recopilar <code>tasting_view</code>, <code>booking_click</code>, etc., respetando normativas (sin PII).</li>
-            <li><strong>Comparador Inteligente:</strong> Disponible una vez el volumen de históricos sea &gt; 5 eventos de la misma categoría.</li>
-          </ul>
-        </div>
+      {/* INDICADORES FUTUROS */}
+      <section className="bg-[#111] p-6 border border-[var(--color-charcoal)] mt-12 text-center">
+        <p className="text-sm text-gray-500 uppercase tracking-widest">Sin datos suficientes todavía para comparativas históricas</p>
       </section>
     </div>
   );
