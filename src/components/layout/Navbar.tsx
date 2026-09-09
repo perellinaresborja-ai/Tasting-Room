@@ -44,7 +44,7 @@ export default function Navbar({ locale }: { locale: string }) {
         
         {/* Right side (Desktop & Mobile) */}
         <div className="flex items-center gap-4 text-sm font-semibold">
-          <a href={`/${locale}/admin`} className="hidden md:inline-block text-gray-500 hover:text-[var(--color-gold)] uppercase tracking-widest text-xs border border-gray-800 px-2 py-1">
+          <a href={`/${locale}/admin`} className="inline-block text-gray-500 hover:text-[var(--color-gold)] uppercase tracking-widest text-xs border border-gray-800 px-2 py-1">
             Admin
           </a>
           <div className="flex items-center gap-2">
@@ -78,9 +78,6 @@ export default function Navbar({ locale }: { locale: string }) {
                 {link.label}
               </Link>
             ))}
-            <a href={`/${locale}/admin`} className="block py-2 text-gray-500 hover:text-[var(--color-gold)] border-t border-[var(--color-charcoal)] mt-4 pt-4">
-              Admin
-            </a>
           </nav>
         </div>
       )}
