@@ -58,6 +58,20 @@ export default async function HomePage({
         </div>
       </section>
 
+      {/* WHAT IS THE CHURCH TASTING ROOM */}
+      <section className="py-24 px-4 md:px-8 bg-[#0a0a0a] border-y border-[var(--color-charcoal)] relative overflow-hidden">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <Image src="/logo-header-full.png" alt="Logo" width={200} height={60} className="mx-auto mb-8 opacity-50 object-contain" />
+          <h3 className="text-3xl font-serif text-[var(--color-gold)] mb-8">{t("what_is")}</h3>
+          <p className="text-lg text-[var(--color-warm-white)]/80 leading-relaxed font-light mb-12">
+            {t("what_is_desc")}
+          </p>
+          <div className="flex flex-wrap justify-center gap-6 text-sm uppercase tracking-widest text-gray-500">
+            <span>Vino</span> • <span>Champagne</span> • <span>Destilados</span> • <span>Gastronomía</span> • <span>Café</span>
+          </div>
+        </div>
+      </section>
+
       {/* NEXT TASTING HIGHLIGHT */}
       {nextTasting && (
         <section className="py-20 px-4 md:px-8 bg-[#0a0a0a]">
@@ -102,20 +116,6 @@ export default async function HomePage({
           </div>
         </section>
       )}
-
-      {/* WHAT IS THE CHURCH TASTING ROOM */}
-      <section className="py-24 px-4 md:px-8 bg-[#0a0a0a] border-y border-[var(--color-charcoal)] relative overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <Image src="/logo-header-full.png" alt="Logo" width={200} height={60} className="mx-auto mb-8 opacity-50 object-contain" />
-          <h3 className="text-3xl font-serif text-[var(--color-gold)] mb-8">{t("what_is")}</h3>
-          <p className="text-lg text-[var(--color-warm-white)]/80 leading-relaxed font-light mb-12">
-            {t("what_is_desc")}
-          </p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm uppercase tracking-widest text-gray-500">
-            <span>Vino</span> • <span>Champagne</span> • <span>Destilados</span> • <span>Gastronomía</span> • <span>Café</span>
-          </div>
-        </div>
-      </section>
 
       {/* SUBSCRIBE */}
       <section className="py-24 px-4 md:px-8 bg-[#141414] border-t border-[var(--color-charcoal)]">

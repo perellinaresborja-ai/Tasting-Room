@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { translateEsToEn } from "@/app/actions/translate";
 import { uploadImageAction } from "@/app/actions/uploadImage";
-import { clearCache } from "@/app/actions/revalidate";
+import { saveTastingAction } from "@/app/actions/saveTasting";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
@@ -124,25 +124,19 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
     setLoading(true);
     setError(null);
 
-    const dataToSave = { ...formData };
+    const dataToSave = { ...formData }; console.log('SAVING DATA:', dataToSave);
     if (!dataToSave.end_time) delete dataToSave.end_time;
     if (!dataToSave.subtitle_es) delete dataToSave.subtitle_es;
     if (!dataToSave.subtitle_en) delete dataToSave.subtitle_en;
     if (!dataToSave.host) delete dataToSave.host;
     if (!dataToSave.cover_image) delete dataToSave.cover_image;
 
-    let res;
-    if (initialData?.id) {
-      res = await supabase.from('tastings').update(dataToSave).eq('id', initialData.id);
-    } else {
-      res = await supabase.from('tastings').insert([dataToSave]);
-    }
-
+    const res = await saveTastingAction(dataToSave, (initialData as any)?.id);
+  
     if (res.error) {
-      setError(res.error.message);
+      setError(res.error);
       setLoading(false);
     } else {
-      await clearCache();
       router.push(`/${locale}/admin/tastings`);
       router.refresh();
     }
@@ -298,7 +292,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
 
       <div className="pt-6 border-t border-[var(--color-charcoal)] flex justify-end gap-4">
         <button type="button" onClick={() => router.back()} className="px-6 py-3 text-sm text-gray-400 uppercase tracking-widest hover:text-white transition-colors">Cancelar</button>
-        <button type="submit" disabled={loading} className="bg-[var(--color-gold)] text-black px-8 py-3 uppercase tracking-widest font-bold hover:bg-[var(--color-gold-hover)] transition-colors disabled:opacity-50">
+        <button type="submit" disabled={loading || isUploading} className="bg-[var(--color-gold)] text-black px-8 py-3 uppercase tracking-widest font-bold hover:bg-[var(--color-gold-hover)] transition-colors disabled:opacity-50">
           {loading ? "Guardando..." : "Guardar Cata"}
         </button>
       </div>
