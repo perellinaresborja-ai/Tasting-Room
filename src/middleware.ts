@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
   const isAdminRoute = request.nextUrl.pathname.match(/^\/(es|en)\/admin/);
 
   if (isAdminRoute && !user) {
-    const locale = request.nextUrl.pathname.split('/')[1] || 'es';
+    const locale = request.nextUrl.pathname.split('/')[1] || 'en';
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = `/${locale}/login`;
     return NextResponse.redirect(redirectUrl);

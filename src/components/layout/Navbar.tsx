@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
@@ -48,9 +48,9 @@ export default function Navbar({ locale }: { locale: string }) {
             Admin
           </a>
           <div className="flex items-center gap-2">
-            <Link href="/" locale="es" className={`${locale === "es" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>ES</Link>
-            <span className="text-gray-700">|</span>
             <Link href="/" locale="en" className={`${locale === "en" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>EN</Link>
+            <span className="text-gray-700">|</span>
+            <Link href="/" locale="es" className={`${locale === "es" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>ES</Link>
           </div>
           
           {/* Mobile Menu Toggle */}
