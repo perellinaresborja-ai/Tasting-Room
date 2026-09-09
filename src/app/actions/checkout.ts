@@ -95,6 +95,15 @@ export async function createCheckoutSession(formData: FormData) {
       .update({ stripe_session_id: session.id })
       .eq('id', reservationId);
 
+    // Track checkout started
+    await import('@/app/actions/analytics').then(m => 
+      m.trackAnalyticsEvent({ 
+        event_name: 'checkout_started', 
+        tasting_id: tastingId,
+        session_id: session.id
+      })
+    ).catch(() => {});
+
     return { success: true, url: session.url };
   } catch (error: unknown) {
     console.error('Checkout error:', error);

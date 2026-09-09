@@ -63,6 +63,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
           }
           console.log(`Reservation ${reservationId} marked CONFIRMED.`);
+
+          // TRACK payment_completed
+          await import('@/app/actions/analytics').then(m => 
+            m.trackAnalyticsEvent({ 
+              event_name: 'payment_completed', 
+              tasting_id: resData.tasting_id,
+              profile_id: resData.profile_id,
+              session_id: session.id
+            })
+          ).catch(() => {});
         }
 
         // 3. Send email idempotently

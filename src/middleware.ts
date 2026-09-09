@@ -9,6 +9,32 @@ export async function middleware(request: NextRequest) {
   // 1. Get intl response
   const response = intlMiddleware(request);
 
+  // --- UTM & Analytics Tracking ---
+  const url = request.nextUrl;
+  const utmSource = url.searchParams.get("utm_source");
+  const utmMedium = url.searchParams.get("utm_medium");
+  const utmCampaign = url.searchParams.get("utm_campaign");
+  const utmContent = url.searchParams.get("utm_content");
+  const utmTerm = url.searchParams.get("utm_term");
+  const referrer = request.headers.get("referer");
+
+  // Options for analytics cookies (30 days)
+  const cookieOptions = { maxAge: 60 * 60 * 24 * 30, path: "/", sameSite: "lax" as const, httpOnly: true };
+
+  if (utmSource) response.cookies.set("utm_source", utmSource, cookieOptions);
+  if (utmMedium) response.cookies.set("utm_medium", utmMedium, cookieOptions);
+  if (utmCampaign) response.cookies.set("utm_campaign", utmCampaign, cookieOptions);
+  if (utmContent) response.cookies.set("utm_content", utmContent, cookieOptions);
+  if (utmTerm) response.cookies.set("utm_term", utmTerm, cookieOptions);
+  
+  // Only set referrer if it's external (doesn't contain our own domain) to avoid overwriting original source
+  if (referrer && !referrer.includes(url.host)) {
+    // Only set if we don't already have one, to preserve the first-touch referrer
+    if (!request.cookies.has("referrer")) {
+      response.cookies.set("referrer", referrer, cookieOptions);
+    }
+  }
+
   // 2. Supabase session handling
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || "https://dummy.supabase.co",

@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from 'react';
@@ -24,8 +24,13 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
   const [waitlistDone, setWaitlistDone] = useState(false);
   const [waitlistError, setWaitlistError] = useState('');
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     setLoading(true);
+    // Track click
+    await import('@/app/actions/analytics').then(m => 
+      m.trackAnalyticsEvent({ event_name: 'booking_click', tasting_id: tastingId })
+    ).catch(() => {});
+
     router.push(`/${locale}/checkout?tasting=${tastingId}&tickets=${tickets}`);
   };
 

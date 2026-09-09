@@ -57,7 +57,6 @@ export default async function AdminTastings() {
                     </td>
                     <td className="py-4 text-right">
                       <Link href={`/admin/tastings/${tasting.id}` as any} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Editar</Link>
-                      <SendFeedbackButton tastingId={tasting.id} title={tasting.title_es} />
                     </td>
                   </tr>
                 ))}

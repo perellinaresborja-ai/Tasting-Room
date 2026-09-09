@@ -5,6 +5,7 @@ import Image from "next/image";
 import { formatDate, formatDayOfWeek, formatTime } from "@/lib/utils/formatDate";
 import { createClient } from "@/lib/supabase/server";
 import BookingForm from "@/components/ui/BookingForm";
+import TastingViewTracker from "@/components/analytics/TastingViewTracker";
 
 export default async function TastingDetailPage({
   params,
@@ -30,6 +31,7 @@ export default async function TastingDetailPage({
 
   return (
     <main className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+      <TastingViewTracker tastingId={tasting.id} />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         <div className="relative h-[50vh] lg:h-[70vh] border border-[var(--color-charcoal)]">
           <Image 

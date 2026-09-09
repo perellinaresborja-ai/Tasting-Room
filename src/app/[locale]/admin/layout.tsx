@@ -19,6 +19,9 @@ export default async function AdminLayout({
     { name: "Clientes", href: `/${locale}/admin/clients` },
     { name: "Suscriptores", href: `/${locale}/admin/subscribers` },
     { name: "Scanner", href: `/${locale}/admin/scanner` },
+    { name: "Estadísticas", href: `/${locale}/admin/statistics` },
+    { name: "Comunicaciones", href: `/${locale}/admin/communications` },
+    { name: "Inteligencia", href: `/${locale}/admin/intelligence` },
   ];
 
   return (

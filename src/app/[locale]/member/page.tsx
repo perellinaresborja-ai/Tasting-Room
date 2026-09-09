@@ -57,6 +57,8 @@ export default function MemberPortal() {
         if (active) {
           setProfile(res.profile as Profile);
           setReservations((res.reservations as unknown as Reservation[]) || []);
+          // Track access
+          import('@/app/actions/analytics').then(m => m.trackAnalyticsEvent({ event_name: 'member_access', profile_id: res.profile?.id })).catch(() => {});
         }
       } else {
         console.error("Error loading profile:", res.error);

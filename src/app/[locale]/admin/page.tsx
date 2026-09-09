@@ -8,20 +8,20 @@ export default async function AdminDashboard() {
   // Real counts
   const [{ count: tastingsCount }, { count: resCount }, { count: subCount }] = await Promise.all([
     supabase.from('tastings').select('*', { count: 'exact', head: true }),
-    supabase.from('reservations').select('*', { count: 'exact', head: true }),
+    supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('status', 'CONFIRMED'),
     supabase.from('subscribers').select('*', { count: 'exact', head: true })
   ]);
 
   // Plazas vendidas
-  const { data: resData } = await supabase.from('reservations').select('places').eq('status', 'CONFIRMED');
-  const plazasVendidas = resData?.reduce((acc, curr) => acc + curr.places, 0) || 0;
+  const { data: resData } = await supabase.from('reservations').select('tickets').eq('status', 'CONFIRMED');
+  const plazasVendidas = resData?.reduce((acc, curr) => acc + (curr.tickets || 0), 0) || 0;
 
   // Últimas reservas
   const { data: latestReservations } = await supabase
     .from('reservations')
     .select('*, profile:profiles(first_name, last_name, email), tasting:tastings(title_es, date)')
     .order('created_at', { ascending: false })
-    .limit(5);
+    .limit(10);
 
   return (
     <div className="space-y-8">
@@ -29,7 +29,7 @@ export default async function AdminDashboard() {
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <StatCard title="Catas Programadas" value={tastingsCount || 0} />
-        <StatCard title="Reservas Totales" value={resCount || 0} />
+        <StatCard title="Reservas Confirmadas" value={resCount || 0} />
         <StatCard title="Plazas Vendidas" value={plazasVendidas} />
         <StatCard title="Suscriptores" value={subCount || 0} />
       </div>
@@ -53,11 +53,11 @@ export default async function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-charcoal)]">
-                {latestReservations.map((res: { id: string; profile?: { first_name?: string; email?: string; }; tasting?: { title_es?: string; }; places?: number; status?: string; }) => (
+                {latestReservations.map((res: { id: string; profile?: { first_name?: string; email?: string; }; tasting?: { title_es?: string; }; tickets?: number; status?: string; }) => (
                   <tr key={res.id}>
                     <td className="py-4 text-gray-300">{res.profile?.first_name || res.profile?.email || 'N/A'}</td>
                     <td className="py-4 text-gray-300">{res.tasting?.title_es}</td>
-                    <td className="py-4 text-[var(--color-gold)]">{res.places}</td>
+                    <td className="py-4 text-[var(--color-gold)]">{res.tickets}</td>
                     <td className="py-4">
                       <span className={`px-2 py-1 text-xs uppercase tracking-wider ${res.status === 'CONFIRMED' ? 'bg-green-900/30 text-green-400' : 'bg-gray-800 text-gray-400'}`}>
                         {res.status}

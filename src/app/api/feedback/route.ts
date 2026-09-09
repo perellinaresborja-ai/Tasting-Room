@@ -41,6 +41,13 @@ export async function POST(req: Request) {
     // Invalidate token so it can't be reused
     await supabase.from('reservations').update({ feedback_token: null }).eq('id', reservation.id);
 
+    // Track feedback
+    await import('@/app/actions/analytics').then(m => m.trackAnalyticsEvent({
+      event_name: 'feedback_completed',
+      tasting_id: reservation.tasting_id,
+      profile_id: reservation.profile_id
+    })).catch(() => {});
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

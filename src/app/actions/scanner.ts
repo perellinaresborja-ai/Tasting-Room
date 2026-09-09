@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { createClient } from '@/lib/supabase/server';
 import { requireAdmin } from '@/lib/supabase/adminAuth';
@@ -74,6 +74,13 @@ export async function validateAccess(reservationId: string) {
   if (error || !data) {
     return { success: false, error: 'No se ha podido validar o ya estaba validado.' };
   }
+
+  // Track check_in
+  await import('./analytics').then(m => m.trackAnalyticsEvent({
+    event_name: 'check_in',
+    tasting_id: data.tasting_id,
+    profile_id: data.profile_id
+  })).catch(() => {});
 
   return { success: true, checkInTime: data.check_in_time };
 }
