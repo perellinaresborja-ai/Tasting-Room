@@ -44,9 +44,6 @@ export default function Navbar({ locale }: { locale: string }) {
         
         {/* Right side (Desktop & Mobile) */}
         <div className="flex items-center gap-4 text-sm font-semibold">
-          <a href={`/${locale}/admin`} className="inline-block text-gray-500 hover:text-[var(--color-gold)] uppercase tracking-widest text-xs border border-gray-800 px-2 py-1">
-            Admin
-          </a>
           <div className="flex items-center gap-2">
             <Link href="/" locale="en" className={`${locale === "en" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>EN</Link>
             <span className="text-gray-700">|</span>
