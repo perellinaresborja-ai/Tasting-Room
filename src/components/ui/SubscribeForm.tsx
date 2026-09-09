@@ -84,7 +84,7 @@ export default function SubscribeForm({ t, locale }: Props) {
         <div className="text-red-500 mb-4 text-center">Debes seleccionar al menos un canal de comunicación, y rellenar el teléfono si marcas WhatsApp.</div>
       )}
 
-      <button type="submit" disabled={status === "loading"} className="w-full bg-white text-black px-8 py-4 uppercase tracking-widest font-bold hover:bg-[var(--color-gold)] transition-colors disabled:opacity-50">
+      <button type="submit" disabled={status === "loading"} className="w-full bg-black border border-[var(--color-gold)] text-[var(--color-gold)] px-8 py-4 uppercase tracking-widest font-bold hover:bg-[var(--color-gold)] hover:text-black transition-colors disabled:opacity-50">
         {status === "loading" ? "..." : t.subscribe_btn}
       </button>
     </form>
