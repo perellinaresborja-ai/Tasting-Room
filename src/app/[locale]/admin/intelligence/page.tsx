@@ -25,6 +25,9 @@ export default async function IntelligenceDashboard({ params }: { params: Promis
   const abandonedValue = recentAbandonments.reduce((sum: number, r: any) => sum + (Number(r.total_amount) || 0), 0);
   const abandonedPlazas = recentAbandonments.reduce((sum: number, r: any) => sum + (r.tickets || 0), 0);
 
+  // Evaluate rules
+  await import('@/lib/intelligence/alertsEngine').then(m => m.evaluateAlerts(locale)).catch(console.error);
+
   // Alertas
   const { data: alerts } = await supabase.from('commercial_alerts').select('*').eq('status', 'PENDING');
 
@@ -43,7 +46,7 @@ export default async function IntelligenceDashboard({ params }: { params: Promis
         
         {(!alerts || alerts.length === 0) ? (
           <div className="bg-[#111] p-6 border border-[var(--color-charcoal)] text-gray-500 text-sm uppercase tracking-widest text-center">
-            No hay alertas comerciales activas
+            No hay nada que requiera tu atención ahora mismo.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

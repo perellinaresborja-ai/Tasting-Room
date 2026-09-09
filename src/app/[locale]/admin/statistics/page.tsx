@@ -52,7 +52,7 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
           <StatCard title="Clientes Únicos" value={uniqueClients} />
           <StatCard title="Clientes Recurrentes" value={returningClients} />
           <StatCard title="Leads / Abandonos" value={abandonedRes.length} />
-          <StatCard title="Valoración Media" value="Sin datos" subtitle="Sistema de feedback pendiente" />
+          <StatCard title="Valoración Media" value="Sin datos" />
         </div>
       </section>
       <section>
@@ -97,9 +97,8 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
       </section>
       <section>
         <h2 className="text-xl font-bold text-white mb-6 uppercase tracking-wider">Demanda y Planificación</h2>
-        <div className="bg-[#111] p-6 border border-[var(--color-charcoal)]">
-          <p className="text-gray-400 text-sm uppercase tracking-widest mb-4">Aviso de Arquitectura</p>
-          <p className="text-white text-sm">Las funciones avanzadas de predicción, demanda no atendida y planificación requieren un mayor volumen de histórico estructurado por categorías. En esta versión se han consolidado las métricas de rendimiento reales sin inventar información inexistente.</p>
+        <div className="bg-[#111] p-6 border border-[var(--color-charcoal)] text-center">
+          <p className="text-gray-500 text-sm uppercase tracking-widest">Sin datos suficientes todavía para planificaciones avanzadas</p>
         </div>
       </section>
     </div>

@@ -19,19 +19,6 @@ export default async function CommunicationsPage({ params }: { params: Promise<{
         </button>
       </div>
 
-      <section className="bg-[#111] p-6 border border-[var(--color-charcoal)]">
-        <h2 className="text-xl font-bold text-white mb-4 uppercase tracking-wider">Nueva Arquitectura CRM</h2>
-        <div className="text-sm text-gray-400 space-y-4">
-          <p>Esta sección consolida a los <strong className="text-white">Clientes (Profiles)</strong> y <strong className="text-white">Suscriptores</strong> en una única audiencia segmentable, respetando los consentimientos legales de email y WhatsApp (actualmente preparados, pendientes de activación del proveedor Resend).</p>
-          <ul className="list-disc list-inside space-y-2">
-            <li>Deduplicación automática de perfiles y suscriptores.</li>
-            <li>Filtros por asistencia, reservas abandonadas, invitados y recurrencia.</li>
-            <li>Previsualización de destinatarios antes de enviar.</li>
-            <li>Selección manual de perfiles individuales.</li>
-          </ul>
-        </div>
-      </section>
-
       <section>
         <h2 className="text-xl font-bold text-white mb-6 uppercase tracking-wider">Historial de Envíos</h2>
         <div className="overflow-x-auto">
