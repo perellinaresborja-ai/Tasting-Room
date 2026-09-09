@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { createClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 
-export async function saveTastingAction(dataToSave: any, id?: string) {
+export async function saveTastingAction(dataToSave: unknown, id?: string) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -33,7 +34,7 @@ export async function saveTastingAction(dataToSave: any, id?: string) {
 
     revalidatePath('/', 'layout');
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return { success: false, error: error.message || "Error desconocido" };
   }
 }

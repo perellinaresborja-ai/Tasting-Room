@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from 'react';
 import { Scanner } from '@yudiel/react-qr-scanner';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { processScan, validateAccess, searchReservations } from '@/app/actions/scanner';
 
 type Props = {
@@ -10,7 +12,7 @@ type Props = {
 
 export default function ScannerClient({ tastings }: Props) {
   const [selectedTastingId, setSelectedTastingId] = useState<string>(tastings[0]?.id || '');
-  const [scanResult, setScanResult] = useState<unknown>(null);
+  const [scanResult, setScanResult] = useState<{status: string; checkInTime?: string; customer?: {first_name: string; last_name: string; phone?: string; email?: string}; reservation?: {id: string; tickets: number; status: string; payment_status: string; reservation_type: string; check_in_time?: string | null}} | null>(null);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState<unknown[]>([]);
@@ -43,7 +45,7 @@ export default function ScannerClient({ tastings }: Props) {
     setLoading(true);
     const res = await validateAccess(reservationId);
     if (res.success) {
-      setScanResult((prev: unknown) => ({ ...prev, status: 'YA VALIDADO', checkInTime: res.checkInTime }));
+      setScanResult((prev: any) => ({ ...prev, status: 'YA VALIDADO', checkInTime: res.checkInTime }));
       // Return automatically to scanner after validation (optional, but requested: "volver inmediatamente")
       setTimeout(() => setScanResult(null), 2500);
     } else {
@@ -61,10 +63,11 @@ export default function ScannerClient({ tastings }: Props) {
     setLoading(false);
   }
 
-  function selectManualResult(reservation: unknown, customer: unknown) {
+  function selectManualResult(reservation: { status: string; payment_status: string; reservation_type: string; check_in_time: string | null }, customer: { first_name: string; last_name: string; phone: string; email: string; }) {
     let status = 'VÁLIDO';
-    if (reservation.status === 'CANCELLED' || reservation.payment_status === 'FAILED') status = 'RESERVA CANCELADA';
-    else if (reservation.payment_status !== 'PAID') status = 'PAGO PENDIENTE';
+    if (reservation.status === 'CANCELLED' || reservation.status === 'REJECTED' || reservation.payment_status === 'FAILED') status = 'RESERVA CANCELADA';
+    else if (reservation.reservation_type === 'INVITATION' && reservation.status === 'PENDING') status = 'INVITACIÓN PENDIENTE';
+    else if (reservation.reservation_type !== 'INVITATION' && reservation.payment_status !== 'PAID' && reservation.payment_status !== 'NOT_REQUIRED') status = 'PAGO PENDIENTE';
     else if (reservation.check_in_time) status = 'YA VALIDADO';
 
     setScanResult({
@@ -196,14 +199,16 @@ export default function ScannerClient({ tastings }: Props) {
                     </div>
                     <div>
                       <p className="text-xs uppercase text-gray-500 tracking-widest mb-1">PAGO</p>
-                      <p className={`text-lg font-bold ${scanResult.reservation.payment_status === 'PAID' ? 'text-green-500' : 'text-orange-500'}`}>
-                        {scanResult.reservation.payment_status === 'PAID' ? 'PAGADO ✓' : 'PENDIENTE'}
+                      <p className={`text-lg font-bold ${scanResult.reservation.payment_status === 'PAID' ? 'text-green-500' : scanResult.reservation.payment_status === 'NOT_REQUIRED' ? 'text-gray-400' : 'text-orange-500'}`}>
+                        {scanResult.reservation.payment_status === 'PAID' ? 'PAGADO ✓' : scanResult.reservation.payment_status === 'NOT_REQUIRED' ? 'NO REQUERIDO' : 'PENDIENTE'}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-gray-500 tracking-widest mb-1">RESERVA</p>
+                      <p className="text-xs uppercase text-gray-500 tracking-widest mb-1">
+                        {scanResult.reservation.reservation_type === 'INVITATION' ? 'TIPO' : 'RESERVA'}
+                      </p>
                       <p className={`text-lg font-bold ${scanResult.reservation.status === 'CONFIRMED' ? 'text-green-500' : 'text-gray-400'}`}>
-                        {scanResult.reservation.status === 'CONFIRMED' ? 'CONFIRMADA ✓' : scanResult.reservation.status}
+                        {scanResult.reservation.reservation_type === 'INVITATION' ? 'INVITACIÓN' : scanResult.reservation.status}
                       </p>
                     </div>
                   </>

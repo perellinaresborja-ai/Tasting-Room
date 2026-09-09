@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 
@@ -5,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 export default async function AdminTastings() {
   const supabase = await createClient();
   
-  const { data: tastings } = await supabase
+  const { data: tastingsRaw } = await supabase
     .from('tastings')
     .select('*, reservations(tickets, status)')
     .order('date', { ascending: false });
@@ -40,29 +41,33 @@ export default async function AdminTastings() {
               </thead>
               <tbody className="divide-y divide-[var(--color-charcoal)]">
                 {tastings.map((tasting: unknown /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
-                  const reserved = (tasting as any).reservations
+                  const reserved = (tasting as unknown as { id: string }).reservations
                     ?.filter((r: any) => r.status === 'COMPLETED')
                     ?.reduce((sum: number, r: any) => sum + (r.tickets || 0), 0) || 0;
-                  const remaining = Math.max(0, (tasting as any).capacity - reserved);
+                  const remaining = Math.max(0, (tasting as unknown as { id: string }).capacity - reserved);
                   
                   return (
-                  <tr key={(tasting as any).id}>
-                    <td className="py-4 text-gray-300 font-serif">{(tasting as any).title_es}</td>
-                    <td className="py-4 text-gray-400">{(tasting as any).date} {(tasting as any).start_time}</td>
-                    <td className="py-4 text-[var(--color-gold)]">{(tasting as any).price}€</td>
-                    <td className="py-4 text-gray-300">{(tasting as any).capacity}</td>
+                  <tr key={(tasting as unknown as { id: string }).id}>
+                    <td className="py-4 text-gray-300 font-serif">{(tasting as unknown as { id: string }).title_es}</td>
+                    <td className="py-4 text-gray-400">{(tasting as unknown as { id: string }).date} {(tasting as unknown as { id: string }).start_time}</td>
+                    <td className="py-4 text-[var(--color-gold)]">{(tasting as unknown as { id: string }).price}€</td>
+                    <td className="py-4 text-gray-300">{(tasting as unknown as { id: string }).capacity}</td>
                     <td className="py-4 font-bold text-[var(--color-gold)]">{remaining}</td>
                     <td className="py-4">
                       <span className={`px-2 py-1 text-xs uppercase tracking-wider ${
-                        (tasting as any).status === 'PUBLISHED' ? 'bg-green-900/30 text-green-400' : 
-                        (tasting as any).status === 'DRAFT' ? 'bg-yellow-900/30 text-yellow-400' :
+                        (tasting as unknown as { id: string }).status === 'PUBLISHED' ? 'bg-green-900/30 text-green-400' : 
+                        (tasting as unknown as { id: string }).status === 'DRAFT' ? 'bg-yellow-900/30 text-yellow-400' :
                         'bg-gray-800 text-gray-400'
                       }`}>
-                        {(tasting as any).status}
+                        {(tasting as unknown as { id: string }).status}
                       </span>
                     </td>
                     <td className="py-4 text-right">
-                      <Link href={`/admin/tastings/${(tasting as any).id}`} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Editar</Link>
+                      <div className="flex justify-end gap-3">
+                        <Link href={`/admin/tastings/${((tasting as unknown) as {id: string}).id}`} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Editar</Link>
+                        <Link href={`/admin/tastings/${((tasting as unknown) as {id: string}).id}/attendees`} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Asistentes</Link>
+                        <Link href={`/admin/tastings/${((tasting as unknown) as {id: string}).id}/invitations`} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Invitar</Link>
+                      </div>
                     </td>
                   </tr>
                 )})}

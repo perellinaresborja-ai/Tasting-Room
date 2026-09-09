@@ -34,7 +34,7 @@ export async function ensureProfile(userId: string, email: string) {
     }
     
     return { success: true, profile };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error ensuring profile:', error);
     return { success: false, error: error.message };
   }

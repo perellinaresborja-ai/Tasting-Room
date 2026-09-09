@@ -6,7 +6,7 @@ export default async function AdminReservations() {
   
   const { data: reservations } = await supabase
     .from('reservations')
-    .select('*, customer:customers(first_name, last_name, email), tasting:tastings(title_es, date)')
+    .select('*, customer:profiles(first_name, last_name, email), tasting:tastings(title_es, date)')
     .order('created_at', { ascending: false });
 
   return (

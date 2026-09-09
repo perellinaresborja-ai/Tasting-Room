@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 
@@ -13,6 +13,7 @@ type Reservation = {
   id: string;
   tickets: number;
   payment_status: string;
+  reservation_type: string;
   status: string;
   check_in_time: string | null;
   customer: {
@@ -27,49 +28,46 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'PENDING' | 'ARRIVED' | 'ALL'>('PENDING');
   
-  const supabase = createClient();
+  const supabase = React.useMemo(() => createClient(), []);
 
   // Function to load data
-  async function loadData() {
+  const loadData = useCallback(async () => {
     const { data } = await supabase
       .from('reservations')
-      .select('id, tickets, payment_status, status, check_in_time, customer:customers(first_name, last_name, phone)')
+      .select('id, tickets, payment_status, reservation_type, status, check_in_time, customer:profiles(first_name, last_name, phone)')
       .eq('tasting_id', tastingId)
       .in('status', ['CONFIRMED', 'PENDING']) // Exclude CANCELLED
       .not('payment_status', 'in', '("FAILED", "REFUNDED")'); // Only valid payments (mostly PAID)
       
     if (data) {
       // Sort alphabetically by first_name
-      const sorted = (data as unknown[]).sort((a, b) => {
-        const nameA = a.customer?.first_name || '';
-        const nameB = b.customer?.first_name || '';
+      const sorted = (data as unknown[]).sort((a: unknown, b: unknown) => {
+        const nameA = a.customer?.first_name?.toLowerCase() || '';
+        const nameB = b.customer?.first_name?.toLowerCase() || '';
         return nameA.localeCompare(nameB);
       });
-      setReservations(sorted);
-      setReservations(sorted as Reservation[]);
+      setReservations(sorted as unknown as Reservation[]);
     }
     setLoading(false);
-  }
+  }, [supabase, tastingId]);
 
-  // Polling every 3 seconds for robust real-time updates without WebSockets
+  // Subscribe to changes in reservations for this tasting
   useEffect(() => {
-    let active = true;
-    const fetchIt = async () => {
-      if (active) await loadData();
-    };
-    fetchIt();
-    const interval = setInterval(fetchIt, 3000);
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tastingId]);
+    // eslint-disable-next-line
+    loadData();
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reservations', filter: `tasting_id=eq.${tastingId}` }, () => {
+        loadData();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [supabase, tastingId, loadData]);
 
   // Calculations
-  // Only PAID count as valid spots. If they are PENDING and haven't paid, they are technically not confirmed attendees, 
-  // but to avoid edge cases, we assume 'PAID' is the strict source of truth for the counter.
-  const validReservations = reservations.filter(r => r.payment_status === 'PAID');
+  // Only PAID or NOT_REQUIRED count as valid spots. 
+  const validReservations = reservations.filter(r => r.status === 'CONFIRMED' && (r.payment_status === 'PAID' || r.payment_status === 'NOT_REQUIRED'));
   
   const totalSpots = validReservations.reduce((sum, r) => sum + r.tickets, 0);
   const arrivedSpots = validReservations.filter(r => r.check_in_time).reduce((sum, r) => sum + r.tickets, 0);
@@ -156,24 +154,31 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
           </div>
         ) : (
           filteredList.map(res => (
-            <div key={res.id} className="border border-[var(--color-charcoal)] bg-black p-4 flex justify-between items-center">
-              <div>
-                <p className="font-bold text-white mb-1 uppercase tracking-wider">{res.customer.first_name} {res.customer.last_name}</p>
-                {res.customer.phone ? (
-                  <a href={`tel:${res.customer.phone}`} className="text-blue-400 text-sm hover:underline">{res.customer.phone}</a>
-                ) : (
-                  <p className="text-gray-600 text-sm">Sin teléfono</p>
-                )}
-                
-                {res.check_in_time && (
-                  <p className="text-green-500 text-xs mt-2 uppercase tracking-widest">
-                    Llegada: {new Date(res.check_in_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                  </p>
-                )}
-              </div>
-              <div className="text-right">
-                <p className="text-xl font-serif text-[var(--color-gold)] mb-1">{res.tickets} <span className="text-sm">plazas</span></p>
-                <p className="text-[10px] uppercase tracking-widest text-green-500">PAGADO</p>
+            <div key={res.id} className="border border-[var(--color-charcoal)] bg-black p-4 flex flex-col gap-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-bold text-white mb-1 uppercase tracking-wider">{res.customer.first_name} {res.customer.last_name}</p>
+                  {res.customer.phone ? (
+                    <a href={`tel:${res.customer.phone}`} className="text-blue-400 text-sm hover:underline">{res.customer.phone}</a>
+                  ) : (
+                    <p className="text-gray-600 text-sm">Sin teléfono</p>
+                  )}
+                  {res.check_in_time && (
+                    <p className="text-green-500 text-xs mt-2 uppercase tracking-widest">
+                      Llegada: {new Date(res.check_in_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </p>
+                  )}
+                </div>
+                <div className="text-right flex flex-col items-end">
+                  <span className="text-[var(--color-gold)] font-bold text-lg">{res.tickets} {res.tickets > 1 ? 'plazas' : 'plaza'}</span>
+                  <span className={`text-[10px] uppercase tracking-widest font-bold mt-1 px-2 py-1 ${
+                    res.reservation_type === 'INVITATION' ? 'bg-blue-900/30 text-blue-400' :
+                    res.payment_status === 'PAID' ? 'bg-green-900/30 text-green-400' : 
+                    'bg-orange-900/30 text-orange-400'
+                  }`}>
+                    {res.reservation_type === 'INVITATION' ? 'INVITACIÓN' : res.payment_status === 'PAID' ? 'PAGADO ✓' : 'PENDIENTE'}
+                  </span>
+                </div>
               </div>
             </div>
           ))

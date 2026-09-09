@@ -33,18 +33,13 @@ export default function MemberPortal() {
         if (active) setProfile(user); // fallback
       }
       
-      // 2. Load Reservations from customers table (linked by email)
-      const { data: customerData } = await supabase.from("customers").select("id").eq("email", user.email).single();
+      const { data: reservations } = await supabase
+        .from("reservations")
+        .select("*, tasting:tastings(title_es, title_en, date, start_time, status)")
+        .eq("profile_id", user.id)
+        .order("created_at", { ascending: false });
       
-      if (customerData && active) {
-        const { data: rData } = await supabase
-          .from("reservations")
-          .select("*, tasting:tastings(title_es, date, start_time)")
-          .eq("customer_id", customerData.id)
-          .order('created_at', { ascending: false });
-        
-        if (rData) setReservations(rData);
-      }
+      if (reservations) setReservations(reservations);
       
       if (active) setLoading(false);
     }
