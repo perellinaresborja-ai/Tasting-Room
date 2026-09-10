@@ -75,6 +75,7 @@ export async function subscribeAction(formData: FormData) {
     // 4. Send Welcome Email if it's a new subscriber and they gave email consent
     if (isNewSubscriber && consent_email) {
       try {
+        const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
         const subject = language === "en" ? "Welcome to The Church Tasting Room" : "Bienvenido a The Church Tasting Room";
         const title = language === "en" ? "Welcome to The Church Tasting Room" : "Bienvenido a The Church Tasting Room";
         const body1 = language === "en" 
@@ -84,6 +85,7 @@ export async function subscribeAction(formData: FormData) {
           ? "From now on, you can receive information about our upcoming tastings and experiences."
           : "A partir de ahora podrás recibir información sobre nuestras próximas catas y experiencias.";
         const signoff = language === "en" ? "See you at The Church." : "Nos vemos en The Church.";
+        const buttonText = language === "en" ? "VIEW UPCOMING TASTINGS" : "VER PRÓXIMAS CATAS";
         
         const html = `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #111111; color: #ffffff; padding: 40px 20px; max-width: 600px; margin: 0 auto; text-align: center;">
@@ -94,6 +96,13 @@ export async function subscribeAction(formData: FormData) {
             <div style="color: #cccccc; font-size: 16px; line-height: 1.6; margin-bottom: 40px;">
               <p style="margin-bottom: 20px;">${body1}</p>
               <p style="margin-bottom: 20px;">${body2}</p>
+              
+              <div style="margin: 40px 0;">
+                <a href="${appUrl}/${language}/tastings" style="background-color: #c9a96e; color: #111111; padding: 14px 28px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; border-radius: 2px;">
+                  ${buttonText}
+                </a>
+              </div>
+              
               <p>${signoff}</p>
             </div>
             
