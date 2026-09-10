@@ -61,8 +61,8 @@ export const mockTastings = [
 export const mockPastTastings = [
   {
     id: "past-1",
-    title_es: "Vinos Blancos del Mediterráneo",
-    title_en: "Mediterranean White Wines",
+    title_es: "Vinos Blancos\ndel Mediterráneo",
+    title_en: "Mediterranean\nWhite Wines",
     date: "2026-08-10",
     category_es: "Vino",
     category_en: "Wine",
@@ -79,7 +79,7 @@ export const mockPastTastings = [
   },
   {
     id: "past-3",
-    title_es: "Cata de Aceites de Oliva Virgen Extra",
+    title_es: "Cata de Aceites Señoríos de Relleu",
     title_en: "Premium Olive Oil Tasting",
     date: "2026-06-12",
     category_es: "Gastronomía",
