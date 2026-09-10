@@ -23,6 +23,7 @@ export const routing = defineRouting({
     "/admin/intelligence": "/admin/intelligence",
     "/admin/statistics": "/admin/statistics",
     "/admin/reservations": "/admin/reservations",
+    "/admin/reservations/[id]": "/admin/reservations/[id]",
     "/admin/clients": "/admin/clients",
     "/admin/subscribers": "/admin/subscribers",
     "/scanner": "/scanner",
