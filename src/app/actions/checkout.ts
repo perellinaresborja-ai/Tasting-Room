@@ -79,6 +79,10 @@ export async function createCheckoutSession(formData: FormData) {
     // 3. Create Stripe Checkout Session
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tastingroom.es';
     
+    const tastingDesc = locale === 'es' ? (tasting.subtitle_es || tasting.description_es) : (tasting.subtitle_en || tasting.description_en);
+    const plainDesc = tastingDesc ? tastingDesc.replace(/<[^>]*>?/gm, '') : '';
+    const stripeDescription = `${tickets}x Ticket(s) - ${plainDesc}`.substring(0, 500);
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -94,7 +98,7 @@ export async function createCheckoutSession(formData: FormData) {
             currency: 'eur',
             product_data: {
               name: locale === 'es' ? `Reserva: ${tasting.title_es}` : `Booking: ${tasting.title_en}`,
-              description: `${tickets}x Ticket(s)`,
+              description: stripeDescription,
               images: tasting.cover_image ? [tasting.cover_image] : [],
             },
             unit_amount: Math.round(tasting.price * 100),
