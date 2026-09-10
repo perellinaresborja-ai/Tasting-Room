@@ -31,7 +31,8 @@
     "subscribe_desc_2": "antes de que se agoten las plazas.",
     "subscribe_success": "¡Suscripción exitosa!",
     "subscribe_error": "Error al suscribirse. Verifica tu conexión o inténtalo más tarde.",
-    "subscribe_invalid": "Por favor, rellena todos los campos obligatorios."
+    "subscribe_invalid": "Debes seleccionar al menos un canal de comunicación, y rellenar el teléfono si marcas WhatsApp.",
+    "phone_optional": "Teléfono (opcional para WhatsApp)"
   },
   "Tastings": {
     "title": "Catas y Experiencias",

@@ -31,7 +31,8 @@
     "subscribe_desc_2": "before they sell out.",
     "subscribe_success": "Subscription successful!",
     "subscribe_error": "Error subscribing. Please check your connection or try again later.",
-    "subscribe_invalid": "Please fill out all required fields."
+    "subscribe_invalid": "You must select at least one communication channel, and provide a phone number if you check WhatsApp.",
+    "phone_optional": "Phone (optional for WhatsApp)"
   },
   "Tastings": {
     "title": "Tastings and Experiences",

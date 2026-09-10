@@ -74,7 +74,7 @@ export default async function HomePage({
               locale={locale}
               t={{
                 email: t("email"),
-                phone: t("phone_optional", { default: t("phone") + " (WhatsApp)" }),
+                phone: t("phone_optional"),
                 consent_email: t("consent_email"),
                 consent_wa: t("consent_wa"),
                 subscribe_btn: t("subscribe_btn"),
