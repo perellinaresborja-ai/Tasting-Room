@@ -94,9 +94,8 @@ export default async function IntelligenceDashboard({ params }: { params: Promis
             <thead className="text-xs text-[var(--color-gold)] uppercase tracking-widest bg-[#111]">
               <tr>
                 <th className="p-3">Experiencia</th>
-                <th className="p-3">Confirmados</th>
-                <th className="p-3">Abandonos Totales</th>
-                <th className="p-3">Demanda Perdida</th>
+                <th className="p-3">Plazas Vendidas</th>
+                <th className="p-3">Plazas Abandonadas</th>
                 <th className="p-3 text-right">Acción</th>
               </tr>
             </thead>
@@ -106,19 +105,20 @@ export default async function IntelligenceDashboard({ params }: { params: Promis
                 const confT = resT.filter((r: any) => r.status === 'CONFIRMED');
                 const abndT = resT.filter((r: any) => r.status === 'EXPIRED' || r.status === 'CANCELLED' || (r.status === 'PENDING' && new Date(r.created_at).getTime() < Date.now() - 15 * 60 * 1000));
                 
+                const plazasVendidas = confT.reduce((sum: number, r: any) => sum + (r.tickets || 0), 0);
+                const plazasAbandonadas = abndT.reduce((sum: number, r: any) => sum + (r.tickets || 0), 0);
+                
+                if (plazasAbandonadas === 0) return null;
+
                 return (
                   <tr key={t.id} className="hover:bg-[#111]">
                     <td className="p-3 font-bold text-white">{t.title_es}</td>
-                    <td className="p-3">{confT.length}</td>
-                    <td className="p-3 text-orange-400">{abndT.length}</td>
-                    <td className="p-3 text-red-400">
-                       {/* Calculate tickets that were abandoned */}
-                       {abndT.reduce((sum: number, r: any) => sum + (r.tickets || 0), 0)} plazas
-                    </td>
+                    <td className="p-3">{plazasVendidas}</td>
+                    <td className="p-3 text-orange-400">{plazasAbandonadas}</td>
                     <td className="p-3 text-right">
-                       <button className="text-[10px] uppercase tracking-widest border border-[var(--color-gold)] text-[var(--color-gold)] px-2 py-1 hover:bg-[var(--color-gold)] hover:text-black transition-colors">
-                         Segmentar
-                       </button>
+                       <Link href={{ pathname: '/admin/communications', query: { tastingId: t.id, segment: 'interested' } }} className="inline-block text-[10px] uppercase tracking-widest border border-[var(--color-gold)] text-[var(--color-gold)] px-2 py-1 hover:bg-[var(--color-gold)] hover:text-black transition-colors">
+                         Preparar Comunicación
+                       </Link>
                     </td>
                   </tr>
                 );

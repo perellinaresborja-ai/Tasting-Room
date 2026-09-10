@@ -20,6 +20,18 @@ export async function checkIfEmailExists(email: string) {
     return { success: true, exists: false };
   }
 
+  // Comprobar que realmente es un CLIENTE (tiene al menos una reserva CONFIRMED)
+  const { data: reservations } = await supabaseAdmin
+    .from('reservations')
+    .select('id')
+    .eq('profile_id', profile.id)
+    .eq('status', 'CONFIRMED')
+    .limit(1);
+
+  if (!reservations || reservations.length === 0) {
+    return { success: true, exists: false }; // Ocultamos la existencia si no es cliente
+  }
+
   return { success: true, exists: true };
 }
 
@@ -53,7 +65,9 @@ export async function getMemberData(authUserId: string, email: string) {
       .eq('profile_id', profile.id)
       .order('created_at', { ascending: false });
 
-    return { success: true, profile, reservations };
+    const isClient = reservations?.some(r => r.status === 'CONFIRMED');
+
+    return { success: true, profile, reservations, isClient };
   } catch (err: unknown) {
     console.error('getMemberData error', err);
     return { success: false, error: (err instanceof Error ? err.message : String(err)) };

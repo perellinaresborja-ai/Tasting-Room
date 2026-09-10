@@ -7,7 +7,7 @@ export default async function AdminDashboard() {
   
   // Real counts
   const [{ count: tastingsCount }, { count: resCount }, { count: subCount }] = await Promise.all([
-    supabase.from('tastings').select('*', { count: 'exact', head: true }),
+    supabase.from('tastings').select('*', { count: 'exact', head: true }).in('status', ['PUBLISHED', 'SOLD_OUT']),
     supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('status', 'CONFIRMED'),
     supabase.from('subscribers').select('*', { count: 'exact', head: true })
   ]);

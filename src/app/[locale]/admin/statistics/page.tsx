@@ -12,12 +12,20 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
   const safeTastings = tastings || [];
   const safeReservations = reservations || [];
 
-  const completedTastings = safeTastings.filter((t: any) => t.status === "COMPLETED").length;
+  const completedTastingsArr = safeTastings.filter((t: any) => t.status === "COMPLETED");
+  const completedTastings = completedTastingsArr.length;
+  
   const confirmedRes = safeReservations.filter((r: any) => r.status === "CONFIRMED");
   const ticketsSold = confirmedRes.reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
   const totalRevenue = confirmedRes.reduce((acc: number, r: any) => acc + (Number(r.total_amount) || 0), 0);
-  const totalCapacity = safeTastings.reduce((acc: number, t: any) => acc + (t.capacity || 0), 0);
-  const avgOccupancy = totalCapacity > 0 ? (ticketsSold / totalCapacity) * 100 : 0;
+  
+  // Calculate average occupancy only for COMPLETED tastings
+  const completedTastingIds = new Set(completedTastingsArr.map((t: any) => t.id));
+  const completedConfirmedRes = confirmedRes.filter((r: any) => completedTastingIds.has(r.tasting_id));
+  const totalCompletedCapacity = completedTastingsArr.reduce((acc: number, t: any) => acc + (t.capacity || 0), 0);
+  const totalCompletedTicketsSold = completedConfirmedRes.reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
+  const avgOccupancy = totalCompletedCapacity > 0 ? (totalCompletedTicketsSold / totalCompletedCapacity) * 100 : 0;
+  
   const realAttendance = confirmedRes.filter((r: any) => r.check_in_time).reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
   
   const uniqueClients = new Set(confirmedRes.map((r: any) => r.profile_id)).size;
@@ -35,6 +43,7 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
     }
     return false;
   });
+  const abandonedTickets = abandonedRes.reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
 
   return (
     <div className="space-y-12">
@@ -51,7 +60,7 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
           <StatCard title="Asistencia Real" value={realAttendance} />
           <StatCard title="Clientes Únicos" value={uniqueClients} />
           <StatCard title="Clientes Recurrentes" value={returningClients} />
-          <StatCard title="Leads / Abandonos" value={abandonedRes.length} />
+          <StatCard title="Plazas Abandonadas" value={abandonedTickets} />
           <StatCard title="Valoración Media" value="Sin datos" />
         </div>
       </section>
@@ -66,7 +75,7 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
                 <th className="p-3">Ocupación</th>
                 <th className="p-3">Facturación</th>
                 <th className="p-3">Asistencia</th>
-                <th className="p-3">Interesados perdidos</th>
+                <th className="p-3">Plazas Abandonadas</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-charcoal)] bg-black">
@@ -79,6 +88,7 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
                 const rev = confT.reduce((acc: number, r: any) => acc + (Number(r.total_amount) || 0), 0);
                 const occ = t.capacity > 0 ? Math.round((tix / t.capacity) * 100) : 0;
                 const att = confT.filter((r: any) => r.check_in_time).reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
+                const abndTix = abndT.reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
 
                 return (
                   <tr key={t.id} className="hover:bg-[#111]">
@@ -87,7 +97,7 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
                     <td className="p-3">{tix}/{t.capacity} ({occ}%)</td>
                     <td className="p-3">€{rev.toFixed(2)}</td>
                     <td className="p-3">{att}</td>
-                    <td className="p-3 text-orange-400">{abndT.length}</td>
+                    <td className="p-3 text-orange-400">{abndTix}</td>
                   </tr>
                 );
               })}

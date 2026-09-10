@@ -19,6 +19,12 @@ export const routing = defineRouting({
     "/checkout/cancel": { en: "/checkout/cancel", es: "/reserva/cancelada" },
     "/member": { en: "/member", es: "/cliente" },
     "/admin": "/admin",
+    "/admin/communications": "/admin/communications",
+    "/admin/intelligence": "/admin/intelligence",
+    "/admin/statistics": "/admin/statistics",
+    "/admin/reservations": "/admin/reservations",
+    "/admin/clients": "/admin/clients",
+    "/admin/subscribers": "/admin/subscribers",
     "/scanner": "/scanner",
     "/feedback/[id]": "/feedback/[id]"
   }

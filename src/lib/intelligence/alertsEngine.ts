@@ -85,7 +85,7 @@ export async function evaluateAlerts(locale: string = 'es') {
       title: 'Últimas plazas',
       description: `Quedan ${availableSpots} plazas para ${titleStr} (${tasting.date}).`,
       action_text: 'PREPARAR COMUNICACIÓN',
-      action_url: `/${locale}/admin/communications?tastingId=${tasting.id}&segment=all`
+      action_url: `/admin/communications?tastingId=${tasting.id}&segment=all`
     }));
 
     // RULE B: SLOW_SALES
@@ -94,7 +94,7 @@ export async function evaluateAlerts(locale: string = 'es') {
       title: 'Venta lenta',
       description: `A ${Math.floor(daysToTasting)} días, ocupación del ${Math.round(occupancyPct)}% (${soldTickets}/${capacity} plazas).`,
       action_text: 'PREPARAR COMUNICACIÓN',
-      action_url: `/${locale}/admin/communications?tastingId=${tasting.id}&segment=all`
+      action_url: `/admin/communications?tastingId=${tasting.id}&segment=all`
     }));
 
     // RULE C: FAST_SALES
@@ -103,7 +103,7 @@ export async function evaluateAlerts(locale: string = 'es') {
       title: 'Alta demanda',
       description: `Ocupación del ${Math.round(occupancyPct)}% en menos de 3 días desde su publicación.`,
       action_text: 'VER EXPERIENCIA',
-      action_url: `/${locale}/admin/tastings/${tasting.id}`
+      action_url: `/admin/tastings/${tasting.id}`
     }));
 
     // RULE D: HIGH_ABANDONMENT
@@ -112,7 +112,7 @@ export async function evaluateAlerts(locale: string = 'es') {
       title: 'Abandono alto en Checkout',
       description: `${abandonments.length} intentos abandonados (${abandonedTickets} plazas potenciales, ~€${abandonedValue.toFixed(2)}).`,
       action_text: 'VER INTERESADOS',
-      action_url: `/${locale}/admin/tastings/${tasting.id}/attendees`
+      action_url: `/admin/tastings/${tasting.id}/attendees`
     }));
 
     // RULE E: OVER_DEMAND
@@ -123,7 +123,7 @@ export async function evaluateAlerts(locale: string = 'es') {
       title: 'Demanda superior al aforo',
       description: `La demanda observada (${totalDemanded} plazas) supera la capacidad de la cata.`,
       action_text: 'VALORAR REPETIR',
-      action_url: `/${locale}/admin/tastings/${tasting.id}`
+      action_url: `/admin/tastings/${tasting.id}`
     }));
   }
 

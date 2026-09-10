@@ -1,12 +1,16 @@
 import { requireAdmin } from "@/lib/supabase/adminAuth";
 import { createClient } from "@/lib/supabase/server";
 
+import Link from "next/link";
+import CampaignBuilder from "@/components/admin/CampaignBuilder";
+
 export default async function CommunicationsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   await requireAdmin(locale);
   const supabase = await createClient();
 
   const { data: comms } = await supabase.from('communications').select('*').order('created_at', { ascending: false });
+  const { data: tastings } = await supabase.from('tastings').select('id, title_es');
 
   return (
     <div className="space-y-12">
@@ -14,10 +18,12 @@ export default async function CommunicationsPage({ params }: { params: Promise<{
         <h1 className="text-3xl font-serif text-[var(--color-gold)] uppercase tracking-widest">
           Comunicaciones
         </h1>
-        <button className="bg-[var(--color-gold)] text-black px-6 py-2 uppercase tracking-widest font-bold text-xs hover:bg-white transition-colors">
+        <Link href={{ pathname: '/admin/communications', query: { new: 'true' } }} className="bg-[var(--color-gold)] text-black px-6 py-2 uppercase tracking-widest font-bold text-xs hover:bg-white transition-colors">
           Nueva Campaña
-        </button>
+        </Link>
       </div>
+
+      <CampaignBuilder initialLocale={locale} tastings={tastings || []} />
 
       <section>
         <h2 className="text-xl font-bold text-white mb-6 uppercase tracking-wider">Historial de Envíos</h2>
