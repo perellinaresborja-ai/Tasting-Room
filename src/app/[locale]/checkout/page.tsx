@@ -16,6 +16,11 @@ function CheckoutContent() {
   const [tasting, setTasting] = useState<CheckoutTasting | null>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const [marketingChoice, setMarketingChoice] = useState<string | null>(null);
+  const [channelEmail, setChannelEmail] = useState(false);
+  const [channelWa, setChannelWa] = useState(false);
+
   const supabase = createClient();
 
   useEffect(() => {
@@ -42,11 +47,30 @@ function CheckoutContent() {
     e.preventDefault();
     if (requiresAgeConfirmation && !ageConfirmed) return;
     
-    setIsSubmitting(true);
+    if (!marketingChoice) {
+      alert(locale === "es" ? "Por favor, indica si deseas recibir novedades." : "Please indicate if you'd like to receive updates.");
+      return;
+    }
+
+    if (marketingChoice === 'yes' && !channelEmail && !channelWa) {
+      alert(locale === "es" ? "Debes seleccionar al menos un canal (Email o WhatsApp)." : "You must select at least one channel (Email or WhatsApp).");
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
+    const phoneValue = formData.get("phone") as string;
+
+    if (marketingChoice === 'yes' && channelWa && (!phoneValue || phoneValue.trim() === '')) {
+      alert(locale === "es" ? "Para recibir novedades por WhatsApp, debes introducir un teléfono válido." : "To receive updates via WhatsApp, you must enter a valid phone number.");
+      return;
+    }
+    
+    setIsSubmitting(true);
     formData.append("tasting_id", tastingId!);
     formData.append("locale", locale);
     formData.append("tickets", tickets);
+    formData.append("marketing_email", marketingChoice === 'yes' && channelEmail ? "true" : "false");
+    formData.append("marketing_whatsapp", marketingChoice === 'yes' && channelWa ? "true" : "false");
 
     try {
       const { createCheckoutSession } = await import("@/app/actions/checkout");
@@ -107,6 +131,40 @@ function CheckoutContent() {
             </label>
           </div>
         )}
+        
+        <div className="pt-8 mt-8 border-t border-[var(--color-charcoal)]">
+          <label className="block text-sm text-[var(--color-warm-white)] mb-4">
+            {locale === "es" ? "¿Quieres que te avisemos de próximas experiencias?" : "Would you like us to let you know about upcoming experiences?"}
+          </label>
+          <div className="flex flex-col gap-4 mb-4">
+            <label className="flex items-center gap-3 cursor-pointer text-gray-300">
+              <input type="radio" name="marketingChoice" value="yes" checked={marketingChoice === 'yes'} onChange={() => setMarketingChoice('yes')} className="w-4 h-4 accent-[var(--color-gold)]" />
+              {locale === "es" ? "Sí, quiero recibir novedades" : "Yes, I'd like to receive updates"}
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer text-gray-300">
+              <input type="radio" name="marketingChoice" value="no" checked={marketingChoice === 'no'} onChange={() => { setMarketingChoice('no'); setChannelEmail(false); setChannelWa(false); }} className="w-4 h-4 accent-[var(--color-gold)]" />
+              {locale === "es" ? "No, gracias" : "No, thanks"}
+            </label>
+          </div>
+
+          {marketingChoice === 'yes' && (
+            <div className="bg-[#1a1a1a] p-5 border border-[var(--color-charcoal)] mt-4 animate-in fade-in zoom-in-95 duration-200">
+              <p className="text-sm text-[var(--color-warm-white)] mb-4">
+                {locale === "es" ? "¿Cómo quieres recibirlas?" : "How would you like to receive them?"}
+              </p>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white transition-colors">
+                  <input type="checkbox" checked={channelEmail} onChange={(e) => setChannelEmail(e.target.checked)} className="w-4 h-4 accent-[var(--color-gold)]" />
+                  Email
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white transition-colors">
+                  <input type="checkbox" checked={channelWa} onChange={(e) => setChannelWa(e.target.checked)} className="w-4 h-4 accent-[var(--color-gold)]" />
+                  WhatsApp
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
         
         <div className="pt-8 mt-8 border-t border-[var(--color-charcoal)] flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-2xl text-white">

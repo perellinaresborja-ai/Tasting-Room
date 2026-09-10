@@ -59,6 +59,23 @@ export async function createCheckoutSession(formData: FormData) {
       return { success: false, error: 'Error al procesar la reserva.' };
     }
 
+    // 2b. Persist Marketing Consents directly to the created profile before going to Stripe
+    const marketingEmail = formData.get('marketing_email') === 'true';
+    const marketingWhatsapp = formData.get('marketing_whatsapp') === 'true';
+
+    const { data: resData } = await supabaseAdmin
+      .from('reservations')
+      .select('profile_id')
+      .eq('id', reservationId)
+      .single();
+
+    if (resData?.profile_id) {
+      await supabaseAdmin.from('profiles').update({
+        marketing_email_consent: marketingEmail,
+        marketing_whatsapp_consent: marketingWhatsapp
+      }).eq('id', resData.profile_id);
+    }
+
     // 3. Create Stripe Checkout Session
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tastingroom.es';
     
