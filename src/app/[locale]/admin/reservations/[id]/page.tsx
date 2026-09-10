@@ -5,16 +5,22 @@ import { Link } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import ReservationEditForm from "./ReservationEditForm";
 
-export default async function AdminReservationEdit({ params }: { params: { id: string, locale: string } }) {
+export default async function AdminReservationEdit({ params }: { params: Promise<{ id: string; locale: string }> }) {
+  const { id } = await params;
   const supabase = await createClient();
   
-  const { data: reservation } = await supabase
+  const { data: reservation, error } = await supabase
     .from('reservations')
     .select('*, profile:profiles(*), tasting:tastings(*)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
+  if (error) {
+    console.error("Error fetching reservation:", error);
+  }
+
   if (!reservation) {
+    console.error("Reservation not found for id:", id);
     notFound();
   }
 
