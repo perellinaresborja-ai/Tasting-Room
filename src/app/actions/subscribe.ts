@@ -85,7 +85,7 @@ export async function subscribeAction(formData: FormData) {
           ? "From now on, you can receive information about our upcoming tastings and experiences."
           : "A partir de ahora podrás recibir información sobre nuestras próximas catas y experiencias.";
         const signoff = language === "en" ? "See you at The Church." : "Nos vemos en The Church.";
-        const buttonText = language === "en" ? "VIEW UPCOMING TASTINGS" : "VER PRÓXIMAS CATAS";
+        const buttonText = language === "en" ? "VIEW UPCOMING EXPERIENCES" : "VER PRÓXIMAS EXPERIENCIAS";
         
         const html = `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #111111; color: #ffffff; padding: 40px 20px; max-width: 600px; margin: 0 auto; text-align: center;">
