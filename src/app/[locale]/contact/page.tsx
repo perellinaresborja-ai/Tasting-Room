@@ -30,7 +30,8 @@ export default async function ContactPage({
         <div className="flex flex-col justify-center space-y-12">
           <div>
             <h2 className="text-sm text-[var(--color-gold)] uppercase tracking-[0.3em] mb-4">{t("address_title")}</h2>
-            <p className="text-3xl font-serif text-[var(--color-warm-white)] mb-2">The Church</p>
+            <p className="text-3xl font-serif text-[var(--color-warm-white)]">The Church</p>
+            <p className="text-3xl font-serif text-[var(--color-warm-white)] mb-4">Tasting Room</p>
             <p className="text-xl text-gray-400 font-light leading-relaxed">
               {t("address_line1")}<br />
               {t("address_line2")}
@@ -48,13 +49,6 @@ export default async function ContactPage({
             <h2 className="text-sm text-[var(--color-gold)] uppercase tracking-[0.3em] mb-4">{t("email")}</h2>
             <a href="mailto:info@tastingroom.es" className="text-2xl font-serif text-[var(--color-warm-white)] hover:text-[var(--color-gold)] transition-colors">
               info@tastingroom.es
-            </a>
-          </div>
-
-          <div>
-            <h2 className="text-sm text-[var(--color-gold)] uppercase tracking-[0.3em] mb-4">{t("web")}</h2>
-            <a href="https://www.thechurch.es/" target="_blank" rel="noopener noreferrer" className="text-2xl font-serif text-[var(--color-warm-white)] hover:text-[var(--color-gold)] transition-colors">
-              www.thechurch.es
             </a>
           </div>
 
