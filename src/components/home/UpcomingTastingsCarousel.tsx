@@ -76,7 +76,9 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
     return (
       <section className="py-20 px-4 md:px-8 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-sm text-[var(--color-gold)] uppercase tracking-[0.3em] mb-12 text-center">{labelNextTasting}</h3>
+          <h3 className="text-3xl font-serif text-[var(--color-gold)] mb-12 text-center">
+            {labelNextTasting}
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-[var(--color-charcoal)] group">
             <div className="relative h-64 md:h-auto overflow-hidden">
               <Image 
@@ -129,10 +131,12 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
   return (
     <section className="py-20 px-4 md:px-8 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-12">
-          <h3 className="text-sm text-[var(--color-gold)] uppercase tracking-[0.3em] text-center w-full md:w-auto md:text-left">{labelNextTasting}</h3>
+        <div className="relative mb-12 flex justify-center items-center">
+          <h3 className="text-3xl font-serif text-[var(--color-gold)] text-center">
+            {labelNextTasting}
+          </h3>
           
-          <div className="hidden md:flex gap-4">
+          <div className="hidden md:flex gap-4 absolute right-0">
             <button 
               onClick={() => { prevSlide(); setIsHovered(true); setTimeout(() => setIsHovered(false), 100); }} 
               className="p-2 border border-[var(--color-charcoal)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold)] transition-colors text-gray-500"
