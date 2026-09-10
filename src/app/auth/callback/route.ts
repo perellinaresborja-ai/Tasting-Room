@@ -12,7 +12,10 @@ export async function GET(request: NextRequest) {
   let next = searchParams.get('next') ?? '/'
   if (!next.startsWith('/')) { next = '/' + next; }
 
-  const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es'
+  let appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es'
+  if (appUrl.includes('://tastingroom.es')) {
+    appUrl = appUrl.replace('://tastingroom.es', '://www.tastingroom.es')
+  }
   const redirectUrl = new URL(next, appUrl)
   
   // Construct the final successful redirect response upfront so we can attach cookies to it

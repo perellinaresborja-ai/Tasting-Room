@@ -85,7 +85,10 @@ export async function POST(req: Request) {
         if (!resData.confirmation_email_sent_at && resData.profile?.email) {
           try {
             const locale = session.metadata?.locale || "es";
-            const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es';
+            let appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es';
+            if (appUrl.includes('://tastingroom.es')) {
+              appUrl = appUrl.replace('://tastingroom.es', '://www.tastingroom.es');
+            }
             const title = resData.tasting?.title_es || 'The Church Tasting Room';
             const date = resData.tasting?.date;
             

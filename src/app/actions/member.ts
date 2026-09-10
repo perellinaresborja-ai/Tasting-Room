@@ -36,7 +36,10 @@ export async function requestMagicLink(email: string, locale: string) {
       return { success: false, code: 'NOT_CLIENT' };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es';
+    let siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es';
+    if (siteUrl.includes('://tastingroom.es')) {
+      siteUrl = siteUrl.replace('://tastingroom.es', '://www.tastingroom.es');
+    }
     
     // 2. Generate magic link using admin API (skips PKCE)
     const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
