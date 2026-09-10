@@ -3,6 +3,7 @@
 // @ts-nocheck
 import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/routing";
+import TastingRowActions from "./TastingRowActions";
 
 export default async function AdminTastings() {
   const supabase = await createClient();
@@ -56,7 +57,7 @@ export default async function AdminTastings() {
                       </span>
                     </td>
                     <td className="py-4 text-right">
-                      <Link href={`/admin/tastings/${tasting.id}` as any} className="text-[var(--color-gold)] hover:underline uppercase tracking-widest text-xs">Editar</Link>
+                      <TastingRowActions id={tasting.id} />
                     </td>
                   </tr>
                 ))}
