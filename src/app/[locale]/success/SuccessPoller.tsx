@@ -62,9 +62,6 @@ export default function SuccessPoller({ sessionId, initialConfirmed, locale }: {
   if (timeoutReached) {
     return (
       <>
-        <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-8">
-          <span className="text-gray-400 text-4xl">?</span>
-        </div>
         <h1 className="text-3xl font-serif text-[var(--color-gold)] mb-4">{locale === 'es' ? 'Pago en verificación' : 'Payment in verification'}</h1>
         <p className="text-gray-400 mb-8 px-4">
           {locale === 'es' 

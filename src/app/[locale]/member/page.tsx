@@ -44,11 +44,22 @@ export default function MemberPortal() {
   
   const [email, setEmail] = useState('');
   const [loginStep, setLoginStep] = useState<'IDLE' | 'SENT'>('IDLE');
+  const [expiredView, setExpiredView] = useState(false);
   
   const supabase = createClient();
 
   useEffect(() => {
     let active = true;
+
+    // Check for expired error in URL
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get('error') === 'expired') {
+        setExpiredView(true);
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
 
     async function loadData(user: { id: string; email?: string }) {
       if (!user || !user.email) return;
@@ -119,6 +130,29 @@ export default function MemberPortal() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-32 text-center">
         <p className="text-[var(--color-gold)] uppercase tracking-widest text-sm">{t('loading')}</p>
+      </div>
+    );
+  }
+
+  if (expiredView) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-32">
+        <div className="bg-[#141414] border border-[var(--color-charcoal)] p-8 text-center">
+          <h1 className="text-2xl font-serif text-[var(--color-gold)] mb-6 uppercase tracking-widest leading-relaxed">
+            {locale === 'es' ? 'Acceso Caducado' : 'Access Expired'}
+          </h1>
+          <p className="text-gray-400 text-sm mb-8 leading-relaxed">
+            {locale === 'es' 
+              ? 'Este acceso ha caducado o ya ha sido utilizado.' 
+              : 'This access has expired or has already been used.'}
+          </p>
+          <button
+            onClick={() => setExpiredView(false)}
+            className="w-full bg-[var(--color-gold)] text-black font-bold uppercase tracking-widest py-3 text-sm hover:bg-white transition-colors"
+          >
+            {locale === 'es' ? 'Solicitar nuevo acceso' : 'Request new access'}
+          </button>
+        </div>
       </div>
     );
   }

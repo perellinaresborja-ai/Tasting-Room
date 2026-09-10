@@ -84,11 +84,36 @@ export async function POST(req: Request) {
         // 3. Send email idempotently
         if (!resData.confirmation_email_sent_at && resData.profile?.email) {
           try {
-            const locale = session.metadata?.locale || "es"; // just fallback
-            const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tastingroom.es';
+            const locale = session.metadata?.locale || "es";
+            const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es';
             const title = resData.tasting?.title_es || 'The Church Tasting Room';
             const date = resData.tasting?.date;
-            const time = resData.tasting?.start_time;
+            
+            // Format time HH:mm
+            let time = resData.tasting?.start_time || '';
+            if (time && time.length >= 5) {
+              time = time.slice(0, 5);
+            }
+
+            // Generate secure access link
+            let actionUrl = `${appUrl}/${locale}/member`;
+            try {
+              const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                type: 'magiclink',
+                email: resData.profile.email,
+                options: {
+                  redirectTo: `${appUrl}/auth/callback?next=/${locale}/member`
+                }
+              });
+              
+              if (!linkError && linkData?.properties?.hashed_token) {
+                actionUrl = `${appUrl}/auth/callback?token_hash=${linkData.properties.hashed_token}&type=magiclink&next=/${locale}/member`;
+              } else if (linkError) {
+                console.error("Error generating link for email:", linkError);
+              }
+            } catch (err) {
+              console.error("Error generating link for email:", err);
+            }
 
             const html = locale === 'en' ? `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -106,9 +131,9 @@ export async function POST(req: Request) {
                     <p>Your access is in My Chapel.</p>
                     <p>My Chapel is your personal space at The Church Tasting Room. There you will find your personal QR code, upcoming experiences, and past tastings.</p>
                     <p>Your QR is personal and permanent: you will always use the same one for your experiences with us.</p>
-                    <a href="${appUrl}/en/member" style="background-color: #c9a96e; color: #111; padding: 12px 24px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;">Access My Chapel</a>
+                    <a href="${actionUrl}" style="background-color: #c9a96e; color: #111; padding: 12px 24px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;">Access My Chapel</a>
                   </div>
-                  <p style="font-size: 12px; color: #666; text-align: center;">You don't need a password. Enter the same email used for the booking to receive your access link.</p>
+                  <p style="font-size: 12px; color: #666; text-align: center;">This access link is personal and will expire. You can always request a new one from the website.</p>
                 </div>
               ` : `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -126,9 +151,9 @@ export async function POST(req: Request) {
                     <p style="font-size: 18px; font-weight: bold;">Tu acceso está en Mi Capilla</p>
                     <p>Mi Capilla es tu espacio personal en The Church Tasting Room. Allí encontrarás tu QR personal, tus próximas experiencias y el historial de las catas a las que hayas asistido.</p>
                     <p>Tu QR es personal y permanente: utilizarás siempre el mismo en tus experiencias con nosotros.</p>
-                    <a href="${appUrl}/es/member" style="background-color: #c9a96e; color: #111; padding: 12px 24px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;">Acceder a Mi Capilla</a>
+                    <a href="${actionUrl}" style="background-color: #c9a96e; color: #111; padding: 12px 24px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;">Acceder a Mi Capilla</a>
                   </div>
-                  <p style="font-size: 12px; color: #666; text-align: center;">No necesitas contraseña. Introduce el mismo email utilizado en la reserva y recibirás tu enlace de acceso.</p>
+                  <p style="font-size: 12px; color: #666; text-align: center;">Este enlace de acceso es personal y caducará. Siempre puedes solicitar uno nuevo desde la web.</p>
                 </div>
               `;
 
@@ -148,7 +173,7 @@ export async function POST(req: Request) {
             console.log(`Confirmation email sent for reservation ${reservationId}`);
           } catch (emailError) {
             console.error('Error sending confirmation email:', emailError);
-            // Don't fail the webhook if just the email fails, Stripe shouldn't retry just for email
+            // Don't fail the webhook if just the email fails
           }
         } else {
           console.log(`Email already sent or missing email for reservation ${reservationId}`);
