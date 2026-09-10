@@ -30,10 +30,16 @@ export async function POST(req: Request) {
 
   switch (event.type) {
     case 'checkout.session.completed':
+    case 'checkout.session.async_payment_succeeded':
       const session = event.data.object as Stripe.Checkout.Session;
       const reservationId = session.metadata?.reservation_id;
 
       if (reservationId) {
+        if (session.payment_status !== 'paid') {
+          console.log(`Payment not confirmed yet for session ${session.id}, status: ${session.payment_status}`);
+          return NextResponse.json({ received: true });
+        }
+
         // 1. Fetch reservation to ensure idempotency for email specifically
         const { data: resData, error: resError } = await supabaseAdmin
           .from('reservations')

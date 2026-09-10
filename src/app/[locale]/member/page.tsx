@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { QRCodeSVG } from 'qrcode.react';
-import { checkIfEmailExists, getMemberData } from '@/app/actions/member';
-import { useTranslations } from 'next-intl';
+import { requestMagicLink, getMemberData } from '@/app/actions/member';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface Profile {
   id: string;
@@ -37,6 +37,7 @@ interface Reservation {
 
 export default function MemberPortal() {
   const t = useTranslations('Member');
+  const locale = useLocale();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,24 +86,24 @@ export default function MemberPortal() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
     
-    const checkRes = await checkIfEmailExists(email);
+    const res = await requestMagicLink(email, locale);
 
-    if (checkRes.exists) {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${siteUrl}/auth/callback?next=/es/member`,
-          shouldCreateUser: true
+    if (!res.success) {
+      if (res.code === 'NOT_FOUND' || res.code === 'NOT_CLIENT') {
+        // Fake success for security
+        setLoginStep('SENT');
+      } else {
+        if (res.rateLimit) {
+          alert(locale === 'es' ? 'Has solicitado varios accesos recientemente. Espera unos minutos antes de intentarlo de nuevo.' : 'You have requested access recently. Please wait a few minutes before trying again.');
+        } else {
+          alert(locale === 'es' ? 'No hemos podido enviarte el acceso. Inténtalo de nuevo en unos minutos.' : 'We could not send your access link. Please try again in a few minutes.');
         }
-      });
-      if (error) {
-        alert(t('error_sending'));
-        setLoading(false);
-        return;
       }
+      setLoading(false);
+      return;
     }
+    
     setLoginStep('SENT');
     setLoading(false);
   }
