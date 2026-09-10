@@ -1,9 +1,9 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { formatDate, formatDayOfWeek, formatTime } from "@/lib/utils/formatDate";
 import { createClient } from "@/lib/supabase/server";
 import SubscribeForm from "@/components/ui/SubscribeForm";
+import UpcomingTastingsCarousel from "@/components/home/UpcomingTastingsCarousel";
 
 export default async function HomePage({
   params,
@@ -14,16 +14,15 @@ export default async function HomePage({
   setRequestLocale(locale);
   const t = await getTranslations("Index");
 
-  // Fetch real next tasting from database
+  // Fetch real next tastings from database
   const supabase = await createClient();
+  const today = new Date().toISOString().split('T')[0];
   const { data: upcomingTastings } = await supabase
     .from('tastings')
     .select('*')
-    .eq('status', 'PUBLISHED')
-    .order('date', { ascending: true })
-    .limit(1);
-
-  const nextTasting = upcomingTastings && upcomingTastings.length > 0 ? upcomingTastings[0] : null;
+    .in('status', ['PUBLISHED', 'SOLD_OUT'])
+    .gte('date', today)
+    .order('date', { ascending: true });
 
   return (
     <main className="flex flex-col">
@@ -55,49 +54,13 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* NEXT TASTING HIGHLIGHT */}
-      {nextTasting && (
-        <section className="py-20 px-4 md:px-8 bg-[#0a0a0a]">
-          <div className="max-w-7xl mx-auto">
-            <h3 className="text-sm text-[var(--color-gold)] uppercase tracking-[0.3em] mb-12 text-center">{t("next_tasting")}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-[var(--color-charcoal)] group">
-              <div className="relative h-64 md:h-auto overflow-hidden">
-                <Image 
-                  src={nextTasting.cover_image || "/logo-header-full.png"} 
-                  alt={locale === "es" ? nextTasting.title_es : nextTasting.title_en} 
-                  fill 
-                  className="object-cover transition-transform duration-700 group-hover:scale-105" 
-                />
-              </div>
-              <div className="p-10 md:p-16 flex flex-col justify-center bg-[#141414]">
-                <div className="text-sm text-gray-500 uppercase tracking-widest mb-4">
-                  {nextTasting.category}
-                </div>
-                <h4 className="text-3xl font-serif text-[var(--color-gold)] mb-6">
-                  {locale === "es" ? nextTasting.title_es : nextTasting.title_en}
-                </h4>
-                <div className="space-y-4 mb-8 text-[var(--color-warm-white)]">
-                  <div className="flex items-start gap-3">
-                    <span className="text-[var(--color-gold)] mt-1">📅</span>
-                    <div className="flex flex-col">
-                      <span className="text-sm text-gray-400 capitalize">{formatDayOfWeek(nextTasting.date, locale)}</span>
-                      <span>{formatDate(nextTasting.date, locale)}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-[var(--color-gold)]">⏱</span> {formatTime(nextTasting.start_time)}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-[var(--color-gold)]">€</span> {nextTasting.price.toFixed(2)}
-                  </div>
-                </div>
-                <Link href={{ pathname: "/tastings/[slug]", params: { slug: nextTasting.slug } }} className="inline-block border border-[var(--color-gold)] text-[var(--color-gold)] px-8 py-3 uppercase tracking-widest text-sm text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors w-fit">
-                  {t("book_now")}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+      {/* NEXT TASTING HIGHLIGHT / CAROUSEL */}
+      {upcomingTastings && upcomingTastings.length > 0 && (
+        <UpcomingTastingsCarousel 
+          tastings={upcomingTastings} 
+          locale={locale} 
+          labelNextTasting={t("next_tasting")} 
+        />
       )}
 
       {/* SUBSCRIBE */}
