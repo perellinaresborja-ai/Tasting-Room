@@ -6,11 +6,15 @@ import { createClient } from "@/lib/supabase/server";
 export default async function AdminClients() {
   const supabase = await createClient();
   
-  const { data: clients } = await supabase
+  const { data: clients, error } = await supabase
     .from('profiles')
-    .select('*, reservations(id, status, places, total_amount)')
+    .select('*, reservations(id, status, tickets, total_amount)')
     .eq('role', 'CUSTOMER')
     .order('created_at', { ascending: false });
+    
+  if (error) {
+    console.error("Error fetching clients:", error);
+  }
 
   return (
     <div className="space-y-8">
