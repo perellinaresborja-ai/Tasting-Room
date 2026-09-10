@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils/formatDate";
-import CancelButton from "./CancelButton";
+import ReservationRowActions from "./ReservationRowActions";
 
 export default async function AdminReservations() {
   const supabase = await createClient();
@@ -34,10 +34,11 @@ export default async function AdminReservations() {
                   <th className="pb-3 font-normal">Importe</th>
                   <th className="pb-3 font-normal">Pago</th>
                   <th className="pb-3 font-normal">Estado</th>
+                  <th className="pb-3 font-normal text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-charcoal)]">
-                {reservations.map((res: unknown) => (
+                {reservations.map((res: any) => (
                   <tr key={res.id}>
                     <td className="py-4 text-gray-500 text-xs">{new Date(res.created_at).toLocaleString('es-ES')}</td>
                     <td className="py-4 text-gray-300">
@@ -59,6 +60,9 @@ export default async function AdminReservations() {
                       <span className={`px-2 py-1 text-xs uppercase tracking-wider ${res.status === 'CONFIRMED' ? 'bg-green-900/30 text-green-400' : res.status === 'CANCELLED' ? 'bg-red-900/30 text-red-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
                         {res.status}
                       </span>
+                    </td>
+                    <td className="py-4 text-right">
+                      <ReservationRowActions id={res.id} />
                     </td>
                   </tr>
                 ))}
