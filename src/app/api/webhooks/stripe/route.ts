@@ -94,6 +94,7 @@ export async function POST(req: Request) {
                     <li><strong>Date:</strong> ${date}</li>
                     <li><strong>Time:</strong> ${time}</li>
                     <li><strong>Spots:</strong> ${resData.tickets}</li>
+                    <li><strong>Amount paid:</strong> €${resData.total_amount}</li>
                   </ul>
                   <div style="margin: 30px 0; text-align: center;">
                     <p>Your access is in My Chapel.</p>
@@ -113,6 +114,7 @@ export async function POST(req: Request) {
                     <li><strong>Fecha:</strong> ${date}</li>
                     <li><strong>Hora:</strong> ${time}</li>
                     <li><strong>Plazas:</strong> ${resData.tickets}</li>
+                    <li><strong>Importe pagado:</strong> €${resData.total_amount}</li>
                   </ul>
                   <div style="margin: 30px 0; text-align: center;">
                     <p style="font-size: 18px; font-weight: bold;">Tu acceso está en Mi Capilla</p>
