@@ -7,7 +7,7 @@ export default async function AdminSubscribers({ searchParams }: { searchParams:
   
   let query = supabase.from('subscribers').select('*').order('created_at', { ascending: false });
   if (q) {
-    query = query.or(`name.ilike.%${q}%,email.ilike.%${q}%`);
+    query = query.ilike('email', `%${q}%`);
   }
   
   const { data: subscribers } = await query;
@@ -22,7 +22,7 @@ export default async function AdminSubscribers({ searchParams }: { searchParams:
             type="text" 
             name="q"
             defaultValue={q}
-            placeholder="Buscar por nombre o email..." 
+            placeholder="Buscar por email..." 
             className="flex-1 bg-black border border-[var(--color-charcoal)] p-3 text-white focus:outline-none focus:border-[var(--color-gold)]"
           />
           <button type="submit" className="bg-white text-black px-6 uppercase tracking-widest font-bold hover:bg-[var(--color-gold)] transition-colors">
@@ -39,7 +39,6 @@ export default async function AdminSubscribers({ searchParams }: { searchParams:
             <table className="w-full text-left text-sm">
               <thead className="text-xs uppercase tracking-widest text-gray-500 border-b border-[var(--color-charcoal)]">
                 <tr>
-                  <th className="pb-3 font-normal">Nombre</th>
                   <th className="pb-3 font-normal">Email</th>
                   <th className="pb-3 font-normal">Teléfono</th>
                   <th className="pb-3 font-normal">Idioma</th>
@@ -49,9 +48,8 @@ export default async function AdminSubscribers({ searchParams }: { searchParams:
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-charcoal)]">
-                {subscribers.map((sub: { id: string; email: string; created_at: string; name?: string; phone?: string; preferences?: any; language?: string; interests?: string[]; consent_email?: boolean; consent_wa?: boolean; } /* eslint-disable-line @typescript-eslint/no-explicit-any */) => (
+                {subscribers.map((sub: { id: string; email: string; created_at: string; phone?: string; preferences?: any; language?: string; interests?: string[]; consent_email?: boolean; consent_wa?: boolean; } /* eslint-disable-line @typescript-eslint/no-explicit-any */) => (
                   <tr key={sub.id}>
-                    <td className="py-4 text-gray-300">{sub.name}</td>
                     <td className="py-4 text-[var(--color-gold)]">{sub.email}</td>
                     <td className="py-4 text-gray-400">{sub.phone || '-'}</td>
                     <td className="py-4 text-gray-400 uppercase">{sub.language}</td>
