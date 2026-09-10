@@ -92,13 +92,6 @@ export async function createCheckoutSession(formData: FormData) {
         reservation_id: reservationId,
         tasting_id: tastingId,
       },
-      custom_text: {
-        submit: {
-          message: locale === 'es' 
-            ? "Tus plazas se mantendrán durante 15 minutos mientras completas el pago.\n\nLa reserva no estará confirmada hasta que el pago se haya realizado correctamente." 
-            : "Your places will be held for 15 minutes while you complete the payment.\n\nThe reservation will not be confirmed until the payment has been successfully processed."
-        }
-      },
       line_items: [
         {
           price_data: {
