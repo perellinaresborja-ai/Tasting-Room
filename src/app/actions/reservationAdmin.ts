@@ -63,7 +63,7 @@ export async function resendConfirmationEmail(id: string) {
     const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
     
     await resend.emails.send({
-      from: 'The Church Tasting Room <reservas@tastingroom.es>',
+      from: 'The Church Tasting Room <info@tastingroom.es>',
       to: res.profile.email,
       subject: `Confirmación de Reserva: ${title}`,
       html: `

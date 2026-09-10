@@ -114,7 +114,7 @@ export async function subscribeAction(formData: FormData) {
         `;
 
         await resend.emails.send({
-          from: "The Church Tasting Room <reservas@tastingroom.es>",
+          from: "The Church Tasting Room <info@tastingroom.es>",
           to: email,
           subject: subject,
           html: html

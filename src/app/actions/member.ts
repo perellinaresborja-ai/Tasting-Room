@@ -86,7 +86,7 @@ export async function requestMagicLink(email: string, locale: string) {
         `;
 
       await resend.emails.send({
-        from: 'The Church Tasting Room <reservas@tastingroom.es>',
+        from: 'The Church Tasting Room <info@tastingroom.es>',
         to: emailNormalized,
         subject: locale === 'en' ? 'Access My Chapel' : 'Accede a Mi Capilla',
         html: html

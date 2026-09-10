@@ -161,7 +161,7 @@ export async function POST(req: Request) {
               `;
 
             await resend.emails.send({
-              from: 'The Church Tasting Room <reservas@tastingroom.es>',
+              from: 'The Church Tasting Room <info@tastingroom.es>',
               to: resData.profile.email,
               subject: locale === 'en' ? `Booking Confirmed: ${title}` : `Tu reserva está confirmada — The Church Tasting Room`,
               html: html
