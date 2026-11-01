@@ -1,3 +1,41 @@
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const isEn = locale === "en";
+  const title = isEn
+    ? "Experiencias Gastronómicas y Catas en El Albir"
+    : "Experiencias Gastronómicas y Catas en El Albir";
+  const description = isEn
+    ? "Exclusive wine tastings, pairing dinners, and culinary experiences in El Albir (L'Alfàs del Pi), Costa Blanca. Book your seat at The Church Tasting Room."
+    : "Catas exclusivas de vino, cenas maridaje y experiencias enogastronómicas en El Albir (L'Alfàs del Pi), Costa Blanca. Reserva tu plaza en The Church Tasting Room.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${siteUrl}/${locale}`,
+      languages: {
+        es: `${siteUrl}/es`,
+        en: `${siteUrl}/en`,
+      },
+    },
+    openGraph: {
+      title: `${title} | The Church Tasting Room`,
+      description,
+      url: `${siteUrl}/${locale}`,
+      siteName: "The Church Tasting Room",
+      locale: isEn ? "en_US" : "es_ES",
+      type: "website",
+    },
+  };
+}
+
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
@@ -69,6 +107,7 @@ export default async function HomePage({
             src="/sala.jpg" 
             alt="The Church Tasting Room" 
             fill 
+            sizes="100vw" 
             className="object-cover opacity-25 animate-ken-burns will-change-transform" 
             priority 
           />
@@ -81,6 +120,7 @@ export default async function HomePage({
             width={370} 
             height={400} 
             priority
+            sizes="(max-width: 640px) 170px, (max-width: 768px) 240px, (max-width: 1024px) 320px, 360px"
             className="block object-contain w-[170px] sm:w-[240px] md:w-[320px] lg:w-[360px] max-w-[78vw] h-auto mb-5 sm:mb-6 md:mb-8 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] mx-auto"
           />
           <h1 className="w-full max-w-2xl mx-auto text-xl sm:text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-3 sm:mb-4 md:mb-6 uppercase tracking-wider leading-relaxed [text-wrap:balance] text-center">

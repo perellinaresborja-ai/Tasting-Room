@@ -1,6 +1,15 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import InvitationActions from "./InvitationActions";
@@ -24,50 +33,39 @@ export default async function InvitationPage({ params }: { params: Promise<{ tok
   const tastingTitle = locale === 'en' ? reservation.tasting?.title_en : reservation.tasting?.title_es;
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
-      <div className="max-w-xl w-full text-center space-y-12 bg-[#0a0a0a] border border-[var(--color-charcoal)] p-8 md:p-16">
-        <div>
-          <h1 className="text-xl tracking-[0.3em] uppercase text-gray-500 mb-8">The Church Tasting Room</h1>
-          <p className="text-2xl font-serif text-[var(--color-gold)] mb-2">
-            {reservation.profile?.first_name}, {locale === 'en' ? 'you have been invited' : 'has sido invitado'}
-          </p>
-        </div>
-
-        <div>
-          <h2 className="text-4xl font-serif text-white uppercase tracking-widest mb-6">{tastingTitle}</h2>
-          <div className="text-gray-400 space-y-2 text-lg">
-            <p className="capitalize">{formatDayOfWeek(reservation.tasting?.date, locale)} {formatDate(reservation.tasting?.date, locale)}</p>
-            <p>{formatTime(reservation.tasting?.start_time)}</p>
-          </div>
-        </div>
-
-        <div className="border-y border-[var(--color-charcoal)] py-6">
-          <p className="text-[var(--color-gold)] uppercase tracking-widest">
-            {locale === 'en' ? 'Invitation for' : 'Invitación para'} {reservation.tickets} {locale === 'en' ? 'people' : 'personas'}
-          </p>
-        </div>
-
-        <p className="text-sm text-gray-500">
-          {locale === 'en' ? 'This invitation is personal and non-transferable.' : 'Esta invitación es personal e intransferible.'}
+    <main className="min-h-screen py-24 px-4 flex items-center justify-center">
+      <div className="max-w-lg w-full bg-[#141414] border border-[var(--color-charcoal)] p-8 md:p-12 text-center shadow-2xl relative">
+        <div className="absolute top-0 left-0 w-full h-1 bg-[var(--color-gold)]" />
+        
+        <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-gold)] mb-4">Invitación VIP</p>
+        <h1 className="text-2xl md:text-3xl font-serif text-[var(--color-warm-white)] mb-2">
+          {tastingTitle}
+        </h1>
+        
+        <p className="text-gray-400 text-sm mb-6">
+          Invitación personal para <span className="text-[var(--color-gold)] font-medium">{reservation.profile?.first_name}</span>
         </p>
 
-        {reservation.status === 'PENDING' ? (
-          <InvitationActions reservationId={reservation.id} locale={locale} />
-        ) : (
-          <div className="pt-8">
-            <p className={`text-xl uppercase tracking-widest font-bold ${reservation.status === 'CONFIRMED' ? 'text-green-500' : 'text-red-500'}`}>
-              {reservation.status === 'CONFIRMED' ? (locale === 'en' ? 'ACCEPTED' : 'ACEPTADA') : (locale === 'en' ? 'DECLINED' : 'RECHAZADA')}
-            </p>
-            {reservation.status === 'CONFIRMED' && (
-              <p className="text-gray-400 mt-4 text-sm leading-relaxed">
-                {locale === 'en' 
-                  ? 'Your reservation is confirmed. You can view your QR code in the Client Area.' 
-                  : 'Tu reserva está confirmada. Puedes ver tu código QR en el Área de Cliente.'}
-              </p>
-            )}
+        <div className="bg-black/60 border border-[var(--color-charcoal)] p-4 rounded-sm mb-8 space-y-2 text-sm text-gray-300">
+          <div>
+            <span className="text-gray-500">Fecha:</span>{" "}
+            <span className="font-medium text-white">{reservation.tasting?.date ? `${formatDayOfWeek(reservation.tasting.date, locale)} ${formatDate(reservation.tasting.date, locale)}` : ''}</span>
           </div>
-        )}
+          <div>
+            <span className="text-gray-500">Hora:</span>{" "}
+            <span className="font-medium text-white">{reservation.tasting?.start_time ? formatTime(reservation.tasting.start_time) : ''}</span>
+          </div>
+          <div>
+            <span className="text-gray-500">Pases incluidos:</span>{" "}
+            <span className="font-medium text-[var(--color-gold)]">{reservation.tickets}</span>
+          </div>
+        </div>
+
+        <InvitationActions 
+          reservationId={reservation.id} 
+          currentStatus={reservation.status} 
+        />
       </div>
-    </div>
+    </main>
   );
 }

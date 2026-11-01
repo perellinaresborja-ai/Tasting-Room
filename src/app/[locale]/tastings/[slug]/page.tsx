@@ -32,7 +32,7 @@ export async function generateMetadata({
   const path = locale === "es" ? `/es/catas/${slug}` : `/en/tastings/${slug}`;
 
   return {
-    title: `${title} | The Church Tasting Room`,
+    title: title,
     description: description ? description.slice(0, 160) : undefined,
     alternates: {
       canonical: `${siteUrl}${path}`,
@@ -138,7 +138,7 @@ export default async function TastingDetailPage({
                   <div key={idx} className="flex items-center gap-4 bg-[#0a0a0a] p-4 border border-[var(--color-charcoal)]">
                     {guest.photo ? (
                       <div className="w-12 h-12 relative flex-shrink-0 rounded-full overflow-hidden border border-[var(--color-gold)]">
-                        <Image src={guest.photo} alt={guest.name} fill className="object-cover" />
+                        <Image src={guest.photo} alt={guest.name} fill sizes="48px" className="object-cover" />
                       </div>
                     ) : (
                       <div className="w-12 h-12 flex-shrink-0 rounded-full bg-[#141414] border border-[var(--color-charcoal)] flex items-center justify-center">

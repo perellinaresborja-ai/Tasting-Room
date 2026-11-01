@@ -1,3 +1,40 @@
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const isEn = locale === "en";
+  const title = isEn ? "Contact & Location" : "Contacto y Ubicación";
+  const description = isEn
+    ? "Visit The Church Tasting Room at Camí Vell d'Altea 26, El Albir (Alicante). Bookings, private events, and enquiries."
+    : "Visita The Church Tasting Room en Camí Vell d'Altea 26, El Albir (Alicante). Reservas, eventos privados y contacto.";
+  const path = isEn ? "/en/contact" : "/es/contacto";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${siteUrl}${path}`,
+      languages: {
+        es: `${siteUrl}/es/contacto`,
+        en: `${siteUrl}/en/contact`,
+      },
+    },
+    openGraph: {
+      title: `${title} | The Church Tasting Room`,
+      description,
+      url: `${siteUrl}${path}`,
+      siteName: "The Church Tasting Room",
+      locale: isEn ? "en_US" : "es_ES",
+      type: "website",
+    },
+  };
+}
+
 import {getTranslations, setRequestLocale} from "next-intl/server";
 import Image from "next/image";
 
@@ -23,6 +60,7 @@ export default async function ContactPage({
             src="/sala.jpg" 
             alt="The Church Tasting Room Albir" 
             fill 
+            sizes="(max-width: 1024px) 100vw, 50vw" 
             className="object-cover" 
             priority
           />

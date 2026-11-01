@@ -15,9 +15,24 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "PastTastings" });
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const path = locale === "es" ? "/es/catas-realizadas" : "/en/past-tastings";
   return {
-    title: `${t("title")} | The Church Tasting Room`,
+    title: t("title"),
     description: t("subtitle"),
+    alternates: {
+      canonical: `${siteUrl}${path}`,
+      languages: {
+        es: `${siteUrl}/es/catas-realizadas`,
+        en: `${siteUrl}/en/past-tastings`,
+      },
+    },
+    openGraph: {
+      title: `${t("title")} | The Church Tasting Room`,
+      description: t("subtitle"),
+      url: `${siteUrl}${path}`,
+      siteName: "The Church Tasting Room",
+    },
   };
 }
 
@@ -93,6 +108,7 @@ export default async function PastTastingsPage({
               src={past.image_url} 
               alt={locale === "es" ? past.title_es : past.title_en} 
               fill 
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
               className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-8 flex flex-col justify-end">

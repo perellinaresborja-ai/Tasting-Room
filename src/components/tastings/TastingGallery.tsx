@@ -47,6 +47,7 @@ export default function TastingGallery({
           src={currentImage}
           alt={`${title} - Foto ${currentIndex + 1}`}
           fill
+          sizes="(max-width: 1024px) 100vw, 55vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           priority
         />
@@ -104,6 +105,7 @@ export default function TastingGallery({
                   src={img}
                   alt={`Miniatura ${idx + 1}`}
                   fill
+                  sizes="80px"
                   className="object-cover"
                 />
               </button>

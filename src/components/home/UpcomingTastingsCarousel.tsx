@@ -88,6 +88,7 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                 src={nextTasting.cover_image || "/logo-header-full.png"} 
                 alt={locale === "es" ? nextTasting.title_es : nextTasting.title_en} 
                 fill 
+                sizes="(max-width: 768px) 100vw, 50vw" 
                 className="object-cover transition-transform duration-700 group-hover:scale-105" 
               />
             </div>
@@ -199,6 +200,7 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                         src={tasting.cover_image || "/logo-header-full.png"} 
                         alt={locale === "es" ? tasting.title_es : tasting.title_en} 
                         fill 
+                        sizes="(max-width: 768px) 100vw, 50vw" 
                         className="object-cover transition-transform duration-700 group-hover:scale-105" 
                       />
                     </div>

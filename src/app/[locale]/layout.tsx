@@ -49,6 +49,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       "Things to do in Albir", "Altea tourist activities", "Bodegas Costa Blanca"
     ],
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es"),
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        es: "/es",
+        en: "/en",
+      },
+    },
     openGraph: {
       title,
       description,

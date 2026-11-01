@@ -1,3 +1,12 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 import { requireAdmin } from "@/lib/supabase/adminAuth";
 import { LogOut } from "lucide-react";
 import LogoutButton from "./LogoutButton";

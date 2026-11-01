@@ -1,3 +1,12 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import FeedbackForm from './FeedbackForm';

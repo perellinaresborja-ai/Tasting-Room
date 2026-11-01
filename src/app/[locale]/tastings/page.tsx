@@ -1,3 +1,40 @@
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const isEn = locale === "en";
+  const title = isEn ? "Upcoming Wine Tastings & Experiences" : "Catas y Experiencias Gastronómicas";
+  const description = isEn
+    ? "Discover and reserve our upcoming wine and spirit tastings in El Albir (Alicante). Limited seats in an intimate, sophisticated atmosphere."
+    : "Descubre y reserva nuestras próximas catas de vinos, espumosos y destilados en El Albir (Alicante). Plazas limitadas en un ambiente íntimo y sofisticado.";
+  const path = isEn ? "/en/tastings" : "/es/catas";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${siteUrl}${path}`,
+      languages: {
+        es: `${siteUrl}/es/catas`,
+        en: `${siteUrl}/en/tastings`,
+      },
+    },
+    openGraph: {
+      title: `${title} | The Church Tasting Room`,
+      description,
+      url: `${siteUrl}${path}`,
+      siteName: "The Church Tasting Room",
+      locale: isEn ? "en_US" : "es_ES",
+      type: "website",
+    },
+  };
+}
+
 import {getTranslations, setRequestLocale} from "next-intl/server";
 import {Link} from "@/i18n/routing";
 import Image from "next/image";
@@ -43,6 +80,7 @@ export default async function TastingsPage({
                 src={tasting.cover_image || "/logo-header-full.png"} 
                 alt={locale === "es" ? tasting.title_es : tasting.title_en} 
                 fill 
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
                 className="object-cover transition-transform duration-700 group-hover:scale-105" 
               />
             </div>
