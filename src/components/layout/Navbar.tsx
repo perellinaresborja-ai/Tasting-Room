@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
@@ -10,6 +11,8 @@ export default function Navbar({ locale }: { locale: string }) {
   const t = useTranslations("Nav");
   const tNav = useTranslations("Navigation");
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const params = useParams();
   
   const navLinks = [
     { href: "/tastings", label: t("tastings") },
@@ -45,9 +48,23 @@ export default function Navbar({ locale }: { locale: string }) {
         {/* Right side (Desktop & Mobile) */}
         <div className="flex items-center flex-shrink-0 gap-4 text-sm font-semibold">
           <div className="flex items-center gap-2">
-            <Link href="/" locale="es" className={`${locale === "es" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>ES</Link>
+            <Link 
+              // @ts-expect-error next-intl dynamic route typing
+              href={{ pathname, params }} 
+              locale="es" 
+              className={`${locale === "es" ? "text-[var(--color-gold)] font-bold" : "text-gray-500"} hover:text-[var(--color-gold)] transition-colors`}
+            >
+              ES
+            </Link>
             <span className="text-gray-700">|</span>
-            <Link href="/" locale="en" className={`${locale === "en" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>EN</Link>
+            <Link 
+              // @ts-expect-error next-intl dynamic route typing
+              href={{ pathname, params }} 
+              locale="en" 
+              className={`${locale === "en" ? "text-[var(--color-gold)] font-bold" : "text-gray-500"} hover:text-[var(--color-gold)] transition-colors`}
+            >
+              EN
+            </Link>
           </div>
           
           {/* Mobile Menu Toggle */}
