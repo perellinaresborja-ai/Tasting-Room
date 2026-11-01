@@ -29,10 +29,10 @@ export default async function HomePage({
       {/* HERO */}
       <section className="relative h-[85vh] min-h-[700px] flex items-center justify-center text-center px-4 overflow-hidden">
         <Image 
-          src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=2070&auto=format&fit=crop" 
-          alt="The Church Atmosphere" 
+          src="/sala.jpg" 
+          alt="The Church Tasting Room" 
           fill 
-          className="object-cover opacity-30" 
+          className="object-cover opacity-25" 
           priority 
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#141414]/50 to-[var(--background)] z-0"></div>
