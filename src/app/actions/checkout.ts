@@ -22,7 +22,10 @@ export async function createCheckoutSession(formData: FormData) {
     const tickets = parseInt(formData.get('tickets') as string, 10);
     const locale = formData.get('locale') as string || 'es';
     const isGift = formData.get('is_gift') === 'true';
+    const giftDelivery = (formData.get('gift_delivery') as string) || 'whatsapp';
     const recipientName = (formData.get('recipient_name') as string)?.trim() || '';
+    const recipientEmail = (formData.get('recipient_email') as string)?.trim() || '';
+    const recipientPhone = (formData.get('recipient_phone') as string)?.trim() || '';
     const giftMessage = (formData.get('gift_message') as string)?.trim() || '';
 
     if (!tastingId || !firstName || !lastName || !email || !tickets) {
@@ -110,7 +113,10 @@ export async function createCheckoutSession(formData: FormData) {
         reservation_id: reservationId,
         tasting_id: tastingId,
         is_gift: isGift ? 'true' : 'false',
+        gift_delivery: giftDelivery,
         recipient_name: recipientName,
+        recipient_email: recipientEmail,
+        recipient_phone: recipientPhone,
         gift_message: giftMessage,
         buyer_name: `${firstName} ${lastName}`.trim(),
       },

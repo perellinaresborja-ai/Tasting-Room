@@ -33,6 +33,9 @@ export default async function SuccessPage({ searchParams, params }: { searchPara
         giftData = {
           isGift: true,
           recipientName: session.metadata.recipient_name,
+          recipientEmail: session.metadata.recipient_email,
+          recipientPhone: session.metadata.recipient_phone,
+          giftDelivery: session.metadata.gift_delivery,
           giftMessage: session.metadata.gift_message,
           buyerName: session.metadata.buyer_name,
           tastingTitle: locale === 'es' ? tasting?.title_es : tasting?.title_en,

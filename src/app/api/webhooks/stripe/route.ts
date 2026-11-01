@@ -257,6 +257,24 @@ export async function POST(req: Request) {
               html: html
             });
 
+            // If it's a gift and recipient email is provided, send directly to recipient too!
+            const recipientEmail = session.metadata?.recipient_email;
+            if (isGift && recipientEmail && recipientEmail.includes('@')) {
+              try {
+                await resend.emails.send({
+                  from: 'The Church Tasting Room <info@tastingroom.es>',
+                  to: recipientEmail,
+                  subject: locale === 'en' 
+                    ? `🎁 You received a Tasting Gift Voucher: ${title}!` 
+                    : `🎁 ¡Tienes un regalo! Tarjeta de Experiencia: ${title}`,
+                  html: html
+                });
+                console.log(`Direct gift voucher email sent to recipient ${recipientEmail}`);
+              } catch (recipErr) {
+                console.error('Error sending direct email to gift recipient:', recipErr);
+              }
+            }
+
             // Mark email as sent
             await supabaseAdmin
               .from('reservations')
