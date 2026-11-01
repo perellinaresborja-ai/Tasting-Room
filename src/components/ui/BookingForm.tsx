@@ -140,6 +140,25 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
             Solo para mayores de 18 años.
           </p>
         )}
+
+        <div className="pt-4 border-t border-[var(--color-charcoal)] text-center">
+          <p className="text-xs text-gray-400 mb-1.5 font-light">
+            {locale === 'es' ? '🎁 ¿Quieres regalar esta experiencia?' : '🎁 Looking to gift this tasting?'}
+          </p>
+          <a
+            href={`https://wa.me/34626218295?text=${encodeURIComponent(
+              locale === 'es' 
+                ? 'Hola, me gustaría comprar una tarjeta regalo para una cata en The Church Tasting Room.' 
+                : 'Hello, I would like to buy a gift card for a tasting at The Church Tasting Room.'
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[var(--color-gold)] hover:underline inline-flex items-center gap-1 uppercase tracking-wider font-semibold"
+          >
+            <span>{locale === 'es' ? 'Solicitar Tarjeta Regalo en PDF' : 'Request Digital Gift Card'}</span>
+            <span>→</span>
+          </a>
+        </div>
       </div>
     </div>
   );

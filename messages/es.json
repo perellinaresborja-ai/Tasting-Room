@@ -125,5 +125,11 @@
   },
   "Navigation": {
     "member_access": "Mi Capilla"
+  },
+  "PrivateEvents": {
+    "badge": "Espacio Exclusivo",
+    "title": "Catas Privadas y Eventos en el Tasting Room",
+    "desc": "Disfruta de nuestro Tasting Room en exclusiva: un espacio independiente, cubierto y climatizado en The Church, dedicado únicamente a catas y experiencias privadas. Diseñamos maridajes y eventos a medida para tu grupo o empresa.",
+    "cta": "CONSULTAR TASTING ROOM PRIVADO"
   }
 }

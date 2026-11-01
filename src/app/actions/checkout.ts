@@ -84,7 +84,7 @@ export async function createCheckoutSession(formData: FormData) {
     const stripeDescription = `${tickets}x Ticket(s) - ${plainDesc}`.substring(0, 500);
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+
       mode: 'payment',
       customer_email: email,
       metadata: {

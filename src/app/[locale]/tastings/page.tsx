@@ -54,10 +54,16 @@ export default async function TastingsPage({
                   <span>{formatDate(tasting.date, locale)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-sm text-[var(--color-warm-white)]">
+              <div className="flex items-center gap-3 text-sm text-[var(--color-warm-white)] mb-3">
                 <span className="text-[var(--color-gold)]">⏱</span> 
                 {formatTime(tasting.start_time)}
               </div>
+              {tasting.capacity && (
+                <div className="flex items-center gap-3 text-xs text-gray-400 uppercase tracking-wider">
+                  <span className="text-[var(--color-gold)]">🍷</span> 
+                  <span>{locale === 'es' ? `Aforo: ${tasting.capacity} plazas` : `Capacity: ${tasting.capacity} seats`}</span>
+                </div>
+              )}
             </div>
             <div className="p-8 border-t border-[var(--color-charcoal)] flex justify-between items-center bg-[#111]">
               <span className="text-lg text-[var(--color-gold)]">€{tasting.price.toFixed(2)}</span>

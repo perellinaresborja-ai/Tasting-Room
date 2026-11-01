@@ -109,6 +109,16 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                 <div className="flex items-center gap-3">
                   <span className="text-[var(--color-gold)]">€</span> {nextTasting.price.toFixed(2)}
                 </div>
+                {nextTasting.capacity && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-[var(--color-gold)]">🍷</span> 
+                    <span className="text-xs uppercase tracking-wider text-gray-300">
+                      {locale === 'es' 
+                        ? `Aforo íntimo: ${nextTasting.capacity} plazas` 
+                        : `Intimate capacity: ${nextTasting.capacity} seats`}
+                    </span>
+                  </div>
+                )}
               </div>
               
               {isSoldOut ? (
@@ -201,6 +211,16 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                         <div className="flex items-center gap-3">
                           <span className="text-[var(--color-gold)]">€</span> {tasting.price.toFixed(2)}
                         </div>
+                        {tasting.capacity && (
+                          <div className="flex items-center gap-3">
+                            <span className="text-[var(--color-gold)]">🍷</span> 
+                            <span className="text-xs uppercase tracking-wider text-gray-300">
+                              {locale === 'es' 
+                                ? `Aforo íntimo: ${tasting.capacity} plazas` 
+                                : `Intimate capacity: ${tasting.capacity} seats`}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       
                       <div className="mt-auto pt-4">

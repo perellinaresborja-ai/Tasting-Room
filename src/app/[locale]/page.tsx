@@ -13,6 +13,7 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("Index");
+  const tPrivate = await getTranslations("PrivateEvents");
 
   // Fetch real next tastings from database
   const supabase = await createClient();
@@ -62,6 +63,34 @@ export default async function HomePage({
           labelNextTasting={t("next_tasting")} 
         />
       )}
+
+      {/* PRIVATE EVENTS / CATAS PRIVADAS */}
+      <section className="py-20 px-4 md:px-8 bg-[#0a0a0a] border-t border-[var(--color-charcoal)]">
+        <div className="max-w-3xl mx-auto text-center">
+          <span className="text-xs text-[var(--color-gold)] uppercase tracking-[0.3em] mb-4 block">
+            {tPrivate("badge")}
+          </span>
+          <h3 className="text-3xl md:text-4xl font-serif text-[var(--color-warm-white)] mb-6 leading-tight">
+            {tPrivate("title")}
+          </h3>
+          <p className="text-gray-400 font-light text-base md:text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
+            {tPrivate("desc")}
+          </p>
+          <a
+            href={`https://wa.me/34626218295?text=${encodeURIComponent(
+              locale === "es"
+                ? "Hola, me gustaría solicitar información sobre reservar el Tasting Room para un evento o cata privada."
+                : "Hello, I would like to inquire about booking the Tasting Room for a private tasting or event."
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 border border-[var(--color-gold)] text-[var(--color-gold)] hover:bg-[var(--color-gold)] hover:text-black px-8 py-3.5 text-xs font-bold uppercase tracking-widest transition-all"
+          >
+            <span>💬</span>
+            <span>{tPrivate("cta")}</span>
+          </a>
+        </div>
+      </section>
 
       {/* SUBSCRIBE */}
       <section className="py-24 px-4 md:px-8 bg-[#141414] border-t border-[var(--color-charcoal)]">

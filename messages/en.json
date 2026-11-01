@@ -125,5 +125,11 @@
   },
   "Navigation": {
     "member_access": "My Chapel"
+  },
+  "PrivateEvents": {
+    "badge": "Exclusive Space",
+    "title": "Private Tastings & Events at The Tasting Room",
+    "desc": "Enjoy our Tasting Room exclusively: an independent, enclosed space at The Church dedicated solely to tastings and private gatherings. We curate bespoke food and wine pairings tailored to your private group or corporate event.",
+    "cta": "INQUIRE ABOUT PRIVATE TASTING ROOM"
   }
 }
