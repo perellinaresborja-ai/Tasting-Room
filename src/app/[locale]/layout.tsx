@@ -9,6 +9,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AgeVerificationModal from "@/components/ui/AgeVerificationModal";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import LocalBusinessJsonLd from "@/components/seo/LocalBusinessJsonLd";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -92,6 +93,7 @@ export default async function LocaleLayout({
     <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
       <body className="antialiased font-sans bg-[var(--background)] text-[var(--foreground)] min-h-screen flex flex-col">
         <NextIntlClientProvider messages={messages}>
+          <LocalBusinessJsonLd />
           <AgeVerificationModal />
           <Navbar locale={locale} />
           <main className="flex-grow">

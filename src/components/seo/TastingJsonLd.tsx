@@ -17,10 +17,13 @@ export default function TastingJsonLd({ tasting, locale }: { tasting: Tasting, l
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
     "location": {
       "@type": "Place",
-      "name": tasting.location,
+      "name": "The Church Tasting Room",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Madrid",
+        "streetAddress": "Camí Vell d'Altea, 26",
+        "addressLocality": "L'Albir, L'Alfàs del Pi",
+        "addressRegion": "Alicante",
+        "postalCode": "03581",
         "addressCountry": "ES"
       }
     },

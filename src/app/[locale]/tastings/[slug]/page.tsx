@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import {getTranslations, setRequestLocale} from "next-intl/server";
 import {Link} from "@/i18n/routing";
 import { notFound } from "next/navigation";
@@ -7,6 +8,62 @@ import { createClient } from "@/lib/supabase/server";
 import BookingForm from "@/components/ui/BookingForm";
 import TastingViewTracker from "@/components/analytics/TastingViewTracker";
 import TastingGallery from "@/components/tastings/TastingGallery";
+import TastingJsonLd from "@/components/seo/TastingJsonLd";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const supabase = await createClient();
+  const { data: tasting } = await supabase.from('tastings').select('*').eq('slug', slug).single();
+
+  if (!tasting) {
+    return {
+      title: "Cata | The Church Tasting Room",
+    };
+  }
+
+  const title = locale === "es" ? tasting.title_es : tasting.title_en;
+  const description = locale === "es" ? tasting.description_es : tasting.description_en;
+  const image = tasting.cover_image || "/og-image.png";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const path = locale === "es" ? `/es/catas/${slug}` : `/en/tastings/${slug}`;
+
+  return {
+    title: `${title} | The Church Tasting Room`,
+    description: description ? description.slice(0, 160) : undefined,
+    alternates: {
+      canonical: `${siteUrl}${path}`,
+      languages: {
+        es: `${siteUrl}/es/catas/${slug}`,
+        en: `${siteUrl}/en/tastings/${slug}`,
+      },
+    },
+    openGraph: {
+      title: `${title} | The Church Tasting Room`,
+      description: description ? description.slice(0, 160) : undefined,
+      url: `${siteUrl}${path}`,
+      siteName: "The Church Tasting Room",
+      images: [
+        {
+          url: image.startsWith("http") ? image : `${siteUrl}${image}`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | The Church Tasting Room`,
+      description: description ? description.slice(0, 160) : undefined,
+      images: [image.startsWith("http") ? image : `${siteUrl}${image}`],
+    },
+  };
+}
 
 export default async function TastingDetailPage({
   params,
@@ -32,6 +89,7 @@ export default async function TastingDetailPage({
 
   return (
     <main className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+      <TastingJsonLd tasting={tasting} locale={locale} />
       <TastingViewTracker tastingId={tasting.id} />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         <div>

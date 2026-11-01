@@ -18,12 +18,13 @@ export default async function ContactPage({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <div className="relative h-[60vh]">
+        <div className="relative h-[60vh] overflow-hidden border border-[var(--color-charcoal)]">
           <Image 
-            src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop" 
-            alt="The Church Tasting Room Location" 
+            src="/sala.jpg" 
+            alt="The Church Tasting Room Albir" 
             fill 
             className="object-cover" 
+            priority
           />
         </div>
 
