@@ -26,7 +26,7 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
   const totalCompletedTicketsSold = completedConfirmedRes.reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
   const avgOccupancy = totalCompletedCapacity > 0 ? (totalCompletedTicketsSold / totalCompletedCapacity) * 100 : 0;
   
-  const realAttendance = confirmedRes.filter((r: any) => r.check_in_time).reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
+  const realAttendance = confirmedRes.reduce((acc: number, r: any) => acc + (typeof r.checked_in_tickets === 'number' ? r.checked_in_tickets : (r.check_in_time ? (r.tickets || 0) : 0)), 0);
   
   const uniqueClients = new Set(confirmedRes.map((r: any) => r.profile_id)).size;
   const clientCounts = confirmedRes.reduce((acc: any, r: any) => {

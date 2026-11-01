@@ -37,7 +37,7 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
   const loadData = useCallback(async () => {
     const { data } = await supabase
       .from('reservations')
-      .select('id, tickets, payment_status, reservation_type, status, check_in_time, created_at, customer:profiles(first_name, last_name, phone, email)')
+      .select('id, tickets, checked_in_tickets, payment_status, reservation_type, status, check_in_time, created_at, customer:profiles(first_name, last_name, phone, email)')
       .eq('tasting_id', tastingId)
       .not('payment_status', 'in', '("FAILED", "REFUNDED")'); // Only valid payments (mostly PAID)
       
@@ -72,8 +72,8 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
   const validReservations = reservations.filter(r => r.status === 'CONFIRMED' && (r.payment_status === 'PAID' || r.payment_status === 'NOT_REQUIRED'));
   
   const totalSpots = validReservations.reduce((sum, r) => sum + r.tickets, 0);
-  const arrivedSpots = validReservations.filter(r => r.check_in_time).reduce((sum, r) => sum + r.tickets, 0);
-  const pendingSpots = totalSpots - arrivedSpots;
+  const arrivedSpots = validReservations.reduce((sum, r) => sum + (typeof (r as any).checked_in_tickets === 'number' ? (r as any).checked_in_tickets : (r.check_in_time ? r.tickets : 0)), 0);
+  const pendingSpots = Math.max(0, totalSpots - arrivedSpots);
   
   const isComplete = totalSpots > 0 && pendingSpots === 0;
 
@@ -86,8 +86,9 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
     }
 
     if (r.status !== 'CONFIRMED') return false;
-    if (filter === 'PENDING') return !r.check_in_time;
-    if (filter === 'ARRIVED') return !!r.check_in_time;
+    const used = typeof (r as any).checked_in_tickets === 'number' ? (r as any).checked_in_tickets : (r.check_in_time ? r.tickets : 0);
+    if (filter === 'PENDING') return used < r.tickets;
+    if (filter === 'ARRIVED') return used === r.tickets;
     return true;
   });
 
@@ -195,6 +196,15 @@ export default function AttendeesLiveView({ tastingId, tastingTitle }: Props) {
                 </div>
                 <div className="text-right flex flex-col items-end">
                   <span className="text-[var(--color-gold)] font-bold text-lg">{res.tickets} {res.tickets > 1 ? 'plazas' : 'plaza'}</span>
+                  {(() => {
+                    const used = typeof (res as any).checked_in_tickets === 'number'
+                      ? (res as any).checked_in_tickets
+                      : (res.check_in_time ? res.tickets : 0);
+                    if (res.status !== 'CONFIRMED') return null;
+                    if (used === 0) return <span className="text-gray-500 text-[10px]">0/{res.tickets} validadas</span>;
+                    if (used < res.tickets) return <span className="text-yellow-400 text-[10px] font-bold">{used}/{res.tickets} parcial</span>;
+                    return <span className="text-green-400 text-[10px] font-bold">{res.tickets}/{res.tickets} completo</span>;
+                  })()}
                   <span className={`text-[10px] uppercase tracking-widest font-bold mt-1 px-2 py-1 ${
                     res.reservation_type === 'INVITATION' ? 'bg-blue-900/30 text-blue-400' :
                     res.status === 'CONFIRMED' ? 'bg-green-900/30 text-green-400' : 
