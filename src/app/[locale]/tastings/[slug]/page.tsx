@@ -6,6 +6,7 @@ import { formatDate, formatDayOfWeek, formatTime } from "@/lib/utils/formatDate"
 import { createClient } from "@/lib/supabase/server";
 import BookingForm from "@/components/ui/BookingForm";
 import TastingViewTracker from "@/components/analytics/TastingViewTracker";
+import TastingGallery from "@/components/tastings/TastingGallery";
 
 export default async function TastingDetailPage({
   params,
@@ -33,13 +34,11 @@ export default async function TastingDetailPage({
     <main className="max-w-7xl mx-auto px-4 md:px-8 py-16">
       <TastingViewTracker tastingId={tasting.id} />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        <div className="relative h-[50vh] lg:h-[70vh] border border-[var(--color-charcoal)]">
-          <Image 
-            src={tasting.cover_image || "/logo-header-full.png"} 
-            alt={locale === "es" ? tasting.title_es : tasting.title_en} 
-            fill 
-            className="object-cover" 
-            priority
+        <div>
+          <TastingGallery 
+            coverImage={tasting.cover_image} 
+            galleryImages={tasting.gallery_images}
+            title={locale === "es" ? tasting.title_es : tasting.title_en} 
           />
         </div>
         <div className="flex flex-col justify-center">

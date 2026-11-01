@@ -21,6 +21,7 @@ export type InitialTastingData = {
   capacity?: number;
   includes_alcohol?: boolean;
   cover_image?: string;
+  gallery_images?: string[];
   seo_title?: string;
   seo_description?: string;
   slug?: string;
@@ -32,6 +33,7 @@ export type InitialTastingData = {
   subtitle_en?: string;
   guests?: { name: string; role: string; company?: string; photo?: string; avatar_url?: string }[];
 };
+
 export default function AdminTastingForm({ initialData = null }: { initialData?: InitialTastingData | null /* eslint-disable-line @typescript-eslint/no-explicit-any */ }) {
   const [formData, setFormData] = useState(initialData || {
     title_es: "",
@@ -52,12 +54,14 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
     guests: [],
     includes_alcohol: true,
     status: "DRAFT",
-    cover_image: ""
+    cover_image: "",
+    gallery_images: []
   });
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgressText, setUploadProgressText] = useState<string | null>(null);
   
   const supabase = createClient();
   const router = useRouter();
@@ -82,6 +86,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
     const file = e.target.files[0];
     
     setIsUploading(true);
+    setUploadProgressText("Subiendo imagen de portada...");
     try {
       const data = new FormData();
       data.append('file', file);
@@ -95,7 +100,49 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
       alert("Error de conexión al subir la imagen");
     } finally {
       setIsUploading(false);
+      setUploadProgressText(null);
     }
+  };
+
+  const handleGalleryFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const files = Array.from(e.target.files);
+    
+    setIsUploading(true);
+    try {
+      const uploadedUrls: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        setUploadProgressText(`Subiendo foto ${i + 1} de ${files.length}...`);
+        const data = new FormData();
+        data.append('file', files[i]);
+        const res = await uploadImageAction(data);
+        if (res.success && res.url) {
+          uploadedUrls.push(res.url);
+        } else {
+          alert(`Error al subir ${files[i].name}: ${res.error || 'Desconocido'}`);
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        setFormData((prev: InitialTastingData) => ({
+          ...prev,
+          gallery_images: [...(prev.gallery_images || []), ...uploadedUrls]
+        }));
+      }
+    } catch (err) {
+      alert("Error al subir fotos de la galería");
+    } finally {
+      setIsUploading(false);
+      setUploadProgressText(null);
+      e.target.value = '';
+    }
+  };
+
+  const removeGalleryImage = (indexToRemove: number) => {
+    setFormData((prev: InitialTastingData) => ({
+      ...prev,
+      gallery_images: (prev.gallery_images || []).filter((_: any, idx: number) => idx !== indexToRemove)
+    }));
   };
 
   const addGuest = () => {
@@ -121,6 +168,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
   const handleGuestPhotoChange = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setIsUploading(true);
+    setUploadProgressText("Subiendo foto de invitado...");
     try {
       const data = new FormData();
       data.append('file', e.target.files[0]);
@@ -132,6 +180,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
       }
     } finally {
       setIsUploading(false);
+      setUploadProgressText(null);
     }
   };
 
@@ -154,6 +203,9 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
     if (!dataToSave.subtitle_en) delete dataToSave.subtitle_en;
     if (!dataToSave.host) delete dataToSave.host;
     if (!dataToSave.cover_image) delete dataToSave.cover_image;
+    if (!dataToSave.gallery_images || dataToSave.gallery_images.length === 0) {
+      delete dataToSave.gallery_images;
+    }
 
     const res = await saveTastingAction(dataToSave, initialData?.id);
   
@@ -251,7 +303,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
-          <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Imagen de Portada</label>
+          <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Imagen de Portada Principal</label>
           <div className="flex items-center gap-4">
             {formData.cover_image && (
               <div className="w-16 h-16 relative flex-shrink-0">
@@ -267,8 +319,60 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
               className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-transparent focus:border-[var(--color-gold)] outline-none file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-bold file:uppercase file:tracking-widest file:bg-[var(--color-gold)] file:text-black hover:file:bg-[var(--color-gold-hover)] cursor-pointer" 
             />
           </div>
-          {isUploading && <p className="text-[var(--color-gold)] text-xs mt-2 uppercase tracking-widest">Subiendo imagen...</p>}
         </div>
+
+        {/* GALERÍA DE FOTOS ADICIONALES */}
+        <div className="md:col-span-2 border-t border-[var(--color-charcoal)] pt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-gray-400">
+                Galería de Fotos Adicionales (Opcional)
+              </label>
+              <p className="text-xs text-gray-500 mt-1">
+                Sube fotos adicionales (botellas, platos, detalles) para que los clientes vean un carrusel interactivo en la web.
+              </p>
+            </div>
+            <label className="cursor-pointer bg-[#1e1e1e] hover:bg-[var(--color-gold)] hover:text-black text-[var(--color-gold)] border border-[var(--color-gold)] px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2">
+              <span>+ Añadir Fotos</span>
+              <input 
+                type="file" 
+                accept="image/*" 
+                multiple 
+                disabled={isUploading} 
+                onChange={handleGalleryFilesChange} 
+                className="hidden" 
+              />
+            </label>
+          </div>
+
+          {(formData.gallery_images || []).length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 pt-2">
+              {(formData.gallery_images || []).map((imgUrl: string, idx: number) => (
+                <div key={idx} className="relative group aspect-square border border-[var(--color-charcoal)] bg-black overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={imgUrl} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeGalleryImage(idx)}
+                    className="absolute top-1 right-1 bg-red-600/90 hover:bg-red-600 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Eliminar foto"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {uploadProgressText && (
+          <div className="md:col-span-2">
+            <p className="text-[var(--color-gold)] text-xs uppercase tracking-widest animate-pulse">
+              ⏳ {uploadProgressText}
+            </p>
+          </div>
+        )}
+
         <div>
           <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Host (Opcional)</label>
           <input type="text" name="host" value={formData.host} onChange={handleChange} className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none" />

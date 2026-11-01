@@ -20,17 +20,17 @@ export default function Navbar({ locale }: { locale: string }) {
 
   return (
     <header className="relative z-50 border-b border-[var(--color-charcoal)] py-3 px-4 md:px-8 bg-[var(--background)]">
-      <div className="max-w-7xl mx-auto flex md:grid md:grid-cols-3 items-center justify-between">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 lg:gap-8">
         
         {/* Logo */}
-        <div className="flex-shrink-0 justify-self-start">
+        <div className="flex-shrink-0">
           <Link href="/" className="flex items-center">
             <Image src="/logo-header-full.png" alt="The Church Tasting Room" width={180} height={45} className="object-contain" />
           </Link>
         </div>
         
         {/* Desktop Nav */}
-        <nav className="hidden md:flex justify-self-center items-center gap-3 lg:gap-6 xl:gap-10 text-xs lg:text-sm uppercase tracking-wider text-[var(--color-warm-white)]">
+        <nav className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8 text-xs lg:text-sm uppercase tracking-wider text-[var(--color-warm-white)] flex-shrink-0">
           {navLinks.map((link) => (
             <Link 
               key={link.href} 
@@ -43,11 +43,11 @@ export default function Navbar({ locale }: { locale: string }) {
         </nav>
         
         {/* Right side (Desktop & Mobile) */}
-        <div className="flex items-center justify-self-end gap-4 text-sm font-semibold">
+        <div className="flex items-center flex-shrink-0 gap-4 text-sm font-semibold">
           <div className="flex items-center gap-2">
-            <Link href="/" locale="en" className={`${locale === "en" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>EN</Link>
-            <span className="text-gray-700">|</span>
             <Link href="/" locale="es" className={`${locale === "es" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>ES</Link>
+            <span className="text-gray-700">|</span>
+            <Link href="/" locale="en" className={`${locale === "en" ? "text-[var(--color-gold)]" : "text-gray-500"} hover:text-[var(--color-gold)]`}>EN</Link>
           </div>
           
           {/* Mobile Menu Toggle */}

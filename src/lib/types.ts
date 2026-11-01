@@ -10,6 +10,7 @@ export interface Tasting {
   description_es: string;
   description_en: string;
   cover_image?: string;
+  gallery_images?: string[];
   category?: string;
   date: string;
   start_time: string;
