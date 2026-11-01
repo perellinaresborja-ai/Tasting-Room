@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
+import { Compass, CalendarCheck, QrCode, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import SubscribeForm from "@/components/ui/SubscribeForm";
 import UpcomingTastingsCarousel from "@/components/home/UpcomingTastingsCarousel";
@@ -14,6 +15,7 @@ export default async function HomePage({
   setRequestLocale(locale);
   const t = await getTranslations("Index");
   const tPrivate = await getTranslations("PrivateEvents");
+  const tHow = await getTranslations("HowItWorks");
 
   // Fetch real next tastings from database
   const supabase = await createClient();
@@ -24,6 +26,33 @@ export default async function HomePage({
     .in('status', ['PUBLISHED', 'SOLD_OUT'])
     .gte('date', today)
     .order('date', { ascending: true });
+
+  const howItWorksSteps = [
+    {
+      number: tHow("step1_number"),
+      title: tHow("step1_title"),
+      desc: tHow("step1_desc"),
+      icon: Compass,
+    },
+    {
+      number: tHow("step2_number"),
+      title: tHow("step2_title"),
+      desc: tHow("step2_desc"),
+      icon: CalendarCheck,
+    },
+    {
+      number: tHow("step3_number"),
+      title: tHow("step3_title"),
+      desc: tHow("step3_desc"),
+      icon: QrCode,
+    },
+    {
+      number: tHow("step4_number"),
+      title: tHow("step4_title"),
+      desc: tHow("step4_desc"),
+      icon: Sparkles,
+    },
+  ];
 
   return (
     <main className="flex flex-col">
@@ -70,6 +99,45 @@ export default async function HomePage({
                 <span>{locale === "es" ? "Regala una cata" : "Gift a Tasting"}</span>
               </Link>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS / ¿CÓMO FUNCIONA? */}
+      <section className="py-16 md:py-20 px-4 md:px-8 bg-[#0b0b0b] border-t border-b border-[var(--color-charcoal)] relative">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12 md:mb-14">
+            <h2 className="text-2xl md:text-3xl font-serif text-[var(--color-gold)] uppercase tracking-wider">
+              {tHow("title")}
+            </h2>
+            <div className="w-12 h-px bg-[var(--color-gold)]/40 mx-auto mt-4" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-6">
+            {howItWorksSteps.map((step) => {
+              const Icon = step.icon;
+              return (
+                <div
+                  key={step.number}
+                  className="flex flex-col p-6 rounded-sm bg-[#131313] border border-[var(--color-charcoal)] hover:border-[var(--color-gold)]/40 transition-colors duration-300"
+                >
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="font-serif text-2xl md:text-3xl font-bold text-[var(--color-gold)] tracking-widest">
+                      {step.number}
+                    </span>
+                    <div className="w-10 h-10 rounded-full bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/20 flex items-center justify-center text-[var(--color-gold)]">
+                      <Icon className="w-5 h-5" strokeWidth={1.5} />
+                    </div>
+                  </div>
+                  <h3 className="font-serif text-lg text-[var(--color-warm-white)] font-medium mb-3 leading-snug">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-gray-400 font-light leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

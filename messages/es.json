@@ -131,5 +131,20 @@
     "title": "Catas Privadas y Eventos en The Tasting Room",
     "desc": "Disfruta de nuestro Tasting Room en exclusiva: un espacio independiente y acogedor en The Church, dedicado únicamente a catas y experiencias privadas. Diseñamos maridajes y eventos a medida para tu grupo o empresa.",
     "cta": "CONSULTAR TASTING ROOM PRIVADO"
+  },
+  "HowItWorks": {
+    "title": "¿Cómo funciona?",
+    "step1_number": "01",
+    "step1_title": "Descubre nuestras experiencias",
+    "step1_desc": "Explora las próximas catas, conoce sus propuestas y elige la que más te apetezca.",
+    "step2_number": "02",
+    "step2_title": "Reserva tu plaza",
+    "step2_desc": "Selecciona el número de asistentes y confirma tu reserva online.",
+    "step3_number": "03",
+    "step3_title": "Accede a Mi Capilla",
+    "step3_desc": "Consulta tus reservas y tu QR personal, que utilizarás para acceder a tus experiencias.",
+    "step4_number": "04",
+    "step4_title": "Vive la experiencia",
+    "step4_desc": "Ven a The Church, presenta tu QR y disfruta de una cata diferente."
   }
 }

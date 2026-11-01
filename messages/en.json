@@ -131,5 +131,20 @@
     "title": "Private Tastings & Events at The Tasting Room",
     "desc": "Enjoy our Tasting Room exclusively: an independent, intimate space at The Church dedicated solely to tastings and private gatherings. We curate bespoke food and wine pairings tailored to your private group or corporate event.",
     "cta": "INQUIRE ABOUT PRIVATE TASTING ROOM"
+  },
+  "HowItWorks": {
+    "title": "How does it work?",
+    "step1_number": "01",
+    "step1_title": "Discover our experiences",
+    "step1_desc": "Explore our upcoming tastings, discover what makes each one special and choose your favourite.",
+    "step2_number": "02",
+    "step2_title": "Book your place",
+    "step2_desc": "Select the number of guests and confirm your booking online.",
+    "step3_number": "03",
+    "step3_title": "Access My Chapel",
+    "step3_desc": "View your reservations and your personal QR code, which you will use to access your experiences.",
+    "step4_number": "04",
+    "step4_title": "Enjoy the experience",
+    "step4_desc": "Visit The Church, present your QR code and enjoy a unique tasting experience."
   }
 }
