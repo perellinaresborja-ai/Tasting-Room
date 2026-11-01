@@ -83,14 +83,17 @@ export default function SuccessPoller({
 
           {/* TARJETA REGALO VISUAL */}
           <div className="my-6 p-6 sm:p-8 bg-[#111] border-2 border-[var(--color-gold)] text-left shadow-2xl relative print:border-black print:bg-white print:text-black">
-            <div className="flex justify-between items-start border-b border-[var(--color-charcoal)] pb-4 mb-4">
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-gold)] block">The Church Tasting Room</span>
-                <h2 className="text-xl sm:text-2xl font-serif text-white mt-1 print:text-black">
-                  {locale === 'es' ? 'TARJETA REGALO' : 'GIFT VOUCHER'}
-                </h2>
+            <div className="border-b border-[var(--color-charcoal)] pb-4 mb-4 text-center">
+              <div className="flex justify-center mb-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-tasting-room-gold.png" alt="The Church Tasting Room" className="h-10 sm:h-12 w-auto object-contain" />
               </div>
-              <span className="text-2xl">🎁</span>
+              <h2 className="text-xl sm:text-2xl font-serif text-white tracking-[0.2em] mt-1 print:text-black font-semibold">
+                {locale === 'es' ? 'TARJETA REGALO' : 'GIFT VOUCHER'}
+              </h2>
+              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-gold)] font-medium block mt-1">
+                {locale === 'es' ? 'Experiencia Gastronómica & Maridaje' : 'Gastronomic & Wine Pairing Experience'}
+              </span>
             </div>
 
             <div className="space-y-3 text-sm">

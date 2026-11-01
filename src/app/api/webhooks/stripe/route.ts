@@ -134,8 +134,8 @@ export async function POST(req: Request) {
               html = locale === 'en' ? `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
                   <div style="text-align: center; margin-bottom: 24px;">
-                    <p style="color: #c9a96e; text-transform: uppercase; font-size: 11px; letter-spacing: 3px; margin: 0 0 8px;">The Church Tasting Room</p>
-                    <h1 style="color: #ffffff; font-size: 24px; margin: 0;">Experience Gift Voucher</h1>
+                    <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" style="height: 44px; width: auto; margin: 0 auto 12px; display: block;" />
+                    <h1 style="color: #ffffff; font-size: 22px; margin: 0; letter-spacing: 2px;">EXPERIENCE GIFT VOUCHER</h1>
                   </div>
 
                   <div style="border: 2px solid #c9a96e; padding: 24px; background-color: #111111; margin-bottom: 24px; text-align: left;">
@@ -170,8 +170,8 @@ export async function POST(req: Request) {
               ` : `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
                   <div style="text-align: center; margin-bottom: 24px;">
-                    <p style="color: #c9a96e; text-transform: uppercase; font-size: 11px; letter-spacing: 3px; margin: 0 0 8px;">The Church Tasting Room</p>
-                    <h1 style="color: #ffffff; font-size: 24px; margin: 0;">Tarjeta Regalo de Experiencia</h1>
+                    <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" style="height: 44px; width: auto; margin: 0 auto 12px; display: block;" />
+                    <h1 style="color: #ffffff; font-size: 22px; margin: 0; letter-spacing: 2px;">TARJETA REGALO DE EXPERIENCIA</h1>
                   </div>
 
                   <div style="border: 2px solid #c9a96e; padding: 24px; background-color: #111111; margin-bottom: 24px; text-align: left;">
