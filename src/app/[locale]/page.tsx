@@ -113,26 +113,31 @@ export default async function HomePage({
             <div className="w-12 h-px bg-[var(--color-gold)]/40 mx-auto mt-4" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
             {howItWorksSteps.map((step) => {
               const Icon = step.icon;
               return (
                 <div
                   key={step.number}
-                  className="flex flex-col p-4 sm:p-5 rounded-sm bg-[#131313] border border-[var(--color-charcoal)] hover:border-[var(--color-gold)]/40 transition-colors duration-300"
+                  className="flex flex-col p-3.5 sm:p-4 rounded-sm bg-[#131313] border border-[var(--color-charcoal)] hover:border-[var(--color-gold)]/40 transition-colors duration-300"
                 >
-                  <div className="flex items-center justify-between mb-3 sm:mb-4">
-                    <span className="font-serif text-xl sm:text-2xl md:text-3xl font-bold text-[var(--color-gold)] tracking-widest">
-                      {step.number}
-                    </span>
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/20 flex items-center justify-center text-[var(--color-gold)]">
-                      <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5" strokeWidth={1.5} />
+                  <div className="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-[var(--color-charcoal)]/60">
+                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                      <span className="font-serif text-base sm:text-lg font-bold text-[var(--color-gold)] tracking-wider shrink-0">
+                        {step.number}
+                      </span>
+                      <span className="text-[var(--color-gold)]/60 text-xs shrink-0 select-none">
+                        —
+                      </span>
+                      <h3 className="font-serif text-xs sm:text-[13px] md:text-sm lg:text-[13px] xl:text-sm text-[var(--color-warm-white)] font-medium leading-snug">
+                        {step.title}
+                      </h3>
+                    </div>
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/20 flex items-center justify-center text-[var(--color-gold)] shrink-0">
+                      <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={1.5} />
                     </div>
                   </div>
-                  <h3 className="font-serif text-base sm:text-lg text-[var(--color-warm-white)] font-medium mb-2 leading-snug">
-                    {step.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-400 font-light leading-relaxed">
+                  <p className="text-[11px] sm:text-xs text-gray-400 font-light leading-relaxed">
                     {step.desc}
                   </p>
                 </div>
