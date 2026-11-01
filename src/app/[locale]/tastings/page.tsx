@@ -41,9 +41,6 @@ export default async function TastingsPage({
               />
             </div>
             <div className="p-8">
-              <div className="text-xs text-[var(--color-gold)] uppercase tracking-widest mb-3">
-                {idx === 0 ? t("next_tasting") : t("other_tastings")}
-              </div>
               <h2 className="text-2xl font-serif text-[var(--color-warm-white)] mb-4 group-hover:text-[var(--color-gold)] transition-colors whitespace-pre-line">
                 {locale === "es" ? tasting.title_es : tasting.title_en}
               </h2>

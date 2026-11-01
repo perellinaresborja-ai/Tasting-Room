@@ -42,9 +42,6 @@ export default async function TastingDetailPage({
           />
         </div>
         <div className="flex flex-col justify-center">
-          <span className="text-sm text-[var(--color-gold)] uppercase tracking-[0.3em] mb-4">
-            {tasting.category}
-          </span>
           <h1 className="text-4xl md:text-5xl font-serif text-[var(--color-warm-white)] mb-8 leading-tight">
             {locale === "es" ? tasting.title_es : tasting.title_en}
           </h1>

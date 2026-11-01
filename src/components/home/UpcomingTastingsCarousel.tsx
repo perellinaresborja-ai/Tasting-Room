@@ -89,9 +89,6 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
               />
             </div>
             <div className="p-10 md:p-16 flex flex-col justify-center bg-[#141414]">
-              <div className="text-sm text-gray-500 uppercase tracking-widest mb-4">
-                {nextTasting.category}
-              </div>
               <h4 className="text-3xl font-serif text-[var(--color-gold)] mb-6">
                 {locale === "es" ? nextTasting.title_es : nextTasting.title_en}
               </h4>
@@ -197,9 +194,6 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                       />
                     </div>
                     <div className="p-10 md:p-16 flex flex-col justify-center bg-[#141414] h-full flex-1">
-                      <div className="text-sm text-gray-500 uppercase tracking-widest mb-4">
-                        {tasting.category}
-                      </div>
                       <h4 className="text-3xl font-serif text-[var(--color-gold)] mb-6">
                         {locale === "es" ? tasting.title_es : tasting.title_en}
                       </h4>
