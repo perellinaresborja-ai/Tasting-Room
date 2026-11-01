@@ -38,6 +38,8 @@
     "title": "Catas y Experiencias",
     "subtitle": "Reserva tu plaza en nuestras próximas catas exclusivas.",
     "empty": "No hay catas programadas en este momento.",
+    "next_tasting": "Próxima Cata",
+    "other_tastings": "Catas",
     "category": "Categoría",
     "price": "Precio",
     "book": "Reservar",

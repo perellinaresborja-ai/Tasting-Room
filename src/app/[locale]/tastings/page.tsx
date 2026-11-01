@@ -30,7 +30,7 @@ export default async function TastingsPage({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {tastingsList.map((tasting) => (
+        {tastingsList.map((tasting, idx) => (
           <Link href={{ pathname: "/tastings/[slug]", params: { slug: tasting.slug } }} key={tasting.id} className="group block border border-[var(--color-charcoal)] bg-[#0a0a0a] hover:border-[var(--color-gold)] transition-colors">
             <div className="relative h-64 overflow-hidden">
               <Image 
@@ -42,7 +42,7 @@ export default async function TastingsPage({
             </div>
             <div className="p-8">
               <div className="text-xs text-[var(--color-gold)] uppercase tracking-widest mb-3">
-                {tasting.category}
+                {idx === 0 ? t("next_tasting") : t("other_tastings")}
               </div>
               <h2 className="text-2xl font-serif text-[var(--color-warm-white)] mb-4 group-hover:text-[var(--color-gold)] transition-colors whitespace-pre-line">
                 {locale === "es" ? tasting.title_es : tasting.title_en}
