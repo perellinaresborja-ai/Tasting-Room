@@ -57,7 +57,7 @@ export default async function HomePage({
   return (
     <main className="flex flex-col overflow-x-hidden">
       {/* HERO */}
-      <section className="relative min-h-[calc(100svh-58px)] md:min-h-[660px] lg:h-[86vh] flex items-center justify-center text-center px-4 py-10 sm:py-12 md:py-16 overflow-hidden">
+      <section className="relative w-full min-h-[calc(100svh-58px)] md:min-h-[660px] lg:h-[86vh] flex items-center justify-center text-center px-4 py-10 sm:py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <Image 
             src="/sala.jpg" 
@@ -68,32 +68,32 @@ export default async function HomePage({
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#141414]/50 to-[var(--background)] z-0"></div>
-        <div className="relative z-10 max-w-4xl w-full flex flex-col items-center pt-2 sm:pt-4 md:pt-0">
+        <div className="relative z-10 max-w-4xl w-full flex flex-col items-center mx-auto pt-2 sm:pt-4 md:pt-0">
           <Image 
             src="/logo.png" 
             alt="The Church Tasting Room" 
             width={370} 
             height={400} 
             priority
-            className="object-contain w-[170px] xs:w-[200px] sm:w-[240px] md:w-[320px] lg:w-[360px] max-w-[78vw] h-auto mb-5 sm:mb-6 md:mb-8 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] mx-auto"
+            className="block object-contain w-[170px] sm:w-[240px] md:w-[320px] lg:w-[360px] max-w-[78vw] h-auto mb-5 sm:mb-6 md:mb-8 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] mx-auto"
           />
-          <h1 className="text-xl sm:text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-3 sm:mb-4 md:mb-6 uppercase tracking-wider leading-relaxed max-w-2xl mx-auto">
-            {t("what_is_1")}<br />{t("what_is_2")}
+          <h1 className="w-full max-w-2xl mx-auto text-xl sm:text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-3 sm:mb-4 md:mb-6 uppercase tracking-wider leading-relaxed [text-wrap:balance] text-center">
+            {t("what_is_1")} {t("what_is_2")}
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-[var(--color-warm-white)]/80 mb-6 md:mb-8 font-light max-w-2xl leading-relaxed whitespace-pre-line px-2">
+          <p className="w-full max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-[var(--color-warm-white)]/80 mb-6 md:mb-8 font-light leading-relaxed [text-wrap:balance] text-center">
             {t("what_is_desc")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-xs sm:max-w-none mx-auto mb-2">
             <Link 
               href={{ pathname: "/tastings" }} 
-              className="btn-shimmer bg-[var(--color-gold)] text-black px-7 sm:px-8 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-white transition-all shadow-[0_4px_20px_rgba(197,160,89,0.25)] hover:shadow-[0_6px_28px_rgba(197,160,89,0.45)] hover:-translate-y-0.5 active:translate-y-0 duration-300 w-full sm:w-auto text-center"
+              className="btn-shimmer inline-flex items-center justify-center bg-[var(--color-gold)] text-black px-7 sm:px-8 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-white transition-all shadow-[0_4px_20px_rgba(197,160,89,0.25)] hover:shadow-[0_6px_28px_rgba(197,160,89,0.45)] hover:-translate-y-0.5 active:translate-y-0 duration-300 w-full sm:w-auto text-center whitespace-nowrap"
             >
               {locale === "es" ? "Descubrir Catas" : "Discover Tastings"}
             </Link>
             {upcomingTastings && upcomingTastings.length > 0 && (
               <Link 
                 href={{ pathname: "/checkout", query: { tasting: upcomingTastings[0].id, tickets: "2", gift: "true" } }} 
-                className="btn-shimmer border border-[var(--color-gold)] text-[var(--color-gold)] px-6 sm:px-7 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-[var(--color-gold)] hover:text-black transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0 duration-300 backdrop-blur-xs w-full sm:w-auto text-center"
+                className="btn-shimmer inline-flex items-center justify-center gap-2 border border-[var(--color-gold)] text-[var(--color-gold)] px-7 sm:px-8 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-[var(--color-gold)] hover:text-black transition-all hover:-translate-y-0.5 active:translate-y-0 duration-300 backdrop-blur-xs w-full sm:w-auto text-center whitespace-nowrap"
               >
                 <span>🎁</span>
                 <span>{locale === "es" ? "Regala una cata" : "Gift a Tasting"}</span>
