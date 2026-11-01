@@ -9,7 +9,7 @@
     "what_is_1": "Experiences to",
     "what_is_2": "discover, taste\u00A0and\u00A0enjoy",
     "what_is_desc": "Tastings and gastronomic experiences in an intimate\u00A0space: wines, champagne, premium spirits, gastronomy and\u00A0much\u00A0more, guided by professionals and\u00A0guest\u00A0producers.",
-    "past_tastings": "Past Experiences",
+    "past_tastings": "Memories",
     "subscribe_title": "Stay Informed",
     "subscribe_desc": "Join our list to receive exclusive invitations to future tastings before they sell out.",
     "name": "Name",
@@ -52,9 +52,9 @@
     "location_title": "Location"
   },
   "PastTastings": {
-    "title": "Past Experiences",
+    "title": "Memories",
     "subtitle": "A visual archive of the tastings we have already hosted.",
-    "empty": "No past experiences yet."
+    "empty": "No memories recorded yet."
   },
   "Contact": {
     "title": "Contact and Location",
@@ -70,7 +70,7 @@
   "Nav": {
     "home": "Home",
     "tastings": "Tastings",
-    "past": "Past",
+    "past": "Memories",
     "contact": "Contact"
   },
   "Age": {

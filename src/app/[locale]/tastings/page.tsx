@@ -3,6 +3,10 @@ import {Link} from "@/i18n/routing";
 import Image from "next/image";
 import { formatDate, formatDayOfWeek, formatTime } from "@/lib/utils/formatDate";
 import { createClient } from "@/lib/supabase/server";
+import { classifyTasting } from "@/lib/utils/tastingClassification";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function TastingsPage({
   params,
@@ -14,13 +18,15 @@ export default async function TastingsPage({
   const t = await getTranslations("Tastings");
 
   const supabase = await createClient();
-  const { data: upcoming } = await supabase
+  const { data: rawTastings } = await supabase
     .from('tastings')
     .select('*')
-    .eq('status', 'PUBLISHED')
+    .in('status', ['PUBLISHED', 'SOLD_OUT'])
     .order('date', { ascending: true });
 
-  const tastingsList = upcoming || [];
+  const tastingsList = (rawTastings || []).filter(
+    (tasting) => classifyTasting(tasting) === 'UPCOMING'
+  );
 
   return (
     <main className="max-w-7xl mx-auto px-4 md:px-8 py-24">

@@ -9,7 +9,7 @@
     "what_is_1": "Experiencias para",
     "what_is_2": "descubrir, catar\u00A0y\u00A0disfrutar",
     "what_is_desc": "Catas y experiencias gastronómicas en un espacio\u00A0íntimo: vinos, champagne, destilados, gastronomía y\u00A0mucho\u00A0más, de la mano de profesionales y\u00A0productores\u00A0invitados.",
-    "past_tastings": "Experiencias Realizadas",
+    "past_tastings": "Recuerdos",
     "subscribe_title": "Mantente Informado",
     "subscribe_desc": "Únete a nuestra lista para recibir invitaciones exclusivas a futuras catas antes de que se agoten las plazas.",
     "name": "Nombre",
@@ -52,9 +52,9 @@
     "location_title": "Lugar"
   },
   "PastTastings": {
-    "title": "Experiencias Realizadas",
+    "title": "Recuerdos",
     "subtitle": "Un archivo visual de las catas que ya hemos celebrado.",
-    "empty": "Todavía no hay experiencias pasadas."
+    "empty": "Todavía no hay recuerdos registrados."
   },
   "Contact": {
     "title": "Contacto y Ubicación",
@@ -70,7 +70,7 @@
   "Nav": {
     "home": "Inicio",
     "tastings": "Catas",
-    "past": "Realizadas",
+    "past": "Recuerdos",
     "contact": "Contacto"
   },
   "Age": {

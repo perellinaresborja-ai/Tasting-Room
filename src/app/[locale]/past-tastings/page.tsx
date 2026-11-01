@@ -1,16 +1,83 @@
-import {getTranslations, setRequestLocale} from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { mockPastTastings } from "@/lib/mock-data";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils/formatDate";
+import { createClient } from "@/lib/supabase/server";
+import { classifyTasting } from "@/lib/utils/tastingClassification";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "PastTastings" });
+  return {
+    title: `${t("title")} | The Church Tasting Room`,
+    description: t("subtitle"),
+  };
+}
 
 export default async function PastTastingsPage({
   params,
 }: {
-  params: Promise<{locale: string}>;
+  params: Promise<{ locale: string }>;
 }) {
-  const {locale} = await params;
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("PastTastings");
+
+  // Fetch all candidate tastings from database
+  const supabase = await createClient();
+  const { data: rawDbTastings } = await supabase
+    .from("tastings")
+    .select("*")
+    .order("date", { ascending: false });
+
+  // Filter exclusively finished tastings using Europe/Madrid classification
+  const finishedDbTastings = (rawDbTastings || [])
+    .filter((tasting) => classifyTasting(tasting) === "PAST")
+    .map((tasting) => ({
+      id: tasting.id,
+      slug: tasting.slug,
+      title_es: tasting.title_es,
+      title_en: tasting.title_en,
+      date: tasting.date,
+      category_es: tasting.category_es || tasting.category || "Cata",
+      category_en: tasting.category_en || tasting.category || "Tasting",
+      image_url: tasting.cover_image || "/logo-header-full.png",
+    }));
+
+  interface PastItem {
+    id: string;
+    slug?: string;
+    title_es: string;
+    title_en: string;
+    date: string;
+    category_es: string;
+    category_en: string;
+    image_url: string;
+  }
+
+  const allCandidates: PastItem[] = [...finishedDbTastings, ...mockPastTastings];
+  const seenIds = new Set<string>();
+  const seenSlugs = new Set<string>();
+  const allPastTastings: PastItem[] = [];
+
+  for (const item of allCandidates) {
+    if (seenIds.has(item.id) || (item.slug && seenSlugs.has(item.slug))) {
+      continue;
+    }
+    seenIds.add(item.id);
+    if (item.slug) seenSlugs.add(item.slug);
+    allPastTastings.push(item);
+  }
+
+  // Sort from most recent to oldest
+  allPastTastings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <main className="max-w-7xl mx-auto px-4 md:px-8 py-24">
@@ -20,7 +87,7 @@ export default async function PastTastingsPage({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {mockPastTastings.map((past) => (
+        {allPastTastings.map((past) => (
           <div key={past.id} className="relative h-80 overflow-hidden border border-[var(--color-charcoal)] group">
             <Image 
               src={past.image_url} 

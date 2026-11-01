@@ -35,6 +35,7 @@ export type InitialTastingData = {
 };
 
 export default function AdminTastingForm({ initialData = null }: { initialData?: InitialTastingData | null /* eslint-disable-line @typescript-eslint/no-explicit-any */ }) {
+  const isNew = !initialData?.id;
   const [formData, setFormData] = useState(initialData || {
     title_es: "",
     title_en: "",
@@ -197,6 +198,23 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
     setLoading(true);
     setError(null);
 
+    // Validación de Hora Fin
+    if (isNew && !formData.end_time?.trim()) {
+      setError("La Hora Fin es obligatoria para nuevas catas.");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.end_time?.trim() && formData.start_time?.trim()) {
+      const start = formData.start_time.trim();
+      const end = formData.end_time.trim();
+      if (end <= start) {
+        setError("La Hora Fin debe ser posterior a la Hora Inicio.");
+        setLoading(false);
+        return;
+      }
+    }
+
     const dataToSave = { ...formData }; console.log('SAVING DATA:', dataToSave);
     if (!dataToSave.end_time) delete dataToSave.end_time;
     if (!dataToSave.subtitle_es) delete dataToSave.subtitle_es;
@@ -282,7 +300,7 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
         <div>
           <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Fecha</label>
           <input required type="date" name="date" value={formData.date} onChange={handleChange} className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none [color-scheme:dark]" />
@@ -290,6 +308,19 @@ export default function AdminTastingForm({ initialData = null }: { initialData?:
         <div>
           <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Hora Inicio</label>
           <input required type="time" name="start_time" value={formData.start_time} onChange={handleChange} className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none [color-scheme:dark]" />
+        </div>
+        <div>
+          <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">
+            Hora Fin {isNew ? <span className="text-[var(--color-gold)]">*</span> : <span className="text-gray-500 text-[10px] lowercase">(opcional)</span>}
+          </label>
+          <input 
+            type="time" 
+            name="end_time" 
+            required={isNew}
+            value={formData.end_time || ""} 
+            onChange={handleChange} 
+            className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none [color-scheme:dark]" 
+          />
         </div>
         <div>
           <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Precio (€)</label>

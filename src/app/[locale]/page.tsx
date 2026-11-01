@@ -5,6 +5,10 @@ import { Compass, CalendarCheck, QrCode, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import SubscribeForm from "@/components/ui/SubscribeForm";
 import UpcomingTastingsCarousel from "@/components/home/UpcomingTastingsCarousel";
+import { classifyTasting } from "@/lib/utils/tastingClassification";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function HomePage({
   params,
@@ -19,13 +23,15 @@ export default async function HomePage({
 
   // Fetch real next tastings from database
   const supabase = await createClient();
-  const today = new Date().toISOString().split('T')[0];
-  const { data: upcomingTastings } = await supabase
+  const { data: rawTastings } = await supabase
     .from('tastings')
     .select('*')
     .in('status', ['PUBLISHED', 'SOLD_OUT'])
-    .gte('date', today)
     .order('date', { ascending: true });
+
+  const upcomingTastings = (rawTastings || []).filter(
+    (tasting) => classifyTasting(tasting) === 'UPCOMING'
+  );
 
   const howItWorksSteps = [
     {
