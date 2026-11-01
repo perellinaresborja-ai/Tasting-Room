@@ -13,10 +13,16 @@ function CheckoutContent() {
   const t = useTranslations("Checkout");
   const locale = useLocale();
   
-  const [tasting, setTasting] = useState<CheckoutTasting | null>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [tasting, setTasting] = useState<CheckoutTasting | null>(null);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Gift mode state
+  const isGiftParam = searchParams.get("gift") === "true";
+  const [isGift, setIsGift] = useState(isGiftParam);
+  const [recipientName, setRecipientName] = useState("");
+  const [giftMessage, setGiftMessage] = useState("");
+
   const [marketingChoice, setMarketingChoice] = useState<string | null>(null);
   const [channelEmail, setChannelEmail] = useState(false);
   const [channelWa, setChannelWa] = useState(false);
@@ -25,7 +31,6 @@ function CheckoutContent() {
 
   useEffect(() => {
     if (tastingId) {
-      // For development, try to load from mock data first
       const mock = mockTastings.find(t => t.id === tastingId);
       if (mock) {
         setTasting(mock);
@@ -47,6 +52,11 @@ function CheckoutContent() {
     e.preventDefault();
     if (requiresAgeConfirmation && !ageConfirmed) return;
     
+    if (isGift && (!recipientName || recipientName.trim() === '')) {
+      alert(locale === "es" ? "Por favor, introduce el nombre de la persona que recibe el regalo." : "Please enter the recipient's name.");
+      return;
+    }
+
     if (!marketingChoice) {
       alert(locale === "es" ? "Por favor, indica si deseas recibir novedades." : "Please indicate if you'd like to receive updates.");
       return;
@@ -69,6 +79,9 @@ function CheckoutContent() {
     formData.append("tasting_id", tastingId!);
     formData.append("locale", locale);
     formData.append("tickets", tickets);
+    formData.append("is_gift", isGift ? "true" : "false");
+    formData.append("recipient_name", recipientName.trim());
+    formData.append("gift_message", giftMessage.trim());
     formData.append("marketing_email", marketingChoice === 'yes' && channelEmail ? "true" : "false");
     formData.append("marketing_whatsapp", marketingChoice === 'yes' && channelWa ? "true" : "false");
 
@@ -90,18 +103,85 @@ function CheckoutContent() {
 
   return (
     <div className="bg-[#141414] p-8 md:p-12 border border-[var(--color-charcoal)]">
-      <h2 className="text-2xl font-serif text-[var(--color-warm-white)] mb-4">{title}</h2>
-      <p className="text-gray-400 mb-10 tracking-widest text-sm uppercase">{tasting.date} • {tasting.start_time}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <h2 className="text-2xl font-serif text-[var(--color-warm-white)]">{title}</h2>
+        {isGift && (
+          <span className="bg-[var(--color-gold)] text-black text-xs font-bold px-3 py-1 uppercase tracking-widest self-start sm:self-auto">
+            🎁 {locale === "es" ? "Tarjeta Regalo" : "Gift Voucher"}
+          </span>
+        )}
+      </div>
+      <p className="text-gray-400 mb-8 tracking-widest text-sm uppercase">{tasting.date} • {tasting.start_time}</p>
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">{t("first_name")}</label>
-            <input type="text" name="first_name" required className="w-full bg-black border border-[var(--color-charcoal)] p-4 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors" />
+        {/* SECCIÓN REGALO */}
+        <div className={`p-5 border transition-all ${isGift ? 'bg-[#1c1a14] border-[var(--color-gold)]' : 'bg-black/40 border-[var(--color-charcoal)]'}`}>
+          <div className="flex items-center gap-3">
+            <input 
+              type="checkbox" 
+              id="is_gift_checkbox" 
+              checked={isGift} 
+              onChange={(e) => setIsGift(e.target.checked)} 
+              className="w-5 h-5 accent-[var(--color-gold)] cursor-pointer"
+            />
+            <label htmlFor="is_gift_checkbox" className="text-sm font-semibold text-[var(--color-gold)] uppercase tracking-wider cursor-pointer flex items-center gap-2">
+              <span>🎁</span>
+              <span>{locale === "es" ? "Esta compra es para regalar a otra persona" : "This booking is a gift for someone else"}</span>
+            </label>
           </div>
-          <div>
-            <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">{t("last_name")}</label>
-            <input type="text" name="last_name" required className="w-full bg-black border border-[var(--color-charcoal)] p-4 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors" />
+
+          {isGift && (
+            <div className="pt-4 mt-3 border-t border-[var(--color-charcoal)] space-y-4 animate-in fade-in duration-300">
+              <p className="text-xs text-gray-300 font-light">
+                {locale === "es"
+                  ? "Al completar el pago se generará una Tarjeta Regalo digital de The Church a nombre del destinatario, lista para descargar en PDF, imprimir o reenviar por WhatsApp."
+                  : "Upon payment completion, a digital Gift Card designed by The Church will be generated with the recipient's name, ready to download, print or share via WhatsApp."}
+              </p>
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-gray-400 mb-2">
+                  {locale === "es" ? "Nombre de la persona que recibe el regalo *" : "Recipient's Name *"}
+                </label>
+                <input 
+                  type="text" 
+                  value={recipientName} 
+                  onChange={(e) => setRecipientName(e.target.value)} 
+                  required={isGift}
+                  placeholder={locale === "es" ? "Ej. Laura Martínez" : "e.g. Laura Martinez"} 
+                  className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-gray-400 mb-2">
+                  {locale === "es" ? "Dedicatoria o mensaje personalizado (opcional)" : "Personal Dedication / Message (optional)"}
+                </label>
+                <textarea 
+                  rows={2}
+                  value={giftMessage} 
+                  onChange={(e) => setGiftMessage(e.target.value)} 
+                  placeholder={locale === "es" ? "Ej. ¡Feliz aniversario! Que disfrutéis mucho de la velada." : "e.g. Happy Anniversary! Enjoy this wonderful experience."} 
+                  className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none text-sm"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* DATOS DEL COMPRADOR */}
+        <div className="pt-4 border-t border-[var(--color-charcoal)]">
+          <p className="text-xs uppercase tracking-widest text-gray-500 mb-4 font-semibold">
+            {isGift 
+              ? (locale === "es" ? "Tus datos (comprador para el recibo y entrega)" : "Your details (buyer for receipt & delivery)")
+              : (locale === "es" ? "Tus datos de reserva" : "Your booking details")}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">{t("first_name")}</label>
+              <input type="text" name="first_name" required className="w-full bg-black border border-[var(--color-charcoal)] p-4 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors" />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">{t("last_name")}</label>
+              <input type="text" name="last_name" required className="w-full bg-black border border-[var(--color-charcoal)] p-4 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors" />
+            </div>
           </div>
         </div>
         
@@ -124,7 +204,7 @@ function CheckoutContent() {
               required
               checked={ageConfirmed}
               onChange={(e) => setAgeConfirmed(e.target.checked)}
-              className="mt-1"
+              className="mt-1 accent-[var(--color-gold)]"
             />
             <label htmlFor="age_confirm" className="text-sm text-[var(--color-warm-white)] cursor-pointer">
               {t("confirm_age")}
@@ -176,7 +256,7 @@ function CheckoutContent() {
             disabled={(requiresAgeConfirmation && !ageConfirmed) || isSubmitting}
             className={`w-full md:w-auto px-10 py-4 uppercase tracking-widest font-bold transition-colors ${((requiresAgeConfirmation && !ageConfirmed) || isSubmitting) ? "bg-gray-800 text-gray-500 cursor-not-allowed" : "bg-[var(--color-gold)] text-black hover:bg-[var(--color-gold-hover)]"}`}
           >
-            {isSubmitting ? t("loading") : t("pay_securely")}
+            {isSubmitting ? t("loading") : (isGift ? (locale === "es" ? "Pagar Tarjeta Regalo" : "Pay for Gift Voucher") : t("pay_securely"))}
           </button>
         </div>
         <p className="text-xs text-gray-500 mt-4 text-center md:text-left">

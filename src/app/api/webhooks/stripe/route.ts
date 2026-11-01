@@ -98,6 +98,11 @@ export async function POST(req: Request) {
               time = time.slice(0, 5);
             }
 
+            const isGift = session.metadata?.is_gift === 'true';
+            const recipientName = session.metadata?.recipient_name || '';
+            const giftMessage = session.metadata?.gift_message || '';
+            const buyerName = session.metadata?.buyer_name || (resData.profile?.first_name ? `${resData.profile.first_name} ${resData.profile.last_name || ''}`.trim() : '');
+
             // Generate secure access link
             let actionUrl = `${appUrl}/${locale}/member`;
             try {
@@ -118,7 +123,91 @@ export async function POST(req: Request) {
               console.error("Error generating link for email:", err);
             }
 
-            const html = locale === 'en' ? `
+            let emailSubject = '';
+            let html = '';
+
+            if (isGift) {
+              emailSubject = locale === 'en'
+                ? `🎁 Gift Voucher: ${title} for ${recipientName} — The Church Tasting Room`
+                : `🎁 Tu Tarjeta Regalo para ${title} está lista — The Church Tasting Room`;
+
+              html = locale === 'en' ? `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
+                  <div style="text-align: center; margin-bottom: 24px;">
+                    <p style="color: #c9a96e; text-transform: uppercase; font-size: 11px; letter-spacing: 3px; margin: 0 0 8px;">The Church Tasting Room</p>
+                    <h1 style="color: #ffffff; font-size: 24px; margin: 0;">Experience Gift Voucher</h1>
+                  </div>
+
+                  <div style="border: 2px solid #c9a96e; padding: 24px; background-color: #111111; margin-bottom: 24px; text-align: left;">
+                    <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">To</p>
+                    <p style="color: #c9a96e; font-size: 22px; font-weight: bold; margin: 0 0 16px;">${recipientName}</p>
+
+                    ${buyerName ? `
+                      <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">From</p>
+                      <p style="color: #ffffff; font-size: 15px; margin: 0 0 16px;">${buyerName}</p>
+                    ` : ''}
+
+                    ${giftMessage ? `
+                      <div style="padding: 12px; background-color: #050505; border-left: 3px solid #c9a96e; font-style: italic; color: #cccccc; font-size: 13px; margin-bottom: 16px;">
+                        &ldquo;${giftMessage}&rdquo;
+                      </div>
+                    ` : ''}
+
+                    <div style="border-top: 1px solid #222222; padding-top: 16px; margin-top: 16px;">
+                      <p style="color: #ffffff; font-size: 18px; font-weight: bold; margin: 0 0 8px;">${title}</p>
+                      <p style="color: #aaaaaa; font-size: 14px; margin: 0 0 4px;">📅 Date: ${date} • ⏱ Time: ${time}</p>
+                      <p style="color: #aaaaaa; font-size: 14px; margin: 0;">Seats: ${resData.tickets} · The Church Tasting Room</p>
+                    </div>
+                  </div>
+
+                  <div style="text-align: center; margin: 30px 0;">
+                    <p style="font-size: 14px; color: #cccccc;">You can forward this email to <strong>${recipientName}</strong>, or access My Chapel to view your booking details and access QR.</p>
+                    <a href="${actionUrl}" style="background-color: #c9a96e; color: #000000; padding: 14px 28px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 12px;">Access My Chapel</a>
+                  </div>
+
+                  <p style="font-size: 11px; color: #666666; text-align: center; margin-top: 30px;">The Church Tasting Room · Camí Vell d'Altea, 26 · 03581 L'Albir, Alicante</p>
+                </div>
+              ` : `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
+                  <div style="text-align: center; margin-bottom: 24px;">
+                    <p style="color: #c9a96e; text-transform: uppercase; font-size: 11px; letter-spacing: 3px; margin: 0 0 8px;">The Church Tasting Room</p>
+                    <h1 style="color: #ffffff; font-size: 24px; margin: 0;">Tarjeta Regalo de Experiencia</h1>
+                  </div>
+
+                  <div style="border: 2px solid #c9a96e; padding: 24px; background-color: #111111; margin-bottom: 24px; text-align: left;">
+                    <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">Para</p>
+                    <p style="color: #c9a96e; font-size: 22px; font-weight: bold; margin: 0 0 16px;">${recipientName}</p>
+
+                    ${buyerName ? `
+                      <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">De parte de</p>
+                      <p style="color: #ffffff; font-size: 15px; margin: 0 0 16px;">${buyerName}</p>
+                    ` : ''}
+
+                    ${giftMessage ? `
+                      <div style="padding: 12px; background-color: #050505; border-left: 3px solid #c9a96e; font-style: italic; color: #cccccc; font-size: 13px; margin-bottom: 16px;">
+                        &ldquo;${giftMessage}&rdquo;
+                      </div>
+                    ` : ''}
+
+                    <div style="border-top: 1px solid #222222; padding-top: 16px; margin-top: 16px;">
+                      <p style="color: #ffffff; font-size: 18px; font-weight: bold; margin: 0 0 8px;">${title}</p>
+                      <p style="color: #aaaaaa; font-size: 14px; margin: 0 0 4px;">📅 Fecha: ${date} • ⏱ Hora: ${time}</p>
+                      <p style="color: #aaaaaa; font-size: 14px; margin: 0;">Plazas: ${resData.tickets} · The Church Tasting Room</p>
+                    </div>
+                  </div>
+
+                  <div style="text-align: center; margin: 30px 0;">
+                    <p style="font-size: 14px; color: #cccccc;">Puedes reenviarle este comprobante a <strong>${recipientName}</strong>, o acceder a Mi Capilla para ver los detalles y el QR de acceso.</p>
+                    <a href="${actionUrl}" style="background-color: #c9a96e; color: #000000; padding: 14px 28px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 12px;">Acceder a Mi Capilla</a>
+                  </div>
+
+                  <p style="font-size: 11px; color: #666666; text-align: center; margin-top: 30px;">The Church Tasting Room · Camí Vell d'Altea, 26 · 03581 L'Albir, Alicante</p>
+                </div>
+              `;
+            } else {
+              emailSubject = locale === 'en' ? `Booking Confirmed: ${title}` : `Tu reserva está confirmada — The Church Tasting Room`;
+
+              html = locale === 'en' ? `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                   <h1 style="color: #c9a96e; text-transform: uppercase;">The Church Tasting Room</h1>
                   <h2>Booking Confirmed</h2>
@@ -159,11 +248,12 @@ export async function POST(req: Request) {
                   <p style="font-size: 12px; color: #666; text-align: center;">Este enlace de acceso es personal y caducará. Siempre puedes solicitar uno nuevo desde la web.</p>
                 </div>
               `;
+            }
 
             await resend.emails.send({
               from: 'The Church Tasting Room <info@tastingroom.es>',
               to: resData.profile.email,
-              subject: locale === 'en' ? `Booking Confirmed: ${title}` : `Tu reserva está confirmada — The Church Tasting Room`,
+              subject: emailSubject,
               html: html
             });
 

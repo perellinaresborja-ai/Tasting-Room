@@ -21,9 +21,16 @@ export async function createCheckoutSession(formData: FormData) {
     const phone = formData.get('phone') as string;
     const tickets = parseInt(formData.get('tickets') as string, 10);
     const locale = formData.get('locale') as string || 'es';
+    const isGift = formData.get('is_gift') === 'true';
+    const recipientName = (formData.get('recipient_name') as string)?.trim() || '';
+    const giftMessage = (formData.get('gift_message') as string)?.trim() || '';
 
     if (!tastingId || !firstName || !lastName || !email || !tickets) {
       return { success: false, error: 'Faltan campos obligatorios' };
+    }
+
+    if (isGift && !recipientName) {
+      return { success: false, error: 'Falta el nombre de la persona que recibe el regalo.' };
     }
 
     // 1. Fetch tasting details to get the REAL price
@@ -48,7 +55,8 @@ export async function createCheckoutSession(formData: FormData) {
         p_last_name: lastName,
         p_phone: phone || null,
         p_tickets: tickets,
-        p_total_amount: totalAmount
+        p_total_amount: totalAmount,
+        p_reservation_type: isGift ? 'GIFT' : 'SALE'
       });
 
     if (rpcError || !reservationId) {
@@ -77,27 +85,41 @@ export async function createCheckoutSession(formData: FormData) {
     }
 
     // 3. Create Stripe Checkout Session
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tastingroom.es';
+    let siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es';
+    if (siteUrl.includes('://tastingroom.es')) {
+      siteUrl = siteUrl.replace('://tastingroom.es', '://www.tastingroom.es');
+    }
     
     const tastingDesc = locale === 'es' ? (tasting.subtitle_es || tasting.description_es) : (tasting.subtitle_en || tasting.description_en);
     const plainDesc = tastingDesc ? tastingDesc.replace(/<[^>]*>?/gm, '') : '';
-    const stripeDescription = `${tickets}x Ticket(s) - ${plainDesc}`.substring(0, 500);
+    const stripeDescription = isGift
+      ? `${tickets}x Plaza(s) de Regalo para ${recipientName} - ${plainDesc}`.substring(0, 500)
+      : `${tickets}x Ticket(s) - ${plainDesc}`.substring(0, 500);
+
+    const productName = isGift
+      ? (locale === 'es' 
+          ? `🎁 Tarjeta Regalo: ${tasting.title_es} (Para: ${recipientName})` 
+          : `🎁 Gift Card: ${tasting.title_en} (For: ${recipientName})`)
+      : (locale === 'es' ? `Reserva: ${tasting.title_es}` : `Booking: ${tasting.title_en}`);
 
     const session = await stripe.checkout.sessions.create({
-
       mode: 'payment',
       customer_email: email,
       metadata: {
         locale: locale,
         reservation_id: reservationId,
         tasting_id: tastingId,
+        is_gift: isGift ? 'true' : 'false',
+        recipient_name: recipientName,
+        gift_message: giftMessage,
+        buyer_name: `${firstName} ${lastName}`.trim(),
       },
       line_items: [
         {
           price_data: {
             currency: 'eur',
             product_data: {
-              name: locale === 'es' ? `Reserva: ${tasting.title_es}` : `Booking: ${tasting.title_en}`,
+              name: productName,
               description: stripeDescription,
               images: tasting.cover_image ? [tasting.cover_image] : [],
             },
@@ -128,6 +150,6 @@ export async function createCheckoutSession(formData: FormData) {
     return { success: true, url: session.url };
   } catch (error: unknown) {
     console.error('Checkout error:', error);
-    return { success: false, error: (error instanceof Error ? (error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : String(error)) : String(error)) || 'Error inesperado' };
+    return { success: false, error: (error instanceof Error ? error.message : String(error)) || 'Error inesperado' };
   }
 }

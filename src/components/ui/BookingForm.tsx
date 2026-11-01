@@ -24,14 +24,15 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
   const [waitlistDone, setWaitlistDone] = useState(false);
   const [waitlistError, setWaitlistError] = useState('');
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (isGift: boolean = false) => {
     setLoading(true);
     // Track click
     await import('@/app/actions/analytics').then(m => 
       m.trackAnalyticsEvent({ event_name: 'booking_click', tasting_id: tastingId })
     ).catch(() => {});
 
-    router.push(`/${locale}/checkout?tasting=${tastingId}&tickets=${tickets}`);
+    const giftQuery = isGift ? '&gift=true' : '';
+    router.push(`/${locale}/checkout?tasting=${tastingId}&tickets=${tickets}${giftQuery}`);
   };
 
   const handleWaitlist = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -128,37 +129,34 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
           </select>
         </div>
         
-        <button 
-          onClick={handleCheckout}
-          disabled={loading}
-          className="w-full bg-[var(--color-gold)] text-black font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors disabled:opacity-50"
-        >
-          {loading ? t('loading') : (locale === 'es' ? 'Comprar' : 'Book')}
-        </button>
+        <div className="space-y-3 pt-2">
+          {/* Botón 1: Reservar mis plazas */}
+          <button 
+            type="button"
+            onClick={() => handleCheckout(false)}
+            disabled={loading}
+            className="w-full bg-[var(--color-gold)] text-black font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors disabled:opacity-50 text-xs sm:text-sm"
+          >
+            {loading ? t('loading') : (locale === 'es' ? 'Reservar Mis Plazas' : 'Book My Seats')}
+          </button>
+
+          {/* Botón 2: Comprar para regalar */}
+          <button 
+            type="button"
+            onClick={() => handleCheckout(true)}
+            disabled={loading}
+            className="w-full bg-black/60 border border-[var(--color-gold)] text-[var(--color-gold)] font-bold uppercase tracking-widest py-3.5 hover:bg-[var(--color-gold)] hover:text-black transition-colors disabled:opacity-50 text-xs flex items-center justify-center gap-2"
+          >
+            <span>🎁</span>
+            <span>{locale === 'es' ? 'Comprar para Regalar' : 'Buy as a Gift'}</span>
+          </button>
+        </div>
+
         {includesAlcohol && (
-          <p className="text-xs text-gray-500 text-center uppercase tracking-wider">
+          <p className="text-[11px] text-gray-500 text-center uppercase tracking-wider pt-2">
             Solo para mayores de 18 años.
           </p>
         )}
-
-        <div className="pt-4 border-t border-[var(--color-charcoal)] text-center">
-          <p className="text-xs text-gray-400 mb-1.5 font-light">
-            {locale === 'es' ? '🎁 ¿Quieres regalar esta experiencia?' : '🎁 Looking to gift this tasting?'}
-          </p>
-          <a
-            href={`https://wa.me/34626218295?text=${encodeURIComponent(
-              locale === 'es' 
-                ? 'Hola, me gustaría comprar una tarjeta regalo para una cata en The Church Tasting Room.' 
-                : 'Hello, I would like to buy a gift card for a tasting at The Church Tasting Room.'
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-[var(--color-gold)] hover:underline inline-flex items-center gap-1 uppercase tracking-wider font-semibold"
-          >
-            <span>{locale === 'es' ? 'Solicitar Tarjeta Regalo en PDF' : 'Request Digital Gift Card'}</span>
-            <span>→</span>
-          </a>
-        </div>
       </div>
     </div>
   );
