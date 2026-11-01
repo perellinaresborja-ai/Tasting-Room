@@ -231,7 +231,7 @@ function CheckoutContent() {
             className={`w-full md:w-auto px-10 py-4 uppercase tracking-widest font-bold transition-all ${
               isSubmitting 
                 ? "bg-gray-800 text-gray-500 cursor-not-allowed" 
-                : "bg-[var(--color-gold)] text-black hover:bg-[var(--color-gold-hover)] cursor-pointer shadow-lg hover:shadow-gold"
+                : "btn-shimmer bg-[var(--color-gold)] text-black hover:bg-white cursor-pointer shadow-lg hover:shadow-[0_6px_25px_rgba(197,160,89,0.35)] hover:-translate-y-0.5 active:translate-y-0 duration-300"
             }`}
           >
             {isSubmitting ? t("loading") : (isGift ? (locale === "es" ? "Pagar Tarjeta Regalo" : "Pay for Gift Voucher") : t("pay_securely"))}

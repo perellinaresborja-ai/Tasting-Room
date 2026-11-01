@@ -79,7 +79,7 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
           <h3 className="text-3xl font-serif text-[var(--color-gold)] mb-12 text-center">
             {labelNextTasting}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-[var(--color-charcoal)] group">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-[var(--color-charcoal)] group hover:border-[var(--color-gold)] transition-colors duration-500">
             <div className="relative h-64 md:h-auto overflow-hidden">
               <Image 
                 src={nextTasting.cover_image || "/logo-header-full.png"} 
@@ -108,7 +108,10 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                 </div>
                 {nextTasting.capacity && (
                   <div className="flex items-center gap-3">
-                    <span className="text-[var(--color-gold)]">🍷</span> 
+                    <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-gold)] opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-gold)]"></span>
+                    </span>
                     <span className="text-xs uppercase tracking-wider text-gray-300">
                       {locale === 'es' 
                         ? `Aforo íntimo: ${nextTasting.capacity} plazas` 
@@ -124,10 +127,10 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                  </div>
               ) : (
                 <div className="flex flex-wrap gap-3 items-center">
-                  <Link href={{ pathname: "/tastings/[slug]", params: { slug: nextTasting.slug } }} className="inline-block bg-[var(--color-gold)] text-black font-bold px-8 py-3 uppercase tracking-widest text-xs text-center hover:bg-white transition-colors">
+                  <Link href={{ pathname: "/tastings/[slug]", params: { slug: nextTasting.slug } }} className="btn-shimmer inline-block bg-[var(--color-gold)] text-black font-bold px-8 py-3 uppercase tracking-widest text-xs text-center hover:bg-white transition-all shadow-[0_4px_15px_rgba(197,160,89,0.2)] hover:shadow-[0_6px_22px_rgba(197,160,89,0.35)] hover:-translate-y-0.5 active:translate-y-0 duration-300">
                     {locale === 'es' ? 'RESERVAR' : 'BOOK'}
                   </Link>
-                  <Link href={{ pathname: "/checkout", query: { tasting: nextTasting.id, tickets: "2", gift: "true" } }} className="inline-flex items-center gap-1.5 border border-[var(--color-gold)] text-[var(--color-gold)] px-5 py-3 uppercase tracking-widest text-xs text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors font-medium">
+                  <Link href={{ pathname: "/checkout", query: { tasting: nextTasting.id, tickets: "2", gift: "true" } }} className="btn-shimmer inline-flex items-center gap-1.5 border border-[var(--color-gold)] text-[var(--color-gold)] px-5 py-3 uppercase tracking-widest text-xs text-center hover:bg-[var(--color-gold)] hover:text-black transition-all font-medium hover:-translate-y-0.5 active:translate-y-0 duration-300">
                     <span>🎁</span>
                     <span>{locale === 'es' ? 'REGALA UNA CATA' : 'GIFT A TASTING'}</span>
                   </Link>
@@ -184,7 +187,7 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
               
               return (
                 <div key={tasting.id} className="w-full flex-shrink-0 min-w-full flex">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-[var(--color-charcoal)] group w-full">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-[var(--color-charcoal)] group w-full hover:border-[var(--color-gold)] transition-colors duration-500">
                     <div className="relative min-h-[250px] md:min-h-full h-full overflow-hidden">
                       <Image 
                         src={tasting.cover_image || "/logo-header-full.png"} 
@@ -213,7 +216,10 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                         </div>
                         {tasting.capacity && (
                           <div className="flex items-center gap-3">
-                            <span className="text-[var(--color-gold)]">🍷</span> 
+                            <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-gold)] opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-gold)]"></span>
+                            </span>
                             <span className="text-xs uppercase tracking-wider text-gray-300">
                               {locale === 'es' 
                                 ? `Aforo íntimo: ${tasting.capacity} plazas` 
@@ -230,10 +236,10 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                           </div>
                         ) : (
                           <>
-                            <Link href={{ pathname: "/tastings/[slug]", params: { slug: tasting.slug } }} className="inline-block bg-[var(--color-gold)] text-black font-bold px-6 py-2.5 uppercase tracking-widest text-xs text-center hover:bg-white transition-colors">
+                            <Link href={{ pathname: "/tastings/[slug]", params: { slug: tasting.slug } }} className="btn-shimmer inline-block bg-[var(--color-gold)] text-black font-bold px-6 py-2.5 uppercase tracking-widest text-xs text-center hover:bg-white transition-all shadow-[0_4px_15px_rgba(197,160,89,0.2)] hover:shadow-[0_6px_22px_rgba(197,160,89,0.35)] hover:-translate-y-0.5 active:translate-y-0 duration-300">
                               {locale === 'es' ? 'RESERVAR' : 'BOOK'}
                             </Link>
-                            <Link href={{ pathname: "/checkout", query: { tasting: tasting.id, tickets: "2", gift: "true" } }} className="inline-flex items-center gap-1 border border-[var(--color-gold)] text-[var(--color-gold)] px-4 py-2.5 uppercase tracking-widest text-xs text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors">
+                            <Link href={{ pathname: "/checkout", query: { tasting: tasting.id, tickets: "2", gift: "true" } }} className="btn-shimmer inline-flex items-center gap-1 border border-[var(--color-gold)] text-[var(--color-gold)] px-4 py-2.5 uppercase tracking-widest text-xs text-center hover:bg-[var(--color-gold)] hover:text-black transition-all hover:-translate-y-0.5 active:translate-y-0 duration-300">
                               <span>🎁</span>
                               <span>{locale === 'es' ? 'REGALA UNA CATA' : 'GIFT A TASTING'}</span>
                             </Link>

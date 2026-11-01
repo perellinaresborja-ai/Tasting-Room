@@ -29,13 +29,15 @@ export default async function HomePage({
     <main className="flex flex-col">
       {/* HERO */}
       <section className="relative h-[85vh] min-h-[700px] flex items-center justify-center text-center px-4 overflow-hidden">
-        <Image 
-          src="/sala.jpg" 
-          alt="The Church Tasting Room" 
-          fill 
-          className="object-cover opacity-25" 
-          priority 
-        />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <Image 
+            src="/sala.jpg" 
+            alt="The Church Tasting Room" 
+            fill 
+            className="object-cover opacity-25 animate-ken-burns will-change-transform" 
+            priority 
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#141414]/50 to-[var(--background)] z-0"></div>
         <div className="relative z-10 max-w-4xl flex flex-col items-center pt-8 md:pt-0">
           <Image 
@@ -44,7 +46,7 @@ export default async function HomePage({
             width={370} 
             height={400} 
             priority
-            className="object-contain mb-8 w-[240px] md:w-[370px] h-auto"
+            className="object-contain mb-8 w-[240px] md:w-[370px] h-auto drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
           />
           <h2 className="text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-6 uppercase tracking-wider leading-relaxed">
             {t("what_is_1")}<br />{t("what_is_2")}
@@ -55,14 +57,14 @@ export default async function HomePage({
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <Link 
               href={{ pathname: "/tastings" }} 
-              className="bg-[var(--color-gold)] text-black px-8 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-white transition-colors shadow-lg"
+              className="btn-shimmer bg-[var(--color-gold)] text-black px-8 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-white transition-all shadow-[0_4px_20px_rgba(197,160,89,0.25)] hover:shadow-[0_6px_28px_rgba(197,160,89,0.45)] hover:-translate-y-0.5 active:translate-y-0 duration-300"
             >
               {locale === "es" ? "Descubrir Catas" : "Discover Tastings"}
             </Link>
             {upcomingTastings && upcomingTastings.length > 0 && (
               <Link 
                 href={{ pathname: "/checkout", query: { tasting: upcomingTastings[0].id, tickets: "2", gift: "true" } }} 
-                className="border border-[var(--color-gold)] text-[var(--color-gold)] px-6 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-[var(--color-gold)] hover:text-black transition-colors flex items-center gap-2"
+                className="btn-shimmer border border-[var(--color-gold)] text-[var(--color-gold)] px-6 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-[var(--color-gold)] hover:text-black transition-all flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0 duration-300 backdrop-blur-xs"
               >
                 <span>🎁</span>
                 <span>{locale === "es" ? "Regala una cata" : "Gift a Tasting"}</span>

@@ -31,7 +31,7 @@ export default async function TastingsPage({
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {tastingsList.map((tasting, idx) => (
-          <Link href={{ pathname: "/tastings/[slug]", params: { slug: tasting.slug } }} key={tasting.id} className="group block border border-[var(--color-charcoal)] bg-[#0a0a0a] hover:border-[var(--color-gold)] transition-colors">
+          <Link href={{ pathname: "/tastings/[slug]", params: { slug: tasting.slug } }} key={tasting.id} className="group block border border-[var(--color-charcoal)] bg-[#0a0a0a] hover:border-[var(--color-gold)] transition-all duration-500 hover:-translate-y-1 shadow-lg hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
             <div className="relative h-64 overflow-hidden">
               <Image 
                 src={tasting.cover_image || "/logo-header-full.png"} 
@@ -57,14 +57,19 @@ export default async function TastingsPage({
               </div>
               {tasting.capacity && (
                 <div className="flex items-center gap-3 text-xs text-gray-400 uppercase tracking-wider">
-                  <span className="text-[var(--color-gold)]">🍷</span> 
-                  <span>{locale === 'es' ? `Aforo: ${tasting.capacity} plazas` : `Capacity: ${tasting.capacity} seats`}</span>
+                  <span className="relative flex h-2 w-2 items-center justify-center">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-gold)] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--color-gold)]"></span>
+                  </span>
+                  <span>{locale === 'es' ? `Aforo íntimo: ${tasting.capacity} plazas` : `Capacity: ${tasting.capacity} seats`}</span>
                 </div>
               )}
             </div>
-            <div className="p-8 border-t border-[var(--color-charcoal)] flex justify-between items-center bg-[#111]">
-              <span className="text-lg text-[var(--color-gold)]">€{tasting.price.toFixed(2)}</span>
-              <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-[var(--color-gold)] transition-colors">{t("book")} →</span>
+            <div className="p-8 border-t border-[var(--color-charcoal)] flex justify-between items-center bg-[#111] group-hover:bg-[#151515] transition-colors">
+              <span className="text-lg text-[var(--color-gold)] font-medium">€{tasting.price.toFixed(2)}</span>
+              <span className="text-xs uppercase tracking-widest text-gray-400 group-hover:text-[var(--color-gold)] transition-colors font-bold flex items-center gap-1 group-hover:translate-x-1 duration-300">
+                {t("book")} <span>→</span>
+              </span>
             </div>
           </Link>
         ))}

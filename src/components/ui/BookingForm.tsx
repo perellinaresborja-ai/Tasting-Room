@@ -135,7 +135,7 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
             type="button"
             onClick={() => handleCheckout(false)}
             disabled={loading}
-            className="w-full bg-[var(--color-gold)] text-black font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors disabled:opacity-50 text-xs sm:text-sm"
+            className="btn-shimmer w-full bg-[var(--color-gold)] text-black font-bold uppercase tracking-widest py-4 hover:bg-white transition-all shadow-[0_4px_15px_rgba(197,160,89,0.2)] hover:shadow-[0_6px_22px_rgba(197,160,89,0.35)] disabled:opacity-50 text-xs sm:text-sm hover:-translate-y-0.5 active:translate-y-0 duration-300"
           >
             {loading ? t('loading') : (locale === 'es' ? 'Reservar Mis Plazas' : 'Book My Seats')}
           </button>
@@ -145,7 +145,7 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
             type="button"
             onClick={() => handleCheckout(true)}
             disabled={loading}
-            className="w-full bg-black/60 border border-[var(--color-gold)] text-[var(--color-gold)] font-bold uppercase tracking-widest py-3.5 hover:bg-[var(--color-gold)] hover:text-black transition-colors disabled:opacity-50 text-xs flex items-center justify-center gap-2"
+            className="btn-shimmer w-full bg-black/60 border border-[var(--color-gold)] text-[var(--color-gold)] font-bold uppercase tracking-widest py-3.5 hover:bg-[var(--color-gold)] hover:text-black transition-all disabled:opacity-50 text-xs flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0 duration-300"
           >
             <span>🎁</span>
             <span>{locale === 'es' ? 'Regala una cata' : 'Gift a Tasting'}</span>
