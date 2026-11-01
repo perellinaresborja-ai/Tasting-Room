@@ -65,7 +65,7 @@ export default async function HomePage({
                 className="border border-[var(--color-gold)] text-[var(--color-gold)] px-6 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-[var(--color-gold)] hover:text-black transition-colors flex items-center gap-2"
               >
                 <span>🎁</span>
-                <span>{locale === "es" ? "Comprar para Regalar" : "Buy as a Gift"}</span>
+                <span>{locale === "es" ? "Regala una cata" : "Gift a Tasting"}</span>
               </Link>
             )}
           </div>

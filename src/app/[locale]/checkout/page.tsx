@@ -114,7 +114,7 @@ function CheckoutContent() {
             />
             <label htmlFor="is_gift_checkbox" className="text-sm font-semibold text-[var(--color-gold)] uppercase tracking-wider cursor-pointer flex items-center gap-2">
               <span>🎁</span>
-              <span>{locale === "es" ? "Esta compra es para regalar a otra persona" : "This booking is a gift for someone else"}</span>
+              <span>{locale === "es" ? "Regalar esta cata a otra persona" : "Gift this tasting to someone else"}</span>
             </label>
           </div>
 

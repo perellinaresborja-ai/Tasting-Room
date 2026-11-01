@@ -132,7 +132,7 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                   </Link>
                   <Link href={{ pathname: "/checkout", query: { tasting: nextTasting.id, tickets: "2", gift: "true" } }} className="inline-flex items-center gap-1.5 border border-[var(--color-gold)] text-[var(--color-gold)] px-5 py-3 uppercase tracking-widest text-xs text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors font-medium">
                     <span>🎁</span>
-                    <span>{locale === 'es' ? 'REGALAR' : 'GIFT'}</span>
+                    <span>{locale === 'es' ? 'REGALA UNA CATA' : 'GIFT A TASTING'}</span>
                   </Link>
                 </div>
               )}
@@ -241,7 +241,7 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                             </Link>
                             <Link href={{ pathname: "/checkout", query: { tasting: tasting.id, tickets: "2", gift: "true" } }} className="inline-flex items-center gap-1 border border-[var(--color-gold)] text-[var(--color-gold)] px-4 py-2.5 uppercase tracking-widest text-xs text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors">
                               <span>🎁</span>
-                              <span>{locale === 'es' ? 'REGALAR' : 'GIFT'}</span>
+                              <span>{locale === 'es' ? 'REGALA UNA CATA' : 'GIFT A TASTING'}</span>
                             </Link>
                           </>
                         )}

@@ -140,7 +140,7 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
             {loading ? t('loading') : (locale === 'es' ? 'Reservar Mis Plazas' : 'Book My Seats')}
           </button>
 
-          {/* Botón 2: Comprar para regalar */}
+          {/* Botón 2: Regala una cata */}
           <button 
             type="button"
             onClick={() => handleCheckout(true)}
@@ -148,7 +148,7 @@ export default function BookingForm({ tastingId, price, availableSpots, includes
             className="w-full bg-black/60 border border-[var(--color-gold)] text-[var(--color-gold)] font-bold uppercase tracking-widest py-3.5 hover:bg-[var(--color-gold)] hover:text-black transition-colors disabled:opacity-50 text-xs flex items-center justify-center gap-2"
           >
             <span>🎁</span>
-            <span>{locale === 'es' ? 'Comprar para Regalar' : 'Buy as a Gift'}</span>
+            <span>{locale === 'es' ? 'Regala una cata' : 'Gift a Tasting'}</span>
           </button>
         </div>
 
