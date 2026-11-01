@@ -24,9 +24,7 @@ function CheckoutContent() {
   const [recipientName, setRecipientName] = useState("");
   const [giftMessage, setGiftMessage] = useState("");
 
-  const [marketingChoice, setMarketingChoice] = useState<string | null>(null);
-  const [channelEmail, setChannelEmail] = useState(false);
-  const [channelWa, setChannelWa] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(true);
 
   const supabase = createClient();
 
@@ -51,30 +49,19 @@ function CheckoutContent() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (requiresAgeConfirmation && !ageConfirmed) return;
+    if (requiresAgeConfirmation && !ageConfirmed) {
+      alert(locale === "es" ? "Por favor, confirma que eres mayor de 18 años para continuar." : "Please confirm that you are over 18 years old to proceed.");
+      const ageBox = document.getElementById("age_confirm");
+      if (ageBox) ageBox.focus();
+      return;
+    }
     
     if (isGift && (!recipientName || recipientName.trim() === '')) {
       alert(locale === "es" ? "Por favor, indica a quién va dirigido el regalo (persona, pareja o grupo)." : "Please enter the recipient's name (person, couple or group).");
       return;
     }
 
-    if (!marketingChoice) {
-      alert(locale === "es" ? "Por favor, indica si deseas recibir novedades." : "Please indicate if you'd like to receive updates.");
-      return;
-    }
-
-    if (marketingChoice === 'yes' && !channelEmail && !channelWa) {
-      alert(locale === "es" ? "Debes seleccionar al menos un canal (Email o WhatsApp)." : "You must select at least one channel (Email or WhatsApp).");
-      return;
-    }
-
     const formData = new FormData(e.currentTarget);
-    const phoneValue = formData.get("phone") as string;
-
-    if (marketingChoice === 'yes' && channelWa && (!phoneValue || phoneValue.trim() === '')) {
-      alert(locale === "es" ? "Para recibir novedades por WhatsApp, debes introducir un teléfono válido." : "To receive updates via WhatsApp, you must enter a valid phone number.");
-      return;
-    }
     
     setIsSubmitting(true);
     formData.append("tasting_id", tastingId!);
@@ -83,8 +70,8 @@ function CheckoutContent() {
     formData.append("is_gift", isGift ? "true" : "false");
     formData.append("recipient_name", recipientName.trim());
     formData.append("gift_message", giftMessage.trim());
-    formData.append("marketing_email", marketingChoice === 'yes' && channelEmail ? "true" : "false");
-    formData.append("marketing_whatsapp", marketingChoice === 'yes' && channelWa ? "true" : "false");
+    formData.append("marketing_email", marketingConsent ? "true" : "false");
+    formData.append("marketing_whatsapp", marketingConsent ? "true" : "false");
 
     try {
       const { createCheckoutSession } = await import("@/app/actions/checkout");
@@ -202,53 +189,35 @@ function CheckoutContent() {
         </div>
         
         {requiresAgeConfirmation && (
-          <div className="flex items-start gap-3 mt-8 bg-black p-6 border border-[var(--color-charcoal)]">
+          <div className="flex items-start gap-3 mt-8 bg-black p-5 border border-[var(--color-charcoal)] hover:border-[var(--color-gold)]/40 transition-colors">
             <input 
               type="checkbox" 
               id="age_confirm" 
               required
               checked={ageConfirmed}
               onChange={(e) => setAgeConfirmed(e.target.checked)}
-              className="mt-1 accent-[var(--color-gold)]"
+              className="mt-1 w-5 h-5 accent-[var(--color-gold)] cursor-pointer"
             />
-            <label htmlFor="age_confirm" className="text-sm text-[var(--color-warm-white)] cursor-pointer">
+            <label htmlFor="age_confirm" className="text-sm text-[var(--color-warm-white)] cursor-pointer select-none">
               {t("confirm_age")}
             </label>
           </div>
         )}
         
-        <div className="pt-8 mt-8 border-t border-[var(--color-charcoal)]">
-          <label className="block text-sm text-[var(--color-warm-white)] mb-4">
-            {locale === "es" ? "¿Quieres que te avisemos de próximas experiencias?" : "Would you like us to let you know about upcoming experiences?"}
+        <div className="pt-6 mt-6 border-t border-[var(--color-charcoal)]">
+          <label className="flex items-start gap-3 cursor-pointer text-gray-300 hover:text-white transition-colors select-none">
+            <input 
+              type="checkbox" 
+              checked={marketingConsent} 
+              onChange={(e) => setMarketingConsent(e.target.checked)} 
+              className="mt-0.5 w-4 h-4 accent-[var(--color-gold)] cursor-pointer" 
+            />
+            <span className="text-xs text-gray-300 leading-relaxed">
+              {locale === "es" 
+                ? "Deseo recibir invitaciones exclusivas y avisos de próximas experiencias en The Church Tasting Room."
+                : "I would like to receive exclusive invitations and notices of upcoming experiences at The Church Tasting Room."}
+            </span>
           </label>
-          <div className="flex flex-col gap-4 mb-4">
-            <label className="flex items-center gap-3 cursor-pointer text-gray-300">
-              <input type="radio" name="marketingChoice" value="yes" checked={marketingChoice === 'yes'} onChange={() => setMarketingChoice('yes')} className="w-4 h-4 accent-[var(--color-gold)]" />
-              {locale === "es" ? "Sí, quiero recibir novedades" : "Yes, I'd like to receive updates"}
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer text-gray-300">
-              <input type="radio" name="marketingChoice" value="no" checked={marketingChoice === 'no'} onChange={() => { setMarketingChoice('no'); setChannelEmail(false); setChannelWa(false); }} className="w-4 h-4 accent-[var(--color-gold)]" />
-              {locale === "es" ? "No, gracias" : "No, thanks"}
-            </label>
-          </div>
-
-          {marketingChoice === 'yes' && (
-            <div className="bg-[#1a1a1a] p-5 border border-[var(--color-charcoal)] mt-4 animate-in fade-in zoom-in-95 duration-200">
-              <p className="text-sm text-[var(--color-warm-white)] mb-4">
-                {locale === "es" ? "¿Cómo quieres recibirlas?" : "How would you like to receive them?"}
-              </p>
-              <div className="flex gap-6">
-                <label className="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white transition-colors">
-                  <input type="checkbox" checked={channelEmail} onChange={(e) => setChannelEmail(e.target.checked)} className="w-4 h-4 accent-[var(--color-gold)]" />
-                  Email
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white transition-colors">
-                  <input type="checkbox" checked={channelWa} onChange={(e) => setChannelWa(e.target.checked)} className="w-4 h-4 accent-[var(--color-gold)]" />
-                  WhatsApp
-                </label>
-              </div>
-            </div>
-          )}
         </div>
         
         <div className="pt-8 mt-8 border-t border-[var(--color-charcoal)] flex flex-col md:flex-row justify-between items-center gap-6">
@@ -258,8 +227,12 @@ function CheckoutContent() {
           </div>
           <button 
             type="submit" 
-            disabled={(requiresAgeConfirmation && !ageConfirmed) || isSubmitting}
-            className={`w-full md:w-auto px-10 py-4 uppercase tracking-widest font-bold transition-colors ${((requiresAgeConfirmation && !ageConfirmed) || isSubmitting) ? "bg-gray-800 text-gray-500 cursor-not-allowed" : "bg-[var(--color-gold)] text-black hover:bg-[var(--color-gold-hover)]"}`}
+            disabled={isSubmitting}
+            className={`w-full md:w-auto px-10 py-4 uppercase tracking-widest font-bold transition-all ${
+              isSubmitting 
+                ? "bg-gray-800 text-gray-500 cursor-not-allowed" 
+                : "bg-[var(--color-gold)] text-black hover:bg-[var(--color-gold-hover)] cursor-pointer shadow-lg hover:shadow-gold"
+            }`}
           >
             {isSubmitting ? t("loading") : (isGift ? (locale === "es" ? "Pagar Tarjeta Regalo" : "Pay for Gift Voucher") : t("pay_securely"))}
           </button>

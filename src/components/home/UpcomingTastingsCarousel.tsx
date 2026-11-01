@@ -126,9 +126,15 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                    {locale === 'es' ? 'AGOTADO' : 'SOLD OUT'}
                  </div>
               ) : (
-                <Link href={{ pathname: "/tastings/[slug]", params: { slug: nextTasting.slug } }} className="inline-block border border-[var(--color-gold)] text-[var(--color-gold)] px-8 py-3 uppercase tracking-widest text-sm text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors w-fit">
-                  {locale === 'es' ? 'RESERVAR' : 'BOOK'}
-                </Link>
+                <div className="flex flex-wrap gap-3 items-center">
+                  <Link href={{ pathname: "/tastings/[slug]", params: { slug: nextTasting.slug } }} className="inline-block bg-[var(--color-gold)] text-black font-bold px-8 py-3 uppercase tracking-widest text-xs text-center hover:bg-white transition-colors">
+                    {locale === 'es' ? 'RESERVAR' : 'BOOK'}
+                  </Link>
+                  <Link href={{ pathname: "/checkout", query: { tasting: nextTasting.id, tickets: "2", gift: "true" } }} className="inline-flex items-center gap-1.5 border border-[var(--color-gold)] text-[var(--color-gold)] px-5 py-3 uppercase tracking-widest text-xs text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors font-medium">
+                    <span>🎁</span>
+                    <span>{locale === 'es' ? 'REGALAR' : 'GIFT'}</span>
+                  </Link>
+                </div>
               )}
             </div>
           </div>
@@ -223,15 +229,21 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                         )}
                       </div>
                       
-                      <div className="mt-auto pt-4">
+                      <div className="mt-auto pt-4 flex flex-wrap gap-2 items-center">
                         {isSoldOut ? (
-                          <div className="inline-block border border-red-900 text-red-500 px-8 py-3 uppercase tracking-widest text-sm text-center w-fit opacity-80 cursor-not-allowed">
+                          <div className="inline-block border border-red-900 text-red-500 px-6 py-2.5 uppercase tracking-widest text-xs text-center w-fit opacity-80 cursor-not-allowed">
                             {locale === 'es' ? 'AGOTADO' : 'SOLD OUT'}
                           </div>
                         ) : (
-                          <Link href={{ pathname: "/tastings/[slug]", params: { slug: tasting.slug } }} className="inline-block border border-[var(--color-gold)] text-[var(--color-gold)] px-8 py-3 uppercase tracking-widest text-sm text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors w-fit">
-                            {locale === 'es' ? 'RESERVAR' : 'BOOK'}
-                          </Link>
+                          <>
+                            <Link href={{ pathname: "/tastings/[slug]", params: { slug: tasting.slug } }} className="inline-block bg-[var(--color-gold)] text-black font-bold px-6 py-2.5 uppercase tracking-widest text-xs text-center hover:bg-white transition-colors">
+                              {locale === 'es' ? 'RESERVAR' : 'BOOK'}
+                            </Link>
+                            <Link href={{ pathname: "/checkout", query: { tasting: tasting.id, tickets: "2", gift: "true" } }} className="inline-flex items-center gap-1 border border-[var(--color-gold)] text-[var(--color-gold)] px-4 py-2.5 uppercase tracking-widest text-xs text-center hover:bg-[var(--color-gold)] hover:text-black transition-colors">
+                              <span>🎁</span>
+                              <span>{locale === 'es' ? 'REGALAR' : 'GIFT'}</span>
+                            </Link>
+                          </>
                         )}
                       </div>
                     </div>

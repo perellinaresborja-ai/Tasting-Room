@@ -49,9 +49,26 @@ export default async function HomePage({
           <h2 className="text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-6 uppercase tracking-wider leading-relaxed">
             {t("what_is_1")}<br />{t("what_is_2")}
           </h2>
-          <p className="text-lg md:text-xl text-[var(--color-warm-white)]/80 mb-12 font-light max-w-2xl leading-relaxed whitespace-pre-line">
+          <p className="text-lg md:text-xl text-[var(--color-warm-white)]/80 mb-8 font-light max-w-2xl leading-relaxed whitespace-pre-line">
             {t("what_is_desc")}
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+            <Link 
+              href={{ pathname: "/tastings" }} 
+              className="bg-[var(--color-gold)] text-black px-8 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-white transition-colors shadow-lg"
+            >
+              {locale === "es" ? "Descubrir Catas" : "Discover Tastings"}
+            </Link>
+            {upcomingTastings && upcomingTastings.length > 0 && (
+              <Link 
+                href={{ pathname: "/checkout", query: { tasting: upcomingTastings[0].id, tickets: "2", gift: "true" } }} 
+                className="border border-[var(--color-gold)] text-[var(--color-gold)] px-6 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-[var(--color-gold)] hover:text-black transition-colors flex items-center gap-2"
+              >
+                <span>🎁</span>
+                <span>{locale === "es" ? "Comprar para Regalar" : "Buy as a Gift"}</span>
+              </Link>
+            )}
+          </div>
         </div>
       </section>
 
