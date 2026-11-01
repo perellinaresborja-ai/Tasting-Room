@@ -61,7 +61,7 @@ export default async function TastingsPage({
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-gold)] opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--color-gold)]"></span>
                   </span>
-                  <span>{locale === 'es' ? `Aforo íntimo: ${tasting.capacity} plazas` : `Capacity: ${tasting.capacity} seats`}</span>
+                  <span>{locale === 'es' ? `Aforo limitado: ${tasting.capacity} plazas` : `Limited capacity: ${tasting.capacity} seats`}</span>
                 </div>
               )}
             </div>

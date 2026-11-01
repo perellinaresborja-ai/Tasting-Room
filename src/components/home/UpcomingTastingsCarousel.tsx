@@ -74,11 +74,14 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
     const isSoldOut = nextTasting.status === 'SOLD_OUT';
     
     return (
-      <section className="py-20 px-4 md:px-8 bg-[#0a0a0a]">
+      <section className="py-14 md:py-20 px-4 md:px-8 bg-[#0a0a0a] border-t border-[var(--color-charcoal)]">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-3xl font-serif text-[var(--color-gold)] mb-12 text-center">
-            {labelNextTasting}
-          </h3>
+          <div className="text-center mb-10 md:mb-14">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-[var(--color-gold)] uppercase tracking-wider">
+              {labelNextTasting}
+            </h2>
+            <div className="w-12 h-px bg-[var(--color-gold)]/40 mx-auto mt-4" />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-[var(--color-charcoal)] group hover:border-[var(--color-gold)] transition-colors duration-500">
             <div className="relative h-64 md:h-auto overflow-hidden">
               <Image 
@@ -114,8 +117,8 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                     </span>
                     <span className="text-xs uppercase tracking-wider text-gray-300">
                       {locale === 'es' 
-                        ? `Aforo íntimo: ${nextTasting.capacity} plazas` 
-                        : `Intimate capacity: ${nextTasting.capacity} seats`}
+                        ? `Aforo limitado: ${nextTasting.capacity} plazas` 
+                        : `Limited capacity: ${nextTasting.capacity} seats`}
                     </span>
                   </div>
                 )}
@@ -145,14 +148,17 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
 
   // Multiple tastings carousel
   return (
-    <section className="py-20 px-4 md:px-8 bg-[#0a0a0a]">
+    <section className="py-14 md:py-20 px-4 md:px-8 bg-[#0a0a0a] border-t border-[var(--color-charcoal)]">
       <div className="max-w-7xl mx-auto">
-        <div className="relative mb-12 flex justify-center items-center">
-          <h3 className="text-3xl font-serif text-[var(--color-gold)] text-center">
-            {labelNextTasting}
-          </h3>
+        <div className="relative mb-10 md:mb-14">
+          <div className="text-center">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-[var(--color-gold)] uppercase tracking-wider">
+              {labelNextTasting}
+            </h2>
+            <div className="w-12 h-px bg-[var(--color-gold)]/40 mx-auto mt-4" />
+          </div>
           
-          <div className="hidden md:flex gap-4 absolute right-0">
+          <div className="hidden md:flex gap-3 absolute right-0 top-1/2 -translate-y-1/2">
             <button 
               onClick={() => { prevSlide(); setIsHovered(true); setTimeout(() => setIsHovered(false), 100); }} 
               className="p-2 border border-[var(--color-charcoal)] hover:border-[var(--color-gold)] hover:text-[var(--color-gold)] transition-colors text-gray-500"
@@ -222,8 +228,8 @@ export default function UpcomingTastingsCarousel({ tastings, locale, labelNextTa
                             </span>
                             <span className="text-xs uppercase tracking-wider text-gray-300">
                               {locale === 'es' 
-                                ? `Aforo íntimo: ${tasting.capacity} plazas` 
-                                : `Intimate capacity: ${tasting.capacity} seats`}
+                                ? `Aforo limitado: ${tasting.capacity} plazas` 
+                                : `Limited capacity: ${tasting.capacity} seats`}
                             </span>
                           </div>
                         )}

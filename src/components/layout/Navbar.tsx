@@ -22,13 +22,20 @@ export default function Navbar({ locale }: { locale: string }) {
   ];
 
   return (
-    <header className="relative z-50 border-b border-[var(--color-charcoal)] py-3 px-4 md:px-8 bg-[var(--background)]">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 lg:gap-8">
+    <header className="relative z-50 border-b border-[var(--color-charcoal)] py-2.5 sm:py-3 px-3 sm:px-4 md:px-8 bg-[var(--background)]">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4 lg:gap-8">
         
         {/* Logo */}
         <div className="flex-shrink-0">
           <Link href="/" className="flex items-center">
-            <Image src="/logo-header-full.png" alt="The Church Tasting Room" width={180} height={45} className="object-contain" />
+            <Image 
+              src="/logo-header-full.png" 
+              alt="The Church Tasting Room" 
+              width={180} 
+              height={45} 
+              priority
+              className="object-contain w-[135px] sm:w-[155px] md:w-[180px] h-auto" 
+            />
           </Link>
         </div>
         
