@@ -21,10 +21,7 @@ function CheckoutContent() {
   // Gift mode state
   const isGiftParam = searchParams.get("gift") === "true";
   const [isGift, setIsGift] = useState(isGiftParam);
-  const [giftDelivery, setGiftDelivery] = useState<'whatsapp' | 'email' | 'manual'>('whatsapp');
   const [recipientName, setRecipientName] = useState("");
-  const [recipientEmail, setRecipientEmail] = useState("");
-  const [recipientPhone, setRecipientPhone] = useState("");
   const [giftMessage, setGiftMessage] = useState("");
 
   const [marketingChoice, setMarketingChoice] = useState<string | null>(null);
@@ -57,12 +54,7 @@ function CheckoutContent() {
     if (requiresAgeConfirmation && !ageConfirmed) return;
     
     if (isGift && (!recipientName || recipientName.trim() === '')) {
-      alert(locale === "es" ? "Por favor, introduce el nombre de la persona que recibe el regalo." : "Please enter the recipient's name.");
-      return;
-    }
-
-    if (isGift && giftDelivery === 'email' && (!recipientEmail || !recipientEmail.includes('@'))) {
-      alert(locale === "es" ? "Por favor, introduce un correo electrónico válido para el destinatario." : "Please enter a valid email address for the recipient.");
+      alert(locale === "es" ? "Por favor, indica a quién va dirigido el regalo (persona, pareja o grupo)." : "Please enter the recipient's name (person, couple or group).");
       return;
     }
 
@@ -89,10 +81,7 @@ function CheckoutContent() {
     formData.append("locale", locale);
     formData.append("tickets", tickets);
     formData.append("is_gift", isGift ? "true" : "false");
-    formData.append("gift_delivery", giftDelivery);
     formData.append("recipient_name", recipientName.trim());
-    formData.append("recipient_email", recipientEmail.trim());
-    formData.append("recipient_phone", recipientPhone.trim());
     formData.append("gift_message", giftMessage.trim());
     formData.append("marketing_email", marketingChoice === 'yes' && channelEmail ? "true" : "false");
     formData.append("marketing_whatsapp", marketingChoice === 'yes' && channelWa ? "true" : "false");
@@ -146,113 +135,24 @@ function CheckoutContent() {
             <div className="pt-4 mt-3 border-t border-[var(--color-charcoal)] space-y-4 animate-in fade-in duration-300">
               <p className="text-xs text-gray-300 font-light leading-relaxed">
                 {locale === "es"
-                  ? "Al completar el pago se generará una Tarjeta Regalo digital oficial de The Church a nombre del destinatario, lista para enviar por WhatsApp, por Email o descargar en PDF para imprimir."
-                  : "Upon payment completion, an official digital Gift Card from The Church will be generated with the recipient's name, ready to send via WhatsApp, Email, or download as PDF."}
+                  ? "Al completar el pago se generará una Tarjeta Regalo oficial de The Church con las plazas reservadas, lista para compartir con 1 solo clic por WhatsApp, Email o descargar en PDF para imprimir."
+                  : "Upon payment completion, an official Gift Card will be generated with reserved seats, ready to share in 1 click via WhatsApp, Email, or download as PDF."}
               </p>
 
-              {/* Nombre del destinatario */}
+              {/* Nombre de la persona / pareja / grupo */}
               <div>
                 <label className="block text-xs uppercase tracking-widest text-gray-300 mb-2 font-semibold">
-                  {locale === "es" ? "Nombre de la persona que recibe el regalo *" : "Recipient's Name *"}
+                  {locale === "es" ? "Nombre de la persona, pareja o grupo *" : "Name of person, couple or group *"}
                 </label>
                 <input 
                   type="text" 
                   value={recipientName} 
                   onChange={(e) => setRecipientName(e.target.value)} 
                   required={isGift}
-                  placeholder={locale === "es" ? "Ej. Laura Martínez" : "e.g. Laura Martinez"} 
+                  placeholder={locale === "es" ? "Ej. Laura Martínez, Laura y Carlos, o Familia Pérez" : "e.g. Laura Martinez, Laura & Carlos, or Perez Family"} 
                   className="w-full bg-black border border-[var(--color-charcoal)] p-3 text-white focus:border-[var(--color-gold)] outline-none text-sm"
                 />
               </div>
-
-              {/* Selector de cómo entregar el regalo */}
-              <div>
-                <label className="block text-xs uppercase tracking-widest text-gray-300 mb-2 font-semibold">
-                  {locale === "es" ? "¿Cómo deseas entregar el regalo?" : "How would you like to deliver the gift?"}
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setGiftDelivery('whatsapp')}
-                    className={`p-3 text-xs uppercase tracking-wider font-semibold border flex items-center justify-center gap-2 transition-all cursor-pointer rounded ${
-                      giftDelivery === 'whatsapp' 
-                        ? 'bg-[#25D366]/20 border-[#25D366] text-[#25D366]' 
-                        : 'bg-black/40 border-[var(--color-charcoal)] text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    <span>📲</span>
-                    <span>WhatsApp</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setGiftDelivery('email')}
-                    className={`p-3 text-xs uppercase tracking-wider font-semibold border flex items-center justify-center gap-2 transition-all cursor-pointer rounded ${
-                      giftDelivery === 'email' 
-                        ? 'bg-[var(--color-gold)]/20 border-[var(--color-gold)] text-[var(--color-gold)]' 
-                        : 'bg-black/40 border-[var(--color-charcoal)] text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    <span>✉️</span>
-                    <span>Email</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setGiftDelivery('manual')}
-                    className={`p-3 text-xs uppercase tracking-wider font-semibold border flex items-center justify-center gap-2 transition-all cursor-pointer rounded ${
-                      giftDelivery === 'manual' 
-                        ? 'bg-white/15 border-white text-white' 
-                        : 'bg-black/40 border-[var(--color-charcoal)] text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    <span>🖨️</span>
-                    <span>{locale === 'es' ? 'PDF / En mano' : 'PDF / Handout'}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Opciones según el canal elegido */}
-              {giftDelivery === 'whatsapp' && (
-                <div className="p-3 bg-black/60 border border-[#25D366]/40 animate-in fade-in duration-200 rounded">
-                  <label className="block text-xs uppercase tracking-widest text-gray-300 mb-1.5 font-medium">
-                    {locale === "es" ? "Teléfono WhatsApp del destinatario (opcional)" : "Recipient's WhatsApp Phone (optional)"}
-                  </label>
-                  <input 
-                    type="tel" 
-                    value={recipientPhone} 
-                    onChange={(e) => setRecipientPhone(e.target.value)} 
-                    placeholder={locale === "es" ? "Ej. +34 600 000 000" : "e.g. +34 600 000 000"} 
-                    className="w-full bg-black border border-[var(--color-charcoal)] p-2.5 text-white focus:border-[#25D366] outline-none text-xs"
-                  />
-                  <p className="text-[11px] text-gray-400 mt-1.5">
-                    {locale === "es" 
-                      ? "Al confirmar el pago se abrirá WhatsApp listo para enviar la tarjeta y tu dedicatoria con 1 solo clic." 
-                      : "Upon payment confirmation, WhatsApp will open ready to send the card and dedication in 1 click."}
-                  </p>
-                </div>
-              )}
-
-              {giftDelivery === 'email' && (
-                <div className="p-3 bg-black/60 border border-[var(--color-gold)]/40 animate-in fade-in duration-200 rounded">
-                  <label className="block text-xs uppercase tracking-widest text-gray-300 mb-1.5 font-medium">
-                    {locale === "es" ? "Email del destinatario *" : "Recipient's Email *"}
-                  </label>
-                  <input 
-                    type="email" 
-                    value={recipientEmail} 
-                    onChange={(e) => setRecipientEmail(e.target.value)} 
-                    required={isGift && giftDelivery === 'email'}
-                    placeholder={locale === "es" ? "Ej. laura@ejemplo.com" : "e.g. laura@example.com"} 
-                    className="w-full bg-black border border-[var(--color-charcoal)] p-2.5 text-white focus:border-[var(--color-gold)] outline-none text-xs"
-                  />
-                  <p className="text-[11px] text-gray-400 mt-1.5">
-                    {locale === "es" 
-                      ? "Le enviaremos la tarjeta regalo directamente a su correo con el diseño oficial y tu dedicatoria tras el pago." 
-                      : "We will automatically send the official gift voucher with your dedication directly to their inbox."}
-                  </p>
-                </div>
-              )}
 
               {/* Dedicatoria personalizada */}
               <div>
