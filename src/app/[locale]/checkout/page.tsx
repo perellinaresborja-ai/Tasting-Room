@@ -6,6 +6,7 @@ import { useEffect, useState, Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations, useLocale } from "next-intl";
 import { mockTastings } from "@/lib/mock-data";
+import { formatTime } from "@/lib/utils/formatDate";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -122,7 +123,7 @@ function CheckoutContent() {
           </span>
         )}
       </div>
-      <p className="text-gray-400 mb-8 tracking-widest text-sm uppercase">{tasting.date} • {tasting.start_time}</p>
+      <p className="text-gray-400 mb-8 tracking-widest text-sm uppercase">{tasting.date} • {formatTime(tasting.start_time)}</p>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* SECCIÓN REGALO */}

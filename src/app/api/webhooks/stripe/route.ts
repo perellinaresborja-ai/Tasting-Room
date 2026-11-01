@@ -93,7 +93,7 @@ export async function POST(req: Request) {
             const date = resData.tasting?.date;
             
             // Format time HH:mm
-            let time = resData.tasting?.start_time || '';
+            let time = resData.tasting?.start_time ? String(resData.tasting.start_time).slice(0, 5) + ' h' : '';
             if (time && time.length >= 5) {
               time = time.slice(0, 5);
             }
