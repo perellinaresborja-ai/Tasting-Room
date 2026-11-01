@@ -133,29 +133,45 @@ export default function SuccessPoller({
           </div>
 
           {/* BOTONES DE ACCIÓN PARA LA TARJETA REGALO */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6 print:hidden">
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="border border-[var(--color-gold)] text-[var(--color-gold)] hover:bg-[var(--color-gold)] hover:text-black px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>🖨️</span>
-              <span>{locale === 'es' ? 'Imprimir / Guardar PDF' : 'Print / Save PDF'}</span>
-            </button>
-            
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 justify-center mb-6 print:hidden">
             <a
               href={`https://wa.me/?text=${encodeURIComponent(
                 locale === 'es'
-                  ? `¡Hola ${giftData.recipientName}! 🎁 Te he regalado una experiencia en The Church Tasting Room para "${giftData.tastingTitle}" (${giftData.date} a las ${giftData.time}). ¡Espero que lo disfrutes muchísimo!`
-                  : `Hi ${giftData.recipientName}! 🎁 I got you an experience at The Church Tasting Room for "${giftData.tastingTitle}" (${giftData.date} at ${giftData.time}). Enjoy it!`
+                  ? `🍷 *¡Tienes un regalo muy especial de The Church Tasting Room!* 🎁\n\n¡Hola ${giftData.recipientName}!\n${giftData.buyerName ? `${giftData.buyerName} te ha regalado` : 'Te han regalado'} una experiencia gastronómica y de maridaje: *"${giftData.tastingTitle}"*.\n📅 Fecha: ${giftData.date} • ${giftData.time}\n🎟️ Plazas: ${giftData.tickets}\n📍 The Church Tasting Room (L'Albir)\n${giftData.giftMessage ? `\n"${giftData.giftMessage}"\n` : ''}\n¡Que lo disfrutes muchísimo!`
+                  : `🍷 *You received a gift from The Church Tasting Room!* 🎁\n\nHi ${giftData.recipientName}!\n${giftData.buyerName ? `${giftData.buyerName} got you` : 'You have been gifted'} an exclusive tasting experience: *"${giftData.tastingTitle}"*.\n📅 Date: ${giftData.date} • ${giftData.time}\n🎟️ Seats: ${giftData.tickets}\n📍 The Church Tasting Room (L'Albir)\n${giftData.giftMessage ? `\n"${giftData.giftMessage}"\n` : ''}\nEnjoy!`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[#25D366] hover:bg-[#20bd5a] text-black font-bold px-6 py-2.5 text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+              className="bg-[#25D366] hover:bg-[#20bd5a] text-black font-bold px-4 py-2.5 text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 rounded text-center"
             >
               <span>📲</span>
-              <span>{locale === 'es' ? 'Reenviar por WhatsApp' : 'Share via WhatsApp'}</span>
+              <span>{locale === 'es' ? 'Enviar WhatsApp' : 'Share WhatsApp'}</span>
             </a>
+
+            <a
+              href={`mailto:?subject=${encodeURIComponent(
+                locale === 'es'
+                  ? `🎁 Tarjeta Regalo: Experiencia en The Church Tasting Room para ${giftData.recipientName}`
+                  : `🎁 Gift Voucher: Tasting Experience at The Church for ${giftData.recipientName}`
+              )}&body=${encodeURIComponent(
+                locale === 'es'
+                  ? `¡Hola ${giftData.recipientName}! 🎁\n\n${giftData.buyerName ? `${giftData.buyerName} te ha regalado` : 'Te han regalado'} una experiencia gastronómica y de maridaje exclusiva en The Church Tasting Room:\n\n• Experiencia: ${giftData.tastingTitle}\n• Fecha y Hora: ${giftData.date} · ${giftData.time}\n• Plazas: ${giftData.tickets} plaza(s)\n• Ubicación: The Church Tasting Room · Camí Vell d'Altea, 26 (L'Albir)\n${giftData.giftMessage ? `\n"${giftData.giftMessage}"\n` : ''}\n¡Esperamos que disfrutes de una experiencia inolvidable!`
+                  : `Hi ${giftData.recipientName}! 🎁\n\n${giftData.buyerName ? `${giftData.buyerName} has gifted you` : 'You have been gifted'} an exclusive gastronomic & wine pairing experience at The Church Tasting Room:\n\n• Experience: ${giftData.tastingTitle}\n• Date & Time: ${giftData.date} · ${giftData.time}\n• Seats: ${giftData.tickets} seat(s)\n• Location: The Church Tasting Room · Camí Vell d'Altea, 26 (L'Albir)\n${giftData.giftMessage ? `\n"${giftData.giftMessage}"\n` : ''}\nWe hope you enjoy this unforgettable experience!`
+              )}`}
+              className="border border-[var(--color-gold)] text-[var(--color-gold)] hover:bg-[var(--color-gold)] hover:text-black bg-black/60 px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 rounded text-center"
+            >
+              <span>✉️</span>
+              <span>{locale === 'es' ? 'Enviar por Email' : 'Send by Email'}</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="border border-gray-600 text-gray-300 hover:border-white hover:text-white bg-black/40 px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 rounded text-center cursor-pointer"
+            >
+              <span>🖨️</span>
+              <span>{locale === 'es' ? 'Imprimir / PDF' : 'Print / PDF'}</span>
+            </button>
           </div>
 
           <p className="text-xs text-gray-500 mb-6 print:hidden">
