@@ -53,22 +53,29 @@ export default function CampaignBuilder({ initialTastingId, initialSegment, init
   });
 
   const handleSend = async () => {
-    if (!confirm('¿Estás seguro de guardar esta campaña? El envío real de emails requiere integración de producción (Resend). Se guardará como BORRADOR.')) return;
+    if (!confirm(`¿Estás seguro de enviar esta campaña a ${contactableSelected.length} destinatarios autorizados? Los correos se enviarán inmediatamente mediante Resend.`)) return;
     setLoading(true);
     try {
-      await sendCampaign({
+      const campaignId = crypto.randomUUID();
+      const res = await sendCampaign({
+        campaignId,
         channel,
         segment: `${audience}-${filterType}`,
         subject,
         message,
         recipientIds: contactableSelected,
       });
-      alert('Campaña guardada como borrador con éxito.');
-      router.push(`/admin/communications`);
-      router.refresh();
-    } catch (e) {
+
+      if (res.success) {
+        alert(res.message || 'Campaña procesada con éxito.');
+        router.push(`/admin/communications`);
+        router.refresh();
+      } else {
+        alert(res.message || 'Error al procesar la campaña.');
+      }
+    } catch (e: any) {
       console.error(e);
-      alert('Error de red.');
+      alert(e?.message || 'Error de conexión con el servidor.');
     }
     setLoading(false);
   };
@@ -209,8 +216,8 @@ export default function CampaignBuilder({ initialTastingId, initialSegment, init
 
           <div className="flex gap-4">
             <button onClick={() => setStep(2)} className="border border-[var(--color-charcoal)] text-white px-6 py-3 uppercase font-bold text-xs hover:bg-[#222]">Volver</button>
-            <button onClick={handleSend} disabled={loading || !message || (channel === 'EMAIL' && !subject)} className="bg-[var(--color-gold)] text-black px-6 py-3 uppercase font-bold text-xs hover:bg-white disabled:opacity-50">
-              {loading ? 'Procesando...' : 'Guardar Borrador'}
+            <button onClick={handleSend} disabled={loading || !message || (channel === 'EMAIL' && !subject)} className="bg-[var(--color-gold)] text-black px-6 py-3 uppercase font-bold text-xs hover:bg-white disabled:opacity-50 transition-colors cursor-pointer">
+              {loading ? 'Enviando...' : `Enviar Campaña (${contactableSelected.length})`}
             </button>
           </div>
         </div>

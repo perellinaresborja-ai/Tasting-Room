@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import Link from "next/link";
 import CampaignBuilder from "@/components/admin/CampaignBuilder";
+import RetryCampaignButton from "@/components/admin/RetryCampaignButton";
 
 export default async function CommunicationsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -37,12 +38,13 @@ export default async function CommunicationsPage({ params }: { params: Promise<{
                 <th className="p-3">Canal</th>
                 <th className="p-3">Destinatarios</th>
                 <th className="p-3">Estado</th>
+                <th className="p-3 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-charcoal)] bg-black">
               {(!comms || comms.length === 0) ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-gray-500 uppercase tracking-widest text-xs">
+                  <td colSpan={7} className="p-8 text-center text-gray-500 uppercase tracking-widest text-xs">
                     No hay comunicaciones enviadas
                   </td>
                 </tr>
@@ -53,11 +55,32 @@ export default async function CommunicationsPage({ params }: { params: Promise<{
                     <td className="p-3 font-bold text-white">{c.subject}</td>
                     <td className="p-3">{c.segment}</td>
                     <td className="p-3">{c.channel}</td>
-                    <td className="p-3">{c.recipients_count}</td>
                     <td className="p-3">
-                      <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${c.status === 'SENT' ? 'bg-green-900/30 text-green-400' : 'bg-gray-800 text-gray-400'}`}>
-                        {c.status}
+                      {c.accepted_count !== undefined && c.accepted_count !== null 
+                        ? `${c.accepted_count} / ${c.recipients_count}` 
+                        : c.recipients_count}
+                    </td>
+                    <td className="p-3">
+                      <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                        c.status === 'ACCEPTED' ? 'bg-green-900/30 text-green-400 border border-green-800' :
+                        c.status === 'PARTIAL' ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-800' :
+                        c.status === 'FAILED' ? 'bg-red-900/30 text-red-400 border border-red-800' :
+                        c.status === 'SENDING' ? 'bg-blue-900/30 text-blue-400 border border-blue-800' :
+                        c.status === 'SENT' ? 'bg-green-900/30 text-green-400 border border-green-800' :
+                        'bg-gray-800 text-gray-400'
+                      }`}>
+                        {c.status === 'ACCEPTED' ? 'ACEPTADO' :
+                         c.status === 'PARTIAL' ? 'PARCIAL' :
+                         c.status === 'FAILED' ? 'FALLIDO' :
+                         c.status === 'SENDING' ? 'ENVIANDO...' :
+                         c.status === 'SENT' ? 'ENVIADO' :
+                         c.status}
                       </span>
+                    </td>
+                    <td className="p-3 text-right">
+                      {(c.status === 'PARTIAL' || c.status === 'FAILED') && (
+                        <RetryCampaignButton campaignId={c.id} />
+                      )}
                     </td>
                   </tr>
                 ))
