@@ -25,7 +25,8 @@ if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
 }
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
-  auth: { persistSession: false }
+  auth: { persistSession: false },
+  realtime: { enabled: false }
 });
 
 function calculateSha256(buffer) {
