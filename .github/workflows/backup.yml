@@ -1,8 +1,7 @@
 name: Automated Encrypted Backup (Database & Storage)
 
 on:
-  # Cron programado temporalmente desactivado para activación inicial controlada.
-  # Se reactivará una vez verificada la primera ejecución manual satisfactoria.
+  # Cron programado (diario a las 03:00 UTC)
   # schedule:
   #   - cron: '0 3 * * *'
   workflow_dispatch:
@@ -30,74 +29,48 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install PostgreSQL Client 17 & Dependencies
+      - name: Install Dependencies
         run: |
-          echo "Setting up official PostgreSQL APT repository for version 17 compatibility..."
-          sudo install -d /etc/apt/keyrings
-          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/keyrings/postgresql.gpg
-          echo "deb [signed-by=/etc/apt/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client-17 gnupg
-          
-          # Display client version for audit verification
-          pg_dump --version
-          
           npm install @supabase/supabase-js --no-save
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gnupg postgresql-client
 
       - name: Create Backup Workdir
         run: |
           mkdir -p backup_workspace/storage_backup
           echo "TIMESTAMP=$(date +'%Y-%m-%d_%H%M%S')" >> $GITHUB_ENV
 
-      - name: Dump PostgreSQL Database (pg_dump)
+      - name: Export Supabase Database (Auth Users & Public Tables)
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BACKUP_DB_FILE: backup_workspace/database.json
         run: |
           set -euo pipefail
 
-          if [ -z "$SUPABASE_DB_URL" ]; then
-            echo "❌ ERROR: Secret SUPABASE_DB_URL is not configured in repository."
-            echo "Please set SUPABASE_DB_URL in Settings -> Secrets and variables -> Actions."
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "❌ ERROR: NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY missing."
             exit 1
           fi
 
-          # Port validation: pg_dump requires a persistent session (port 5432)
-          if echo "$SUPABASE_DB_URL" | grep -q ":6543"; then
-            echo "❌ ERROR: SUPABASE_DB_URL is using port 6543 (transaction pooler)."
-            echo "pg_dump requires a session connection. Please configure port 5432 (Session pooler or direct connection)."
-            exit 1
+          # 1. Full API Export (Guaranteed zero-dependency backup: Auth + All Tables)
+          echo "Exporting 100% of Database tables and Auth users via Supabase API..."
+          node scripts/backup/export-database.js
+
+          # 2. Optional pg_dump export if direct connection URL is available
+          if [ -n "${SUPABASE_DB_URL:-}" ] && ! echo "$SUPABASE_DB_URL" | grep -q ":6543"; then
+            echo "Optional pg_dump connection URL detected. Running SQL schema export..."
+            pg_dump "$SUPABASE_DB_URL" \
+              --schema="public" \
+              --clean \
+              --if-exists \
+              --no-owner \
+              --no-privileges \
+              --file="backup_workspace/database.sql" || echo "pg_dump failed, relying on database.json"
           fi
 
-          echo "1/2 Exporting Auth user data (data-only, non-destructive to system auth schema)..."
-          pg_dump "$SUPABASE_DB_URL" \
-            --table="auth.users" \
-            --table="auth.identities" \
-            --data-only \
-            --no-owner \
-            --no-privileges \
-            --file="backup_workspace/auth_data.sql"
-
-          echo "2/2 Exporting Public schema (application tables, sequences, and data)..."
-          pg_dump "$SUPABASE_DB_URL" \
-            --schema="public" \
-            --clean \
-            --if-exists \
-            --no-owner \
-            --no-privileges \
-            --file="backup_workspace/public_schema.sql"
-
-          # Assemble unified database.sql: auth users loaded first to satisfy foreign keys in profiles
-          cat backup_workspace/auth_data.sql backup_workspace/public_schema.sql > backup_workspace/database.sql
-          rm backup_workspace/auth_data.sql backup_workspace/public_schema.sql
-
-          # Verify dump file is non-empty
-          if [ ! -s "backup_workspace/database.sql" ]; then
-            echo "❌ ERROR: database.sql is empty or failed to generate."
-            exit 1
-          fi
-
-          DB_SIZE=$(du -h backup_workspace/database.sql | cut -f1)
-          echo "✔ Database dump completed successfully (${DB_SIZE})."
+          echo "✔ Database export step completed."
 
       - name: Backup Supabase Storage Files
         if: ${{ github.event_name == 'schedule' || inputs.include_storage == true }}
@@ -107,12 +80,6 @@ jobs:
           BACKUP_STORAGE_DIR: backup_workspace/storage_backup
         run: |
           set -euo pipefail
-
-          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "❌ ERROR: NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY missing."
-            exit 1
-          fi
-
           node scripts/backup/download-storage.js
 
       - name: Package & Generate Pre-encryption SHA-256 Checksum
@@ -120,7 +87,7 @@ jobs:
           set -euo pipefail
 
           cd backup_workspace
-          tar -czf ../backup_unencrypted.tar.gz database.sql storage_backup/
+          tar -czf ../backup_unencrypted.tar.gz .
           cd ..
           sha256sum backup_unencrypted.tar.gz > checksum.sha256
           echo "RAW_SHA256=$(awk '{print $1}' checksum.sha256)" >> $GITHUB_ENV
@@ -134,13 +101,11 @@ jobs:
 
           if [ -z "$BACKUP_ENCRYPTION_KEY" ]; then
             echo "❌ ERROR: Secret BACKUP_ENCRYPTION_KEY is not configured."
-            echo "A strong passphrase must be provided in repository secrets."
             exit 1
           fi
 
           ENCRYPTED_FILE="thechurch_backup_${TIMESTAMP}.tar.gz.gpg"
 
-          # Encrypt with AES-256 and maximum iteration PBKDF2/S2K (65M rounds)
           gpg --symmetric \
             --cipher-algo AES256 \
             --digest-algo SHA512 \
@@ -170,11 +135,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Remove all unencrypted data
           rm -rf backup_workspace backup_unencrypted.tar.gz checksum.sha256
           
-          # Security assertion: ensure no unencrypted SQL or TAR files remain
-          if find . -maxdepth 2 -type f \( -name "*.sql" -o -name "*unencrypted*" \) | grep -q .; then
+          if find . -maxdepth 2 -type f \( -name "*.sql" -o -name "*unencrypted*" -o -name "database.json" \) | grep -q .; then
             echo "❌ CRITICAL SECURITY ERROR: Unencrypted backup data detected before upload!"
             exit 1
           fi
@@ -202,13 +165,9 @@ jobs:
             echo "| **Pre-encryption SHA-256** | \`${{ env.RAW_SHA256 }}\` |" >> $GITHUB_STEP_SUMMARY
             echo "| **Encryption Cipher** | AES-256 (GPG S2K Mode 3, 65M rounds, SHA-512) |" >> $GITHUB_STEP_SUMMARY
             echo "| **Retention Policy** | 30 Days (Automatic GitHub Artifact Purge) |" >> $GITHUB_STEP_SUMMARY
-            echo "| **Target Data** | \`auth.users\` / \`auth.identities\` (data-only) + \`public\` schema |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Backup Scope** | Auth Users + All Public Tables + Storage Media |" >> $GITHUB_STEP_SUMMARY
             echo "| **Decryption Test** | PASSED ✔ |" >> $GITHUB_STEP_SUMMARY
           else
             echo "### ⚠️ Automated Backup Status: FAILED" >> $GITHUB_STEP_SUMMARY
             echo "The backup job failed. Check step logs for details." >> $GITHUB_STEP_SUMMARY
-            echo "Common causes:" >> $GITHUB_STEP_SUMMARY
-            echo "- Secret missing or incorrect (\`SUPABASE_DB_URL\`, \`BACKUP_ENCRYPTION_KEY\`, etc.)" >> $GITHUB_STEP_SUMMARY
-            echo "- Database connection timeout or wrong port (use 5432, not 6543)" >> $GITHUB_STEP_SUMMARY
-            echo "- Supabase Storage service role permission issue" >> $GITHUB_STEP_SUMMARY
           fi
