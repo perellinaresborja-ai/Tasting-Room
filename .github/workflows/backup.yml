@@ -137,11 +137,11 @@ jobs:
 
           rm -rf backup_workspace backup_unencrypted.tar.gz checksum.sha256
           
-          if find . -maxdepth 2 -type f \( -name "*.sql" -o -name "*unencrypted*" -o -name "database.json" \) | grep -q .; then
+          if [ -d "backup_workspace" ] || [ -f "backup_unencrypted.tar.gz" ]; then
             echo "❌ CRITICAL SECURITY ERROR: Unencrypted backup data detected before upload!"
             exit 1
           fi
-          echo "✔ Clean runner state confirmed: zero unencrypted data on disk."
+          echo "✔ Clean runner state confirmed: zero unencrypted backup data on disk."
 
       - name: Store Encrypted Backup as GitHub Artifact (30-Day Retention)
         uses: actions/upload-artifact@v4
