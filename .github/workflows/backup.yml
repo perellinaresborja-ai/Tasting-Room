@@ -1,9 +1,9 @@
 name: Automated Encrypted Backup (Database & Storage)
 
 on:
-  # Cron programado (diario a las 03:00 UTC)
-  # schedule:
-  #   - cron: '0 3 * * *'
+  schedule:
+    # Runs daily at 03:00 UTC (04:00/05:00 Madrid time)
+    - cron: '0 3 * * *'
   workflow_dispatch:
     inputs:
       include_storage:
