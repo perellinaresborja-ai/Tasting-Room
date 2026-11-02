@@ -4,6 +4,7 @@ import Image from "next/image";
 import { formatDate } from "@/lib/utils/formatDate";
 import { createClient } from "@/lib/supabase/server";
 import { classifyTasting } from "@/lib/utils/tastingClassification";
+import { getSiteUrl } from "@/lib/constants/site";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -15,7 +16,7 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "PastTastings" });
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const siteUrl = getSiteUrl();
   const path = locale === "es" ? "/es/catas-realizadas" : "/en/past-tastings";
   return {
     title: t("title"),

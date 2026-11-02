@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { getSiteUrl } from "@/lib/constants/site";
 
 export async function generateMetadata({
   params,
@@ -6,7 +7,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const siteUrl = getSiteUrl();
   const isEn = locale === "en";
   const title = isEn ? "Upcoming Wine Tastings & Experiences" : "Catas y Experiencias Gastronómicas";
   const description = isEn

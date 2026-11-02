@@ -1,7 +1,8 @@
 import {Tasting} from "@/lib/types";
+import { getSiteUrl } from "@/lib/constants/site";
 
 export default function TastingJsonLd({ tasting, locale }: { tasting: Tasting, locale: string }) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const SITE_URL = getSiteUrl();
   const title = locale === "es" ? tasting.title_es : tasting.title_en;
   const description = locale === "es" ? tasting.description_es : tasting.description_en;
 

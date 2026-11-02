@@ -9,6 +9,7 @@ import BookingForm from "@/components/ui/BookingForm";
 import TastingViewTracker from "@/components/analytics/TastingViewTracker";
 import TastingGallery from "@/components/tastings/TastingGallery";
 import TastingJsonLd from "@/components/seo/TastingJsonLd";
+import { getSiteUrl } from "@/lib/constants/site";
 
 export async function generateMetadata({
   params,
@@ -28,7 +29,7 @@ export async function generateMetadata({
   const title = locale === "es" ? tasting.title_es : tasting.title_en;
   const description = locale === "es" ? tasting.description_es : tasting.description_en;
   const image = tasting.cover_image || "/og-image.png";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const siteUrl = getSiteUrl();
   const path = locale === "es" ? `/es/catas/${slug}` : `/en/tastings/${slug}`;
 
   return {

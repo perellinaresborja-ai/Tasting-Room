@@ -10,6 +10,7 @@ import Footer from "@/components/layout/Footer";
 import AgeVerificationModal from "@/components/ui/AgeVerificationModal";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import LocalBusinessJsonLd from "@/components/seo/LocalBusinessJsonLd";
+import { getSiteUrl } from "@/lib/constants/site";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       "Sun Palace Albir", "Kaktus Hotel", "Hotel Noguera", "Rober Palas",
       "Things to do in Albir", "Altea tourist activities", "Bodegas Costa Blanca"
     ],
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es"),
+    metadataBase: new URL(getSiteUrl()),
     alternates: {
       canonical: `/${locale}`,
       languages: {
@@ -71,6 +72,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
           alt: 'The Church Tasting Room Logo',
         }
       ],
+    },
+    verification: {
+      google: "mhcHXUK0Ae-G8Tki4iko4U41lYQ1bnwSen50x07gYdg",
     },
   };
 }

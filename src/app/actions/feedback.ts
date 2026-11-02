@@ -1,8 +1,9 @@
-﻿"use server";
+"use server";
 
 import { createClient } from '@/lib/supabase/server';
 import { requireAdmin } from '@/lib/supabase/adminAuth';
 import { Resend } from 'resend';
+import { getSiteUrl } from '@/lib/constants/site';
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
 
@@ -24,7 +25,7 @@ export async function sendFeedbackEmailsAction(tastingId: string) {
     if (error || !attendees) return { success: false, error: 'Error al obtener asistentes con check-in' };
 
     let sent = 0;
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tastingroom.es';
+    const siteUrl = getSiteUrl();
 
     for (const res of attendees) {
       const profile = res.profile as any;

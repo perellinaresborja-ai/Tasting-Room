@@ -1,5 +1,7 @@
+import { getSiteUrl } from "@/lib/constants/site";
+
 export default function LocalBusinessJsonLd() {
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const SITE_URL = getSiteUrl();
 
   const schema = {
     "@context": "https://schema.org",

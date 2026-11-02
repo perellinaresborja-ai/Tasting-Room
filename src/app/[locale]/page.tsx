@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { getSiteUrl } from "@/lib/constants/site";
 
 export async function generateMetadata({
   params,
@@ -6,7 +7,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+  const siteUrl = getSiteUrl();
   const isEn = locale === "en";
   const title = isEn
     ? "Experiencias Gastronómicas y Catas en El Albir"
@@ -120,8 +121,8 @@ export default async function HomePage({
             width={370} 
             height={400} 
             priority
-            sizes="(max-width: 640px) 170px, (max-width: 768px) 240px, (max-width: 1024px) 320px, 360px"
-            className="block object-contain w-[170px] sm:w-[240px] md:w-[320px] lg:w-[360px] max-w-[78vw] h-auto mb-5 sm:mb-6 md:mb-8 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] mx-auto"
+            sizes="(max-width: 640px) 196px, (max-width: 768px) 240px, (max-width: 1024px) 320px, 360px"
+            className="block object-contain w-[196px] sm:w-[240px] md:w-[320px] lg:w-[360px] max-w-[78vw] h-auto mb-5 sm:mb-6 md:mb-8 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] mx-auto"
           />
           <h1 className="w-full max-w-2xl mx-auto text-xl sm:text-2xl md:text-3xl text-[var(--color-gold)] font-serif mb-3 sm:mb-4 md:mb-6 uppercase tracking-wider leading-relaxed [text-wrap:balance] text-center">
             {t("what_is_1")} {t("what_is_2")}

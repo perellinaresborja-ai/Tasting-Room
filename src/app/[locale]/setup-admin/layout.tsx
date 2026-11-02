@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SetupAdminLayout({ children }: { children: React.ReactNode }) {
+export default function SetupAdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

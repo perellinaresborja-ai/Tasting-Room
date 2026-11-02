@@ -2,6 +2,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { getSiteUrl } from "@/lib/constants/site";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://dummy.supabase.co";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "dummy";
@@ -75,7 +76,7 @@ export async function subscribeAction(formData: FormData) {
     // 4. Send Welcome Email if it's a new subscriber and they gave email consent
     if (isNewSubscriber && consent_email) {
       try {
-        const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tastingroom.es";
+        const appUrl = getSiteUrl();
         const subject = language === "en" ? "Welcome to The Church Tasting Room" : "Bienvenido a The Church Tasting Room";
         const title = language === "en" ? "Welcome to The Church Tasting Room" : "Bienvenido a The Church Tasting Room";
         const body1 = language === "en" 
