@@ -3,12 +3,12 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build', {
+const stripe = new Stripe((process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build').trim(), {
   apiVersion: '2026-08-26.dahlia',
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
+const webhookSecret = (process.env.STRIPE_WEBHOOK_SECRET || '').trim();
+const resend = new Resend((process.env.RESEND_API_KEY || 're_dummy').trim());
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

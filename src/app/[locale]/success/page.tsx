@@ -23,7 +23,7 @@ export default async function SuccessPage({ searchParams, params }: { searchPara
     }
 
     try {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build', {
+      const stripe = new Stripe((process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build').trim(), {
         apiVersion: '2026-08-26.dahlia',
       });
       const session = await stripe.checkout.sessions.retrieve(session_id);

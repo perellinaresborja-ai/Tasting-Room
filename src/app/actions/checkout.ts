@@ -3,7 +3,7 @@
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build', {
+const stripe = new Stripe((process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build').trim(), {
   apiVersion: '2026-08-26.dahlia', // fallback or force type
 });
 
@@ -85,10 +85,17 @@ export async function createCheckoutSession(formData: FormData) {
     }
 
     // 3. Create Stripe Checkout Session
-    let siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es';
+    let siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es').trim().replace(/\/+$/, '');
     if (siteUrl.includes('://tastingroom.es')) {
       siteUrl = siteUrl.replace('://tastingroom.es', '://www.tastingroom.es');
     }
+
+    const publicImageBase = siteUrl.startsWith('https://') ? siteUrl : 'https://www.tastingroom.es';
+    const resolvedCoverImage = tasting.cover_image
+      ? (tasting.cover_image.startsWith('http')
+          ? tasting.cover_image
+          : `${publicImageBase}${tasting.cover_image.startsWith('/') ? '' : '/'}${tasting.cover_image}`)
+      : null;
     
     const tastingDesc = locale === 'es' ? (tasting.subtitle_es || tasting.description_es) : (tasting.subtitle_en || tasting.description_en);
     const plainDesc = tastingDesc ? tastingDesc.replace(/<[^>]*>?/gm, '') : '';
@@ -121,7 +128,7 @@ export async function createCheckoutSession(formData: FormData) {
             product_data: {
               name: productName,
               description: stripeDescription,
-              images: tasting.cover_image ? [tasting.cover_image] : [],
+              images: resolvedCoverImage ? [resolvedCoverImage] : [],
             },
             unit_amount: Math.round(tasting.price * 100),
           },
@@ -129,7 +136,7 @@ export async function createCheckoutSession(formData: FormData) {
         },
       ],
       success_url: `${siteUrl}/${locale}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/${locale}/tastings/${tasting.slug}`,
+      cancel_url: `${siteUrl}/${locale}/${locale === 'es' ? 'catas' : 'tastings'}/${tasting.slug}`,
     });
 
     // 4. Update the reservation with the Stripe Session ID
