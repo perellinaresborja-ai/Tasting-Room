@@ -78,7 +78,7 @@ async function dispatchConfirmationEmail(params: ConfirmationEmailParams) {
     html = params.locale === 'en' ? `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
         <div style="text-align: center; margin-bottom: 24px;">
-          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" style="height: 44px; width: auto; margin: 0 auto 12px; display: block;" />
+          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" width="260" style="width: 260px; max-width: 85%; height: auto; margin: 0 auto 16px; display: block;" />
           <h1 style="color: #ffffff; font-size: 22px; margin: 0; letter-spacing: 2px;">EXPERIENCE GIFT VOUCHER</h1>
         </div>
 
@@ -114,7 +114,7 @@ async function dispatchConfirmationEmail(params: ConfirmationEmailParams) {
     ` : `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
         <div style="text-align: center; margin-bottom: 24px;">
-          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" style="height: 44px; width: auto; margin: 0 auto 12px; display: block;" />
+          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" width="260" style="width: 260px; max-width: 85%; height: auto; margin: 0 auto 16px; display: block;" />
           <h1 style="color: #ffffff; font-size: 22px; margin: 0; letter-spacing: 2px;">TARJETA REGALO DE EXPERIENCIA</h1>
         </div>
 
@@ -157,7 +157,7 @@ async function dispatchConfirmationEmail(params: ConfirmationEmailParams) {
     html = params.locale === 'en' ? `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
         <div style="text-align: center; margin-bottom: 24px;">
-          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" style="height: 44px; width: auto; margin: 0 auto 12px; display: block;" />
+          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" width="260" style="width: 260px; max-width: 85%; height: auto; margin: 0 auto 16px; display: block;" />
           <h1 style="color: #ffffff; font-size: 22px; margin: 0; letter-spacing: 2px;">BOOKING CONFIRMED</h1>
         </div>
 
@@ -186,7 +186,7 @@ async function dispatchConfirmationEmail(params: ConfirmationEmailParams) {
     ` : `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
         <div style="text-align: center; margin-bottom: 24px;">
-          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" style="height: 44px; width: auto; margin: 0 auto 12px; display: block;" />
+          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" width="260" style="width: 260px; max-width: 85%; height: auto; margin: 0 auto 16px; display: block;" />
           <h1 style="color: #ffffff; font-size: 22px; margin: 0; letter-spacing: 2px;">RESERVA CONFIRMADA</h1>
         </div>
 
