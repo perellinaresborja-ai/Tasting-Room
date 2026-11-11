@@ -217,7 +217,7 @@ export default async function HomePage({
             {tPrivate("desc")}
           </p>
           <a
-            href={`https://wa.me/34626218295?text=${encodeURIComponent(
+            href={`https://wa.me/34633331313?text=${encodeURIComponent(
               locale === "es"
                 ? "Hola, me gustaría solicitar información sobre reservar el Tasting Room para un evento o cata privada."
                 : "Hello, I would like to inquire about booking the Tasting Room for a private tasting or event."

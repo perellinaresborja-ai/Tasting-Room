@@ -40,7 +40,7 @@ export default function WhatsAppButton() {
       
       {/* Botón Flotante */}
       <a
-        href={`https://wa.me/34626218295?text=${waText}`}
+        href={`https://wa.me/34633331313?text=${waText}`}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full shadow-lg transition-transform hover:scale-110"
