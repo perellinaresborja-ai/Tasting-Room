@@ -149,49 +149,68 @@ async function dispatchConfirmationEmail(params: ConfirmationEmailParams) {
       </div>
     `;
   } else {
+    const guestFullName = `${params.firstName || ''} ${params.lastName || ''}`.trim() || params.toEmail;
     emailSubject = params.locale === 'en'
-      ? `${prefix}Booking Confirmed: ${params.title}`
-      : `${prefix}Tu reserva está confirmada — The Church Tasting Room`;
+      ? `${prefix}✨ Booking Confirmed: ${params.title} — The Church Tasting Room`
+      : `${prefix}✨ Tu reserva para ${params.title} está confirmada — The Church Tasting Room`;
 
     html = params.locale === 'en' ? `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h1 style="color: #c9a96e; text-transform: uppercase;">The Church Tasting Room</h1>
-        <h2>Booking Confirmed</h2>
-        <p>Hi ${params.firstName || ''},</p>
-        <p>Your booking for <strong>${params.title}</strong> is confirmed.</p>
-        <ul>
-          <li><strong>Date:</strong> ${params.date}</li>
-          <li><strong>Time:</strong> ${time}</li>
-          <li><strong>Spots:</strong> ${params.tickets}</li>
-          <li><strong>Amount paid:</strong> €${params.totalAmount}</li>
-        </ul>
-        <div style="margin: 30px 0; text-align: center;">
-          <p>Your access is in My Chapel.</p>
-          <p>My Chapel is your personal space at The Church Tasting Room. There you will find your personal QR code, upcoming experiences, and past tastings.</p>
-          <p>Your QR is personal and permanent: you will always use the same one for your experiences with us.</p>
-          <a href="${actionUrl}" style="background-color: #c9a96e; color: #111; padding: 12px 24px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;">Access My Chapel</a>
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" style="height: 44px; width: auto; margin: 0 auto 12px; display: block;" />
+          <h1 style="color: #ffffff; font-size: 22px; margin: 0; letter-spacing: 2px;">BOOKING CONFIRMED</h1>
         </div>
-        <p style="font-size: 12px; color: #666; text-align: center;">This access link is personal and will expire. You can always request a new one from the website.</p>
+
+        <div style="border: 2px solid #c9a96e; padding: 24px; background-color: #111111; margin-bottom: 24px; text-align: left;">
+          <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">Guest</p>
+          <p style="color: #c9a96e; font-size: 22px; font-weight: bold; margin: 0 0 16px;">${guestFullName}</p>
+
+          <div style="border-top: 1px solid #222222; padding-top: 16px; margin-top: 8px;">
+            <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">Experience</p>
+            <p style="color: #ffffff; font-size: 18px; font-weight: bold; margin: 0 0 10px;">${params.title}</p>
+            <p style="color: #aaaaaa; font-size: 14px; margin: 0 0 6px;">📅 Date: ${params.date} • ⏱ Time: ${time}</p>
+            <p style="color: #aaaaaa; font-size: 14px; margin: 0 0 6px;">🥂 Seats reserved: <strong style="color: #ffffff;">${params.tickets}</strong></p>
+            <p style="color: #aaaaaa; font-size: 14px; margin: 0;">💳 Total paid: <strong style="color: #c9a96e;">€${params.totalAmount}</strong></p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <p style="font-size: 15px; color: #ffffff; font-weight: bold; margin: 0 0 8px;">Your personal QR access is in My Chapel</p>
+          <p style="font-size: 13px; color: #bbbbbb; line-height: 1.6; margin: 0 0 16px;">My Chapel is your personal space at The Church Tasting Room. There you will find your permanent personal QR code for check-in, your upcoming experiences, and your tasting history.</p>
+          <a href="${actionUrl}" style="background-color: #c9a96e; color: #000000; padding: 14px 28px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 8px;">Access My Chapel</a>
+        </div>
+
+        <p style="font-size: 11px; color: #777777; text-align: center; margin-top: 24px;">This magic access link is personal. You can always request a new one anytime from www.tastingroom.es.</p>
+        <p style="font-size: 11px; color: #666666; text-align: center; margin-top: 12px;">The Church Tasting Room · Camí Vell d'Altea, 26 · 03581 L'Albir, Alicante</p>
       </div>
     ` : `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h1 style="color: #c9a96e; text-transform: uppercase;">The Church Tasting Room</h1>
-        <h2>Tu reserva está confirmada</h2>
-        <p>Hola ${params.firstName || ''},</p>
-        <p>Tu reserva para <strong>${params.title}</strong> está confirmada.</p>
-        <ul>
-          <li><strong>Fecha:</strong> ${params.date}</li>
-          <li><strong>Hora:</strong> ${time}</li>
-          <li><strong>Plazas:</strong> ${params.tickets}</li>
-          <li><strong>Importe pagado:</strong> €${params.totalAmount}</li>
-        </ul>
-        <div style="margin: 30px 0; text-align: center;">
-          <p style="font-size: 18px; font-weight: bold;">Tu acceso está en Mi Capilla</p>
-          <p>Mi Capilla es tu espacio personal en The Church Tasting Room. Allí encontrarás tu QR personal, tus próximas experiencias y el historial de las catas a las que hayas asistido.</p>
-          <p>Tu QR es personal y permanente: utilizarás siempre el mismo en tus experiencias con nosotros.</p>
-          <a href="${actionUrl}" style="background-color: #c9a96e; color: #111; padding: 12px 24px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;">Acceder a Mi Capilla</a>
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <img src="${appUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" style="height: 44px; width: auto; margin: 0 auto 12px; display: block;" />
+          <h1 style="color: #ffffff; font-size: 22px; margin: 0; letter-spacing: 2px;">RESERVA CONFIRMADA</h1>
         </div>
-        <p style="font-size: 12px; color: #666; text-align: center;">Este enlace de acceso es personal y caducará. Siempre puedes solicitar uno nuevo desde la web.</p>
+
+        <div style="border: 2px solid #c9a96e; padding: 24px; background-color: #111111; margin-bottom: 24px; text-align: left;">
+          <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">Titular de la reserva</p>
+          <p style="color: #c9a96e; font-size: 22px; font-weight: bold; margin: 0 0 16px;">${guestFullName}</p>
+
+          <div style="border-top: 1px solid #222222; padding-top: 16px; margin-top: 8px;">
+            <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">Experiencia</p>
+            <p style="color: #ffffff; font-size: 18px; font-weight: bold; margin: 0 0 10px;">${params.title}</p>
+            <p style="color: #aaaaaa; font-size: 14px; margin: 0 0 6px;">📅 Fecha: ${params.date} • ⏱ Hora: ${time}</p>
+            <p style="color: #aaaaaa; font-size: 14px; margin: 0 0 6px;">🥂 Plazas reservadas: <strong style="color: #ffffff;">${params.tickets}</strong></p>
+            <p style="color: #aaaaaa; font-size: 14px; margin: 0;">💳 Importe abonado: <strong style="color: #c9a96e;">€${params.totalAmount}</strong></p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <p style="font-size: 15px; color: #ffffff; font-weight: bold; margin: 0 0 8px;">Tu QR de acceso está en Mi Capilla</p>
+          <p style="font-size: 13px; color: #bbbbbb; line-height: 1.6; margin: 0 0 16px;">Mi Capilla es tu espacio personal en The Church Tasting Room. Allí encontrarás tu código QR permanente para entrar al evento, tus próximas catas y tu historial de experiencias.</p>
+          <a href="${actionUrl}" style="background-color: #c9a96e; color: #000000; padding: 14px 28px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 8px;">Acceder a Mi Capilla</a>
+        </div>
+
+        <p style="font-size: 11px; color: #777777; text-align: center; margin-top: 24px;">Este enlace de acceso es personal. Siempre puedes solicitar uno nuevo desde www.tastingroom.es.</p>
+        <p style="font-size: 11px; color: #666666; text-align: center; margin-top: 12px;">The Church Tasting Room · Camí Vell d'Altea, 26 · 03581 L'Albir, Alicante</p>
       </div>
     `;
   }
