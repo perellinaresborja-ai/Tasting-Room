@@ -10,6 +10,40 @@ const stripe = new Stripe((process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build
 const webhookSecret = (process.env.STRIPE_WEBHOOK_SECRET || '').trim();
 const resend = new Resend((process.env.RESEND_API_KEY || 're_dummy').trim());
 
+const DEFAULT_ADMIN_EMAILS = ['info@tastingroom.es', 'perellinaresborja@gmail.com'];
+
+function getAdminNotificationEmails(): string[] {
+  const fromEnv = process.env.ADMIN_NOTIFICATION_EMAILS;
+  if (fromEnv && fromEnv.trim().length > 0) {
+    return Array.from(
+      new Set(
+        fromEnv
+          .split(',')
+          .map((e) => e.trim().toLowerCase())
+          .filter((e) => e.includes('@'))
+      )
+    );
+  }
+  return DEFAULT_ADMIN_EMAILS;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function buildWhatsAppUrl(phone?: string | null): string | null {
+  if (!phone) return null;
+  const digits = phone.replace(/\D/g, '');
+  if (!digits) return null;
+  const normalized = digits.length === 9 && /^[6789]/.test(digits) ? `34${digits}` : digits;
+  return `https://wa.me/${normalized}`;
+}
+
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -40,7 +74,7 @@ async function dispatchConfirmationEmail(params: ConfirmationEmailParams) {
     appUrl = appUrl.replace('://tastingroom.es', '://www.tastingroom.es');
   }
 
-  let time = params.startTime ? String(params.startTime).slice(0, 5) : '';
+  const time = params.startTime ? String(params.startTime).slice(0, 5) : '';
 
   // Generate secure access link
   let actionUrl = `${appUrl}/${params.locale}/member`;
@@ -249,6 +283,142 @@ async function dispatchConfirmationEmail(params: ConfirmationEmailParams) {
   return primaryRes;
 }
 
+interface AdminNotificationEmailParams {
+  reservationId: string;
+  tastingId: string;
+  tastingTitleEs: string;
+  date: string;
+  startTime?: string | null;
+  tickets: number;
+  totalAmount: number;
+  confirmedSeats?: number | null;
+  capacity?: number | null;
+  customerEmail: string;
+  firstName: string;
+  lastName?: string;
+  customerPhone?: string | null;
+  locale: string;
+  isGift: boolean;
+  recipientName?: string;
+  giftMessage?: string;
+  idempotencyKey?: string;
+}
+
+async function dispatchAdminNotificationEmail(params: AdminNotificationEmailParams) {
+  const rawSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tastingroom.es').trim().replace(/\/+$/, '');
+  let publicSiteUrl = rawSiteUrl.startsWith('https://') ? rawSiteUrl : 'https://www.tastingroom.es';
+  if (publicSiteUrl.includes('://tastingroom.es')) {
+    publicSiteUrl = publicSiteUrl.replace('://tastingroom.es', '://www.tastingroom.es');
+  }
+
+  const time = params.startTime ? String(params.startTime).slice(0, 5) : '';
+  const guestFullName = `${params.firstName || ''} ${params.lastName || ''}`.trim() || params.customerEmail;
+  const waUrl = buildWhatsAppUrl(params.customerPhone);
+  const adminReservationUrl = `${publicSiteUrl}/es/admin/reservations/${params.reservationId}`;
+  const adminAttendeesUrl = `${publicSiteUrl}/es/admin/tastings/${params.tastingId}/attendees`;
+
+  const remainingSeats =
+    typeof params.capacity === 'number' && typeof params.confirmedSeats === 'number'
+      ? Math.max(0, params.capacity - params.confirmedSeats)
+      : null;
+
+  const occupancyLabel =
+    typeof params.capacity === 'number' && typeof params.confirmedSeats === 'number'
+      ? `${params.confirmedSeats} / ${params.capacity} plazas confirmadas (${
+          remainingSeats === 0 ? '¡AFORO COMPLETO!' : `quedan ${remainingSeats} libres`
+        })`
+      : null;
+
+  const subject = params.isGift
+    ? `🎁 Nueva Tarjeta Regalo (+${params.tickets} pl. · €${params.totalAmount}): ${params.tastingTitleEs} — ${guestFullName}`
+    : `🔔 Nueva reserva (+${params.tickets} ${params.tickets === 1 ? 'plaza' : 'plazas'} · €${params.totalAmount}): ${params.tastingTitleEs} — ${guestFullName}`;
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #050505; color: #ffffff;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="${publicSiteUrl}/logo-tasting-room-gold.png" alt="The Church Tasting Room" width="200" style="width: 200px; max-width: 75%; height: auto; margin: 0 auto 12px; display: block;" />
+        <p style="color: #c9a96e; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin: 0 0 6px;">AVISO INTERNO DE RESERVA</p>
+        <h1 style="color: #ffffff; font-size: 20px; margin: 0; letter-spacing: 1px;">
+          ${params.isGift ? '🎁 NUEVA TARJETA REGALO PAGADA' : '✨ NUEVA RESERVA CONFIRMADA'}
+        </h1>
+      </div>
+
+      <div style="border: 1px solid #c9a96e; padding: 20px; background-color: #111111; margin-bottom: 20px;">
+        <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;">Experiencia</p>
+        <p style="color: #ffffff; font-size: 18px; font-weight: bold; margin: 0 0 8px;">${escapeHtml(params.tastingTitleEs)}</p>
+        <p style="color: #cccccc; font-size: 14px; margin: 0 0 12px;">📅 ${escapeHtml(params.date)}${time ? ` · ⏱ ${escapeHtml(time)}` : ''}</p>
+
+        <div style="border-top: 1px solid #222222; padding-top: 12px; margin-top: 12px;">
+          <p style="color: #dddddd; font-size: 14px; margin: 0 0 6px;">🥂 Plazas compradas: <strong style="color: #ffffff;">${params.tickets}</strong></p>
+          <p style="color: #dddddd; font-size: 14px; margin: 0 0 6px;">💳 Importe cobrado (Stripe): <strong style="color: #c9a96e;">€${params.totalAmount}</strong></p>
+          ${
+            occupancyLabel
+              ? `<p style="color: #dddddd; font-size: 14px; margin: 0;">📊 Ocupación actual: <strong style="color: ${remainingSeats === 0 ? '#ef4444' : '#c9a96e'};">${escapeHtml(occupancyLabel)}</strong></p>`
+              : ''
+          }
+        </div>
+      </div>
+
+      <div style="border: 1px solid #262626; padding: 20px; background-color: #0d0d0d; margin-bottom: 20px;">
+        <p style="color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 10px;">Datos del Cliente</p>
+        <p style="color: #ffffff; font-size: 16px; font-weight: bold; margin: 0 0 8px;">${escapeHtml(guestFullName)}</p>
+        <p style="color: #cccccc; font-size: 14px; margin: 0 0 6px;">
+          ✉️ Email: <a href="mailto:${escapeHtml(params.customerEmail)}" style="color: #c9a96e; text-decoration: none;">${escapeHtml(params.customerEmail)}</a>
+        </p>
+        ${
+          params.customerPhone
+            ? `<p style="color: #cccccc; font-size: 14px; margin: 0 0 6px;">
+                📞 Teléfono: <a href="tel:${escapeHtml(params.customerPhone)}" style="color: #c9a96e; text-decoration: none;">${escapeHtml(params.customerPhone)}</a>
+                ${waUrl ? ` · <a href="${waUrl}" style="color: #4ade80; text-decoration: underline;">Abrir WhatsApp</a>` : ''}
+              </p>`
+            : `<p style="color: #777777; font-size: 13px; margin: 0 0 6px;">📞 Teléfono: No indicado</p>`
+        }
+        <p style="color: #888888; font-size: 12px; margin: 8px 0 0;">🌐 Idioma de compra: ${params.locale === 'en' ? 'Inglés (EN)' : 'Español (ES)'}</p>
+      </div>
+
+      ${
+        params.isGift
+          ? `
+            <div style="border: 1px solid #3f3420; padding: 16px; background-color: #16130c; margin-bottom: 20px;">
+              <p style="color: #c9a96e; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 6px;">🎁 Detalles del Regalo</p>
+              <p style="color: #ffffff; font-size: 14px; margin: 0 0 6px;">Para: <strong>${escapeHtml(params.recipientName || 'No especificado')}</strong></p>
+              ${
+                params.giftMessage
+                  ? `<p style="color: #cccccc; font-size: 13px; font-style: italic; margin: 0;">&ldquo;${escapeHtml(params.giftMessage)}&rdquo;</p>`
+                  : ''
+              }
+            </div>
+          `
+          : ''
+      }
+
+      <div style="text-align: center; margin: 24px 0 12px;">
+        <a href="${adminReservationUrl}" style="background-color: #c9a96e; color: #000000; padding: 12px 22px; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin: 4px;">
+          Ver Reserva en Admin
+        </a>
+        <a href="${adminAttendeesUrl}" style="background-color: #1a1a1a; border: 1px solid #444444; color: #ffffff; padding: 12px 22px; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin: 4px;">
+          Lista de Asistentes
+        </a>
+      </div>
+
+      <p style="font-size: 11px; color: #666666; text-align: center; margin-top: 20px;">
+        Puedes responder directamente a este correo para escribir a ${escapeHtml(guestFullName)}.
+      </p>
+    </div>
+  `;
+
+  return resend.emails.send(
+    {
+      from: 'The Church Reservas <info@tastingroom.es>',
+      to: getAdminNotificationEmails(),
+      replyTo: params.customerEmail || undefined,
+      subject,
+      html,
+    },
+    params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : undefined
+  );
+}
+
 export async function POST(req: Request) {
   const body = await req.text();
   const signature = req.headers.get('stripe-signature') as string;
@@ -325,7 +495,7 @@ export async function POST(req: Request) {
         // 1. Fetch reservation to ensure idempotency for email specifically
         const { data: resData, error: resError } = await supabaseAdmin
           .from('reservations')
-          .select('*, profile:profiles(email, first_name, last_name, public_token), tasting:tastings(title_es, title_en, date, start_time)')
+          .select('*, profile:profiles(email, first_name, last_name, phone, public_token), tasting:tastings(title_es, title_en, date, start_time, capacity)')
           .eq('id', reservationId)
           .single();
 
@@ -365,7 +535,7 @@ export async function POST(req: Request) {
           ).catch(() => {});
         }
 
-        // 3. Send email idempotently
+        // 3. Send customer confirmation email idempotently
         if (!wasAlreadyConfirmed && !resData.confirmation_email_sent_at && resData.profile?.email) {
           try {
             const locale = session.metadata?.locale || "es";
@@ -404,6 +574,52 @@ export async function POST(req: Request) {
           }
         } else {
           console.log(`Email already sent or missing email for reservation ${reservationId}`);
+        }
+
+        // 4. Send internal admin notification email (info@tastingroom.es & perellinaresborja@gmail.com)
+        if (!wasAlreadyConfirmed) {
+          try {
+            const { data: confirmedRows } = await supabaseAdmin
+              .from('reservations')
+              .select('tickets')
+              .eq('tasting_id', resData.tasting_id)
+              .eq('status', 'CONFIRMED');
+
+            const confirmedSeats = confirmedRows
+              ? confirmedRows.reduce((acc, row) => acc + (row.tickets || 0), 0)
+              : null;
+
+            await new Promise((resolve) => setTimeout(resolve, 350));
+
+            const adminRes = await dispatchAdminNotificationEmail({
+              reservationId,
+              tastingId: resData.tasting_id,
+              tastingTitleEs: resData.tasting?.title_es || resData.tasting?.title_en || 'The Church Tasting Room',
+              date: resData.tasting?.date || '',
+              startTime: resData.tasting?.start_time,
+              tickets: resData.tickets,
+              totalAmount: resData.total_amount,
+              confirmedSeats,
+              capacity: resData.tasting?.capacity ?? null,
+              customerEmail: resData.profile?.email || session.customer_email || '',
+              firstName: resData.profile?.first_name || '',
+              lastName: resData.profile?.last_name || '',
+              customerPhone: resData.profile?.phone || null,
+              locale: session.metadata?.locale || 'es',
+              isGift: session.metadata?.is_gift === 'true',
+              recipientName: session.metadata?.recipient_name,
+              giftMessage: session.metadata?.gift_message,
+              idempotencyKey: `admin_notify_${reservationId}`,
+            });
+
+            if (adminRes.error) {
+              console.error('Resend error sending admin notification email:', adminRes.error);
+            } else {
+              console.log(`Admin notification email sent for reservation ${reservationId} (${adminRes.data?.id})`);
+            }
+          } catch (adminEmailErr) {
+            console.error('Error sending admin notification email:', adminEmailErr);
+          }
         }
       }
       break;
