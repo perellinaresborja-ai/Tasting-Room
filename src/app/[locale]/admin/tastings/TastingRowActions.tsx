@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Link, useRouter } from "@/i18n/routing";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, Users, X } from "lucide-react";
 import { deleteTastingAction } from "@/app/actions/saveTasting";
 
 export default function TastingRowActions({ id }: { id: string }) {
@@ -30,6 +30,14 @@ export default function TastingRowActions({ id }: { id: string }) {
   return (
     <>
       <div className="flex items-center justify-end space-x-3">
+        <Link
+          href={{ pathname: '/admin/tastings/[id]/attendees', params: { id } }}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-[var(--color-charcoal)] text-xs uppercase tracking-wider text-gray-300 hover:border-[var(--color-gold)] hover:text-[var(--color-gold)] transition-colors"
+          title="Ver asistentes e histórico de esta cata"
+        >
+          <Users size={14} />
+          <span>Asistentes</span>
+        </Link>
         {/* 
           // @ts-ignore */}
         <Link href={`/admin/tastings/${id}` as any} className="text-[var(--color-gold)] hover:text-white transition-colors" title="Editar cata">

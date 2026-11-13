@@ -1,18 +1,20 @@
 import { requireAdmin } from "@/lib/supabase/adminAuth";
 import { createClient } from "@/lib/supabase/server";
+import { classifyTasting } from "@/lib/utils/tastingClassification";
+import { Link } from "@/i18n/routing";
 
 export default async function StatisticsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   await requireAdmin(locale);
   const supabase = await createClient();
 
-  const { data: tastings } = await supabase.from("tastings").select("*");
+  const { data: tastings } = await supabase.from("tastings").select("*").order("date", { ascending: false });
   const { data: reservations } = await supabase.from("reservations").select("*, profiles(first_name, last_name, email, phone)");
 
   const safeTastings = tastings || [];
   const safeReservations = reservations || [];
 
-  const completedTastingsArr = safeTastings.filter((t: any) => t.status === "COMPLETED");
+  const completedTastingsArr = safeTastings.filter((t: any) => classifyTasting(t) === "PAST");
   const completedTastings = completedTastingsArr.length;
   
   const confirmedRes = safeReservations.filter((r: any) => r.status === "CONFIRMED");
@@ -71,15 +73,17 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
             <thead className="text-xs text-[var(--color-gold)] uppercase tracking-widest bg-[#111]">
               <tr>
                 <th className="p-3">Experiencia</th>
-                <th className="p-3">Categoría</th>
+                <th className="p-3">Estado</th>
                 <th className="p-3">Ocupación</th>
                 <th className="p-3">Facturación</th>
-                <th className="p-3">Asistencia</th>
-                <th className="p-3">Plazas Abandonadas</th>
+                <th className="p-3">Asistencia (QR)</th>
+                <th className="p-3">Abandonadas</th>
+                <th className="p-3 text-right">Histórico</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-charcoal)] bg-black">
               {safeTastings.map((t: any) => {
+                const isClosed = classifyTasting(t) === "PAST";
                 const resT = safeReservations.filter((r: any) => r.tasting_id === t.id);
                 const confT = resT.filter((r: any) => r.status === "CONFIRMED");
                 const abndT = resT.filter((r: any) => r.status === "EXPIRED" || r.status === "CANCELLED" || (r.status === "PENDING" && new Date(r.created_at).getTime() < Date.now() - 15 * 60 * 1000));
@@ -87,17 +91,29 @@ export default async function StatisticsPage({ params }: { params: Promise<{ loc
                 const tix = confT.reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
                 const rev = confT.reduce((acc: number, r: any) => acc + (Number(r.total_amount) || 0), 0);
                 const occ = t.capacity > 0 ? Math.round((tix / t.capacity) * 100) : 0;
-                const att = confT.filter((r: any) => r.check_in_time).reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
+                const att = confT.reduce((acc: number, r: any) => acc + (typeof r.checked_in_tickets === 'number' ? r.checked_in_tickets : (r.check_in_time ? (r.tickets || 0) : 0)), 0);
                 const abndTix = abndT.reduce((acc: number, r: any) => acc + (r.tickets || 0), 0);
 
                 return (
                   <tr key={t.id} className="hover:bg-[#111]">
-                    <td className="p-3 font-bold text-white">{t.title_es} <br/><span className="text-xs text-gray-500">{new Date(t.date).toLocaleDateString()}</span></td>
-                    <td className="p-3">{t.category || 'Sin categorizar'}</td>
+                    <td className="p-3 font-bold text-white">{t.title_es} <br/><span className="text-xs text-gray-500">{t.date}</span></td>
+                    <td className="p-3">
+                      <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wider ${isClosed ? 'bg-gray-800 text-gray-400 border border-gray-700' : 'bg-green-900/30 text-green-400 border border-green-800'}`}>
+                        {isClosed ? 'CERRADA' : 'ABIERTA'}
+                      </span>
+                    </td>
                     <td className="p-3">{tix}/{t.capacity} ({occ}%)</td>
                     <td className="p-3">€{rev.toFixed(2)}</td>
                     <td className="p-3">{att}</td>
                     <td className="p-3 text-orange-400">{abndTix}</td>
+                    <td className="p-3 text-right">
+                      <Link
+                        href={{ pathname: '/admin/tastings/[id]/attendees', params: { id: t.id } }}
+                        className="text-xs uppercase tracking-wider text-[var(--color-gold)] hover:underline"
+                      >
+                        Ver asistentes →
+                      </Link>
+                    </td>
                   </tr>
                 );
               })}
