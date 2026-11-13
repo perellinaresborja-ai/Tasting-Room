@@ -2,6 +2,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
+import { classifyTasting } from '@/lib/utils/tastingClassification';
 
 const stripe = new Stripe((process.env.STRIPE_SECRET_KEY || 'dummy_key_for_build').trim(), {
   apiVersion: '2026-08-26.dahlia', // fallback or force type
@@ -42,6 +43,16 @@ export async function createCheckoutSession(formData: FormData) {
 
     if (tastingError || !tasting) {
       return { success: false, error: 'Cata no encontrada' };
+    }
+
+    // Automatically reject reservations if tasting is already finished or closed
+    if (classifyTasting(tasting) !== 'UPCOMING') {
+      return {
+        success: false,
+        error: locale === 'en'
+          ? 'This tasting has already concluded and is closed for bookings.'
+          : 'Esta cata ya ha finalizado y está cerrada a nuevas reservas.'
+      };
     }
 
     const totalAmount = tasting.price * tickets;
